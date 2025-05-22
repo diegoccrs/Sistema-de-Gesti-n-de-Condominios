@@ -1,7 +1,17 @@
-<div class="container">
-    <mat-card>
-        <h1>Bienvenido a CondoGest</h1>
-        <p>Administra tu condominio con facilidad y seguridad.</p>
-        <button mat-raised-button color="primary" routerLink="/login">Iniciar sesión</button>
+<div class="landing-container">
+    <mat-card class="welcome-card">
+        <mat-card-content>
+            <h1>Bienvenido a Mi Condominio Digital</h1>
+            <p class="subtitle">Administra tu condominio con facilidad y seguridad.</p>
+
+            <div class="button-group">
+                <button mat-raised-button color="primary" routerLink="/auth/login">
+                    Iniciar Sesión
+                </button>
+                <button mat-stroked-button color="accent" routerLink="/auth/register">
+                    Registrarse
+                </button>
+            </div>
+        </mat-card-content>
     </mat-card>
 </div>
