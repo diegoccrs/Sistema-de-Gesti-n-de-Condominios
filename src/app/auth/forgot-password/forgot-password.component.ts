@@ -1,17 +1,17 @@
 // src/app/auth/forgot-password.component.ts
 import { Component, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { CommonModule } from '@angular/common';
+import { RouterLink } from '@angular/router';
 import { MatInputModule } from '@angular/material/input';
-import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
-import { Router } from '@angular/router';
+import { MatFormFieldModule } from '@angular/material/form-field';
 
-import { createClient } from '@supabase/supabase-js';
+import { SupabaseClient, createClient } from '@supabase/supabase-js';
 import { environment } from '../../../environments/environment';
 
-const supabase = createClient(environment.supabaseUrl, environment.supabaseKey);
+const supabase: SupabaseClient = createClient(environment.supabaseUrl, environment.supabaseKey);
 
 @Component({
   selector: 'app-forgot-password',
@@ -20,48 +20,41 @@ const supabase = createClient(environment.supabaseUrl, environment.supabaseKey);
     CommonModule,
     ReactiveFormsModule,
     MatInputModule,
-    MatFormFieldModule,
     MatButtonModule,
-    MatCardModule
+    MatCardModule,
+    MatFormFieldModule,
+    RouterLink
   ],
   templateUrl: './forgot-password.component.html',
   styleUrls: ['./forgot-password.component.css']
 })
 export class ForgotPasswordComponent {
   fb = inject(FormBuilder);
-  router = inject(Router);
-
-  form = this.fb.group({
+  resetForm = this.fb.group({
     email: ['', [Validators.required, Validators.email]]
   });
 
   message: string | null = null;
-  error: string | null = null;
-  isSubmitting = false;
+  errorMessage: string | null = null;
 
-  async submit() {
-    this.message = null;
-    this.error = null;
-
-    if (this.form.invalid) {
-      this.form.markAllAsTouched();
+  async sendResetLink() {
+    if (this.resetForm.invalid) {
+      this.resetForm.markAllAsTouched();
+      this.errorMessage = 'Ingrese un correo válido.';
       return;
     }
 
-    this.isSubmitting = true;
-    const { email } = this.form.value;
+    this.errorMessage = null;
+    const { email } = this.resetForm.value;
 
     const { error } = await supabase.auth.resetPasswordForEmail(email!, {
-      redirectTo: `${window.location.origin}/auth/reset-password`
+      redirectTo: 'http://localhost:4200/auth/reset-password' // Cambia esto si estás en producción
     });
 
-    this.isSubmitting = false;
-
     if (error) {
-      console.error(error);
-      this.error = 'Error al enviar el correo. Intente de nuevo.';
+      this.errorMessage = 'Error al enviar el enlace: ' + error.message;
     } else {
-      this.message = 'Revisa tu correo electrónico para restablecer tu contraseña.';
+      this.message = 'Se ha enviado un enlace a su correo para restablecer la contraseña.';
     }
   }
 }
