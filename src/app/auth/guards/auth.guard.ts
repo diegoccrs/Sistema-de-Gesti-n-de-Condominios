@@ -1,32 +1,28 @@
-// src/app/auth/guards/auth.guard.ts
 import { CanActivateFn, Router } from '@angular/router';
 import { inject } from '@angular/core';
 import { createClient } from '@supabase/supabase-js';
-import { environment } from '../../../environments/environment'; // Asegúrate de la ruta correcta
+import { environment } from '../../../environments/environment';
 
-// Inicialización de Supabase (igual que en el login, para que el guard tenga acceso)
 const supabase = createClient(environment.supabaseUrl, environment.supabaseKey);
 
 export const authGuard: CanActivateFn = async (route, state) => {
   const router = inject(Router);
 
   try {
-    // Comprobar si hay una sesión activa de Supabase
-    // Supabase mantiene la sesión en localStorage y la refresca si es válida.
+    // Verificar sesión en Supabase
     const { data: { session } } = await supabase.auth.getSession();
-
-    if (session) {
-      console.log('AuthGuard: Sesión activa detectada. Permitiendo acceso.');
-      return true; // El usuario está autenticado, permite el acceso a la ruta.
-    } else {
+    
+    if (!session) {
       console.warn('AuthGuard: No hay sesión activa. Redirigiendo al login.');
-      // No hay sesión, redirige al usuario a la página de login
       router.navigate(['/auth/login']);
-      return false; // No permite el acceso a la ruta.
+      return false;
     }
+
+    console.log('AuthGuard: Sesión válida detectada. Acceso permitido al dashboard.');
+    return true;
+
   } catch (error) {
-    console.error('AuthGuard: Error al verificar la sesión de Supabase:', error);
-    // En caso de error, redirige al login por seguridad
+    console.error('AuthGuard: Error de verificación:', error);
     router.navigate(['/auth/login']);
     return false;
   }
