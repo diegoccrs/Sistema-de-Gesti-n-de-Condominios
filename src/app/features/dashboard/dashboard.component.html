@@ -1,48 +1,38 @@
+
 <div style="padding: 20px; font-family: sans-serif;">
-  <h1>Bienvenido a Mi Condominio Digital (Dashboard Provisional)</h1>
-  
-  <p>
-    Esta es tu página de inicio una vez que hayas iniciado sesión.
-    Por ahora, es una vista temporal con información básica.
-  </p>
+  <!-- Contenido condicional basado en el rol -->
+  @if (userRole === 'admin') {
+    <app-admin-dashboard></app-admin-dashboard>
+  } @else if (userRole === 'residente') {
+    <!--<app-resident-dashboard></app-resident-dashboard> -->
+  } @else {
+    <!-- Mensaje para roles no reconocidos -->
+    <h1>Bienvenido a Mi Condominio Digital</h1>
+    <p>
+      Esta es tu página de inicio una vez que hayas iniciado sesión.
+      Por ahora, es una vista temporal con información básica.
+    </p>
 
+    <div class="role-warning">
+      <h3>⚠️ Rol no reconocido</h3>
+      <p>Por favor contacta al administrador para asignar los permisos adecuados.</p>
+    </div>
+  }
+
+  <!-- Sección común para todos los usuarios -->
   <hr style="margin: 20px 0;">
 
-  <h2>Funcionalidades Futuras:</h2>
-
-  <section>
-    <h3>Para Residentes:</h3>
-    <ul>
-      <li>Visualización de anuncios importantes del condominio.</li>
-      <li>Registro y seguimiento de pagos (USD, VES, EUR).</li>
-      <li>Carga de comprobantes de pago.</li>
-      <li>Consulta de estado de cuenta.</li>
-      <li>Acceso a documentos compartidos por la administración.</li>
-    </ul>
-  </section>
-
-  <section>
-    <h3>Para Administradores:</h3>
-    <ul>
-      <li>Publicación y gestión de anuncios (con opción de adjuntar PDFs).</li>
-      <li>Creación y gestión de cuentas para residentes.</li>
-      <li>Seguimiento general de pagos del condominio.</li>
-      <li>Generación de reportes básicos.</li>
-      <li>Gestión de documentos del condominio.</li>
-    </ul>
-  </section>
-
-  <hr style="margin: 20px 0;">
-
-  <p>
+  <div class="global-message">
     <em>
       Estamos trabajando para implementar todas estas características y ofrecerte
       la mejor experiencia en la gestión de tu condominio.
       ¡Gracias por tu paciencia!
     </em>
-  </p>
+  </div>
 
-  <p>
-    <strong>Próximos pasos:</strong> Implementación del sistema de autenticación y conexión con Supabase.
-  </p>
+  <div class="next-steps">
+    <p>
+      <strong>Próximos pasos:</strong> Implementación del sistema de autenticación y conexión con Supabase.
+    </p>
+  </div>
 </div>
