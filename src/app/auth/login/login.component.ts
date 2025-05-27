@@ -9,7 +9,10 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { SupabaseClient, createClient } from '@supabase/supabase-js';
 import { environment } from '../../../environments/environment';
 
-const supabase = createClient(environment.supabaseUrl, environment.supabaseKey);
+const supabase: SupabaseClient = createClient(
+  environment.supabaseUrl,
+  environment.supabaseKey
+);
 
 @Component({
   selector: 'app-login',
@@ -27,8 +30,9 @@ const supabase = createClient(environment.supabaseUrl, environment.supabaseKey);
   styleUrls: ['./login.component.css']
 })
 export class LoginComponent {
-  fb = inject(FormBuilder);
-  router = inject(Router);
+  private fb = inject(FormBuilder);
+  private router = inject(Router);
+  isLoading = false;
 
   loginForm = this.fb.group({
     email: ['', [Validators.required, Validators.email]],
@@ -37,23 +41,16 @@ export class LoginComponent {
 
   errorMessage: string | null = null;
 
-  constructor() {
-    supabase.auth.onAuthStateChange(async (event, session) => {
-      if (session && event === 'SIGNED_IN') {
-        console.log('Usuario autenticado. Redirigiendo al dashboard...');
-        await this.handleSuccessfulLogin(session.user?.id);
-      }
-    });
-  }
-
   async login() {
     if (this.loginForm.invalid) {
       this.loginForm.markAllAsTouched();
-      this.errorMessage = 'Por favor complete todos los campos correctamente.';
+      this.errorMessage = 'Complete los campos correctamente';
       return;
     }
 
+    this.isLoading = true;
     this.errorMessage = null;
+
     const { email, password } = this.loginForm.value;
 
     try {
@@ -63,43 +60,48 @@ export class LoginComponent {
       });
 
       if (error) throw error;
-      await this.handleSuccessfulLogin(data.user?.id);
+      await this.handlePostLogin(data.user?.id);
 
     } catch (error: any) {
-      console.error('Error de login:', error);
       this.handleLoginError(error);
+    } finally {
+      this.isLoading = false;
     }
   }
 
-  private async handleSuccessfulLogin(userId?: string) {
+  private async handlePostLogin(userId?: string) {
     try {
-      // Obtener rol pero no usarlo para restringir acceso
-      const { data } = await supabase
+      // Obtener rol desde Supabase
+      const { data: profile } = await supabase
         .from('profiles')
         .select('role')
         .eq('id', userId)
         .single();
 
-      if (data?.role) {
-        localStorage.setItem('user_role', data.role.toLowerCase());
-        console.log('Rol detectado:', data.role);
+      if (profile?.role) {
+        // Forzar actualización de la sesión
+        await supabase.auth.refreshSession();
+        console.log('Rol asignado:', profile.role);
       }
-      
-      this.router.navigate(['/dashboard']);
+
+      // Redirección garantizada
+      this.router.navigate(['/dashboard'], { replaceUrl: true });
 
     } catch (error) {
-      console.warn('Error obteniendo rol:', error);
-      this.router.navigate(['/dashboard']); // Redirigir igualmente
+      console.error('Error post-login:', error);
+      this.router.navigate(['/dashboard'], { replaceUrl: true });
     }
   }
 
   private handleLoginError(error: any) {
+    console.error('Error de login:', error);
+    
     if (error.message.includes('Invalid login credentials')) {
-      this.errorMessage = 'Credenciales inválidas. Verifique sus datos.';
+      this.errorMessage = 'Credenciales incorrectas';
     } else if (error.message.includes('Email not confirmed')) {
-      this.errorMessage = 'Confirme su correo electrónico primero.';
+      this.errorMessage = 'Confirma tu correo primero';
     } else {
-      this.errorMessage = 'Error inesperado. Intente nuevamente.';
+      this.errorMessage = 'Error inesperado. Intenta nuevamente';
     }
   }
 }

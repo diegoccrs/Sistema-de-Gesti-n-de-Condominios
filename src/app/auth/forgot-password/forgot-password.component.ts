@@ -21,8 +21,7 @@ const supabase: SupabaseClient = createClient(environment.supabaseUrl, environme
     MatInputModule,
     MatButtonModule,
     MatCardModule,
-    MatFormFieldModule,
-    RouterLink
+    MatFormFieldModule
   ],
   templateUrl: './forgot-password.component.html',
   styleUrls: ['./forgot-password.component.css']
