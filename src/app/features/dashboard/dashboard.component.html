@@ -1,38 +1,12 @@
-
-<div style="padding: 20px; font-family: sans-serif;">
-  <!-- Contenido condicional basado en el rol -->
+<div class="dashboard-container">
   @if (userRole === 'admin') {
     <app-admin-dashboard></app-admin-dashboard>
   } @else if (userRole === 'residente') {
-    <!--<app-resident-dashboard></app-resident-dashboard> -->
+    <app-resident-dashboard></app-resident-dashboard>
   } @else {
-    <!-- Mensaje para roles no reconocidos -->
-    <h1>Bienvenido a Mi Condominio Digital</h1>
-    <p>
-      Esta es tu página de inicio una vez que hayas iniciado sesión.
-      Por ahora, es una vista temporal con información básica.
-    </p>
-
-    <div class="role-warning">
-      <h3>⚠️ Rol no reconocido</h3>
-      <p>Por favor contacta al administrador para asignar los permisos adecuados.</p>
+    <div class="role-error">
+      <h2>Error de configuración de rol</h2>
+      <p>Contacta al administrador del sistema</p>
     </div>
   }
-
-  <!-- Sección común para todos los usuarios -->
-  <hr style="margin: 20px 0;">
-
-  <div class="global-message">
-    <em>
-      Estamos trabajando para implementar todas estas características y ofrecerte
-      la mejor experiencia en la gestión de tu condominio.
-      ¡Gracias por tu paciencia!
-    </em>
-  </div>
-
-  <div class="next-steps">
-    <p>
-      <strong>Próximos pasos:</strong> Implementación del sistema de autenticación y conexión con Supabase.
-    </p>
-  </div>
 </div>
