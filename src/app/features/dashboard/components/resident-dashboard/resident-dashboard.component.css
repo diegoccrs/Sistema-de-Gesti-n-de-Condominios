@@ -1,4 +1,11 @@
 .dashboard-container {
+  position: relative;
+  padding: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.dashboard-container {
   padding: 20px;
   max-width: 1200px;
   margin: 0 auto;

@@ -1,6 +1,8 @@
 <div class="dashboard-container">
+  <app-user-profile-button></app-user-profile-button>
+
   <h1>Panel del Residente</h1>
-  
+
   <section class="main-content">
     <!-- Anuncios Recientes -->
     <mat-card class="section-card">
@@ -12,7 +14,8 @@
           <mat-list-item *ngFor="let announcement of announcements">
             <mat-icon matListItemIcon>campaign</mat-icon>
             <div matListItemTitle>{{ announcement.title }}</div>
-            <div matListItemLine>{{ announcement.content | slice:0:100 }}<span *ngIf="announcement.content.length > 100">...</span></div>
+            <div matListItemLine>{{ announcement.content | slice:0:100 }}<span
+                *ngIf="announcement.content.length > 100">...</span></div>
             <div matListItemMeta>{{ announcement.created_at | date }}</div>
           </mat-list-item>
         </mat-list>
@@ -58,7 +61,7 @@
   <div *ngIf="isLoading" class="loading-overlay">
     <!--<mat-spinner diameter="50"></mat-spinner> -->
   </div>
-  
+
   <div *ngIf="errorMessage" class="error-message">
     {{ errorMessage }}
   </div>

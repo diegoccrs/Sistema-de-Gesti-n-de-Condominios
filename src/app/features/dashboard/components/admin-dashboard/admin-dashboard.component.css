@@ -1,3 +1,10 @@
+.dashboard-container {
+  position: relative;
+  padding: 20px;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  max-width: 1200px;
+  margin: 0 auto;
+}
 
 .dashboard-container {
   padding: 20px;
@@ -29,7 +36,7 @@ h1 {
   background: #f9f9f9;
   border-radius: 8px;
   padding: 20px;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
 .feature-card h3 {
