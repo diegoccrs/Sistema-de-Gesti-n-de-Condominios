@@ -3,12 +3,16 @@ import { Routes } from '@angular/router';
 import { LandingComponent } from './landing/landing.component';
 import { LoginComponent } from './auth/login/login.component';
 import { RegisterComponent } from './auth/register/register.component';
+import { AnuncioComponent } from './auth/anuncio/anuncio.component';
+
 import { authGuard } from './auth/guards/auth.guard'; // <<-- ¡Importa tu guard!
 
 export const routes: Routes = [
   { path: '', component: LandingComponent },
   { path: 'auth/login', component: LoginComponent },
   { path: 'auth/register', component: RegisterComponent },
+   { path: 'anunciosform', component: AnuncioComponent }, // <-- Agrega esta línea
+   
 
   // --- Ruta para el Dashboard (carga perezosa de un Standalone Component con Guard) ---
   {
