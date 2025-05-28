@@ -1,0 +1,10 @@
+:host {
+    position: absolute;
+    top: 16px;
+    right: 24px;
+    z-index: 200;
+}
+
+.profile-trigger mat-icon {
+    margin-right: 4px;
+}

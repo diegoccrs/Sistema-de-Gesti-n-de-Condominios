@@ -6,6 +6,7 @@ import { MatListModule } from '@angular/material/list';
 import { MatIconModule } from '@angular/material/icon';
 import { SupabaseClient, createClient } from '@supabase/supabase-js';
 import { environment } from '../../../../../environments/environment';
+import { UserProfileButtonComponent } from '../user-profile-button/user-profile-button.component';
 
 const supabase: SupabaseClient = createClient(
   environment.supabaseUrl,
@@ -20,7 +21,8 @@ const supabase: SupabaseClient = createClient(
     MatCardModule,
     MatButtonModule,
     MatListModule,
-    MatIconModule
+    MatIconModule,
+    UserProfileButtonComponent
   ],
   templateUrl: './resident-dashboard.component.html',
   styleUrls: ['./resident-dashboard.component.css']
