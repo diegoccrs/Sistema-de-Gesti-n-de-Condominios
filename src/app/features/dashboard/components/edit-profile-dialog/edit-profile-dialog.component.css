@@ -1,0 +1,14 @@
+h2 {
+    margin-bottom: 16px;
+}
+
+.full-width {
+    width: 100%;
+    margin-bottom: 16px;
+}
+
+.actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+}
