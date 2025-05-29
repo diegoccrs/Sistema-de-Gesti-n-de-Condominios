@@ -3,6 +3,8 @@ import { CommonModule } from '@angular/common';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
+import { MatDialog } from '@angular/material/dialog';
+import { EditProfileDialogComponent } from '../edit-profile-dialog/edit-profile-dialog.component';
 
 // ⚠️ Ajusta la ruta si tu AuthService está en otra carpeta
 import { AuthService } from '../../../../auth/auth.service';
@@ -20,6 +22,7 @@ import { AuthService } from '../../../../auth/auth.service';
     styleUrls: ['./user-profile-button.component.css']
 })
 export class UserProfileButtonComponent implements OnInit {
+    private dialog = inject(MatDialog);
     private readonly authService = inject(AuthService);
     user: any = null;
 
@@ -30,7 +33,9 @@ export class UserProfileButtonComponent implements OnInit {
 
     onEditProfile() {
         // Navega o abre modal de edición
-        alert('Funcionalidad de editar perfil aún no implementada.');
+        this.dialog.open(EditProfileDialogComponent, {
+            width: '400px',
+        });
     }
 
     async onLogout() {
