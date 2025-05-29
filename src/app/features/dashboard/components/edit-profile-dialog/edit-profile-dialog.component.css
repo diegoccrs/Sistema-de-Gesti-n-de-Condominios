@@ -1,14 +1,42 @@
+:host {
+    display: block;
+    padding: 24px;
+    max-width: 500px;
+    background: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
 h2 {
-    margin-bottom: 16px;
+    margin-bottom: 24px;
+    font-size: 1.5rem;
+    color: #2c3e50;
+    border-bottom: 2px solid #3498db;
+    padding-bottom: 8px;
 }
 
 .full-width {
     width: 100%;
-    margin-bottom: 16px;
+    margin-bottom: 20px;
 }
 
 .actions {
     display: flex;
     justify-content: flex-end;
-    gap: 10px;
+    gap: 12px;
+    margin-top: 10px;
+}
+
+button[mat-button] {
+    color: #7f8c8d;
+}
+
+button[mat-raised-button] {
+    background-color: #3498db;
+    color: white;
+    transition: background-color 0.3s ease;
+}
+
+button[mat-raised-button]:hover {
+    background-color: #2980b9;
 }
