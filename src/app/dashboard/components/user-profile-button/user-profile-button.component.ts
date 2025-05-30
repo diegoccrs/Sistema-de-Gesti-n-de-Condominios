@@ -7,7 +7,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { EditProfileDialogComponent } from '../edit-profile-dialog/edit-profile-dialog.component';
 
 // ⚠️ Ajusta la ruta si tu AuthService está en otra carpeta
-import { AuthService } from '../../../../auth/auth.service';
+import { AuthService } from '../../../auth/auth.service';
 
 @Component({
     selector: 'app-user-profile-button',

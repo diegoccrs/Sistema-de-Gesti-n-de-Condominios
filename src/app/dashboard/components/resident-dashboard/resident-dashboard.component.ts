@@ -5,7 +5,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatListModule } from '@angular/material/list';
 import { MatIconModule } from '@angular/material/icon';
 import { SupabaseClient, createClient } from '@supabase/supabase-js';
-import { environment } from '../../../../../environments/environment';
+import { environment } from '../../../../environments/environment';
 import { UserProfileButtonComponent } from '../user-profile-button/user-profile-button.component';
 
 const supabase: SupabaseClient = createClient(
