@@ -7,7 +7,7 @@ export const routes: Routes = [
   {
     path: '',
     title: 'Inicio',
-    loadComponent: () => import('./landing/landing.component').then(m => m.LandingComponent)
+    loadComponent: () => import('./dashboard/landing/landing.component').then(m => m.LandingComponent)
   },
 
   // Rutas de autenticación
@@ -41,7 +41,7 @@ export const routes: Routes = [
   {
     path: 'dashboard',
     title: 'Panel Principal',
-    loadComponent: () => import('./features/dashboard/dashboard.component').then(m => m.DashboardComponent),
+    loadComponent: () => import('./dashboard/dashboard.component').then(m => m.DashboardComponent),
     canActivate: [authGuard]
   },
 

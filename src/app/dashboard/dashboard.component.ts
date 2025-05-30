@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { SupabaseClient, createClient } from '@supabase/supabase-js';
-import { environment } from '../../../environments/environment';
+import { environment } from '../../environments/environment';
 import { AdminDashboardComponent } from './components/admin-dashboard/admin-dashboard.component';
 import { ResidentDashboardComponent } from './components/resident-dashboard/resident-dashboard.component';
 
