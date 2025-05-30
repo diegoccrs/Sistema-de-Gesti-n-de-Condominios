@@ -1,47 +1,47 @@
-/* src/app/landing/landing.component.css */
+
 
 .landing-container {
     display: flex;
     justify-content: center;
     align-items: center;
-    min-height: calc(100vh - 64px); /* Asume un navbar de 64px, ajusta si es diferente */
-    background-color: #f0f2f5; /* Un fondo suave para la página de bienvenida */
+    min-height: calc(100vh - 64px); 
+    background-color: #f0f2f5; 
     padding: 20px;
 }
 
 .welcome-card {
-    padding: 3rem; /* Más padding para que se vea más espacioso */
+    padding: 3rem; 
     text-align: center;
-    max-width: 600px; /* Un poco más grande para el mensaje */
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1); /* Sombra más pronunciada */
-    border-radius: 12px; /* Bordes más redondeados */
+    max-width: 600px; 
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1); 
+    border-radius: 12px; 
 }
 
 h1 {
-    font-size: 3rem; /* Título más grande */
-    color: #3f51b5; /* Color primario de Material */
+    font-size: 3rem; 
+    color: #3f51b5; 
     margin-bottom: 1rem;
 }
 
 .subtitle {
-    font-size: 1.25rem; /* Subtítulo legible */
+    font-size: 1.25rem; 
     color: #555;
-    margin-bottom: 2.5rem; /* Más espacio antes de los botones */
+    margin-bottom: 2.5rem; 
 }
 
 .button-group {
     display: flex;
     justify-content: center;
-    gap: 20px; /* Espacio entre los botones */
-    flex-wrap: wrap; /* Para que los botones se envuelvan en pantallas pequeñas */
+    gap: 20px; 
+    flex-wrap: wrap; 
 }
 
 .button-group button {
-    min-width: 180px; /* Ancho mínimo para los botones */
-    padding: 15px 25px; /* Más padding para botones grandes */
+    min-width: 180px; 
+    padding: 15px 25px; 
     font-size: 1.1rem;
     font-weight: 500;
-    border-radius: 8px; /* Bordes redondeados para los botones */
+    border-radius: 8px; 
     transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
 }
 
@@ -50,12 +50,11 @@ h1 {
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
-/* Estilo para el botón outlined (mat-stroked-button) */
 .mat-stroked-button.mat-accent {
-    border-color: #ff4081; /* Color de acento para el borde */
-    color: #ff4081; /* Color de acento para el texto */
+    border-color: #ff4081; 
+    color: #ff4081; 
 }
 
 .mat-stroked-button.mat-accent:hover {
-    background-color: rgba(255, 64, 129, 0.04); /* Fondo ligero al pasar el mouse */
+    background-color: rgba(255, 64, 129, 0.04); 
 }
