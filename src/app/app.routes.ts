@@ -13,13 +13,7 @@ export const routes: Routes = [
     title: 'Inicio',
     loadComponent: () => import('./landing/landing.component').then(m => m.LandingComponent)
   },
-   // Formulario de anuncios
-  {
-    path: 'anunciosform',
-    title: 'Crear anuncio',
-    loadComponent: () => import('./auth/anuncio/anuncio.component').then(m => m.AnuncioComponent)
-  },	
-
+  
   // Rutas de autenticación
   {
     path: 'auth',
@@ -43,7 +37,9 @@ export const routes: Routes = [
         path: 'reset-password',
         title: 'Restablecer Contraseña',
         loadComponent: () => import('./auth/reset-password/reset-password.component').then(m => m.ResetPasswordComponent)
-      }
+      },
+          	
+
     ]
   },
 
@@ -54,6 +50,13 @@ export const routes: Routes = [
     loadComponent: () => import('./features/dashboard/dashboard.component').then(m => m.DashboardComponent),
     canActivate: [authGuard]
   },
+{
+    path: 'anuncio',
+    title: 'Nuevo Anuncio',
+    loadComponent: () => import('./auth/anuncio/anuncio.component').then(m => m.AnuncioComponent),
+    canActivate: [authGuard] // opcional: si solo usuarios autenticados deben acceder
+  },
+ 
 
   // Rutas de estado
   {
@@ -61,6 +64,7 @@ export const routes: Routes = [
     title: 'Acceso no autorizado',
     loadComponent: () => import('./auth/unauthorized/unauthorized.component').then(m => m.UnauthorizedComponent)
   },
+  
 
   // Redirecciones y comodín
   { path: '', redirectTo: '', pathMatch: 'full' },
