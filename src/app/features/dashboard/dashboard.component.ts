@@ -1,17 +1,32 @@
-import { Component } from '@angular/core';
-import { CommonModule } from '@angular/common'; // Importa CommonModule si necesitas directivas como *ngIf, *ngFor
-// Importa cualquier otro módulo que tus componentes hijos o directivas necesiten,
-// o si el DashboardComponent usa pipes o componentes de otros módulos.
+import { Component, OnInit } from '@angular/core';
+import { SupabaseClient, createClient } from '@supabase/supabase-js';
+import { environment } from '../../../environments/environment';
+import { AdminDashboardComponent } from './components/admin-dashboard/admin-dashboard.component';
+import { ResidentDashboardComponent } from './components/resident-dashboard/resident-dashboard.component';
+
+const supabase = createClient(environment.supabaseUrl, environment.supabaseKey);
 
 @Component({
   selector: 'app-dashboard',
-  standalone: true, 
-  imports: [CommonModule], // Aquí importas los módulos o componentes standalone que necesites usar dentro de tu DashboardComponent
+  standalone: true,
+  imports: [
+    AdminDashboardComponent,
+    ResidentDashboardComponent
+  ],
   templateUrl: './dashboard.component.html',
-  styleUrls: ['./dashboard.component.css'] // o './dashboard.component.scss'
+  styleUrls: ['./dashboard.component.css']
 })
-export class DashboardComponent {
-  constructor() {
-    // Lógica inicial del constructor
+export class DashboardComponent implements OnInit {
+  userRole: string = '';
+
+  async ngOnInit() {
+    const { data: { session } } = await supabase.auth.getSession();
+    const { data } = await supabase
+      .from('profiles')
+      .select('role')
+      .eq('id', session?.user?.id)
+      .single();
+
+    this.userRole = data?.role?.toLowerCase() || 'residente'; // Default seguro
   }
 }

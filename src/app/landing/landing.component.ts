@@ -1,9 +1,8 @@
-// src/app/landing/landing.component.ts
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
-import { RouterModule } from '@angular/router'; // Importar RouterModule para routerLink
+import { RouterModule } from '@angular/router'; 
 
 @Component({
     selector: 'app-landing',
@@ -12,7 +11,7 @@ import { RouterModule } from '@angular/router'; // Importar RouterModule para ro
         CommonModule,
         MatCardModule,
         MatButtonModule,
-        RouterModule // <-- Asegúrate de que RouterModule esté aquí
+        RouterModule 
     ],
     templateUrl: './landing.component.html',
     styleUrls: ['./landing.component.css']

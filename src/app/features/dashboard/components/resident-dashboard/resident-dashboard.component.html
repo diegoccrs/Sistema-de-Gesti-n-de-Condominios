@@ -1,0 +1,65 @@
+<div class="dashboard-container">
+  <h1>Panel del Residente</h1>
+  
+  <section class="main-content">
+    <!-- Anuncios Recientes -->
+    <mat-card class="section-card">
+      <mat-card-header>
+        <mat-card-title>Anuncios Recientes</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <mat-list *ngIf="announcements.length > 0; else noAnnouncements">
+          <mat-list-item *ngFor="let announcement of announcements">
+            <mat-icon matListItemIcon>campaign</mat-icon>
+            <div matListItemTitle>{{ announcement.title }}</div>
+            <div matListItemLine>{{ announcement.content | slice:0:100 }}<span *ngIf="announcement.content.length > 100">...</span></div>
+            <div matListItemMeta>{{ announcement.created_at | date }}</div>
+          </mat-list-item>
+        </mat-list>
+        <ng-template #noAnnouncements>
+          <p class="empty-state">No hay anuncios recientes</p>
+        </ng-template>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Pagos Pendientes -->
+    <mat-card class="section-card">
+      <mat-card-header>
+        <mat-card-title>Pagos Pendientes</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <mat-list *ngIf="pendingPayments.length > 0; else noPayments">
+          <mat-list-item *ngFor="let payment of pendingPayments">
+            <mat-icon matListItemIcon>payments</mat-icon>
+            <div matListItemTitle>{{ payment.concept }}</div>
+            <div matListItemLine>Vence: {{ payment.due_date | date }}</div>
+            <div matListItemMeta class="amount">{{ payment.amount | currency }}</div>
+            <button mat-icon-button (click)="openPaymentDetails(payment)">
+              <mat-icon>info</mat-icon>
+            </button>
+          </mat-list-item>
+        </mat-list>
+        <ng-template #noPayments>
+          <p class="empty-state">No tienes pagos pendientes</p>
+        </ng-template>
+      </mat-card-content>
+    </mat-card>
+  </section>
+
+  <!-- Acciones Rápidas -->
+  <section class="quick-actions">
+    <button mat-raised-button color="primary" (click)="reportIssue()">
+      <mat-icon>report_problem</mat-icon>
+      Reportar Problema
+    </button>
+  </section>
+
+  <!-- Estados de carga y error -->
+  <div *ngIf="isLoading" class="loading-overlay">
+    <!--<mat-spinner diameter="50"></mat-spinner> -->
+  </div>
+  
+  <div *ngIf="errorMessage" class="error-message">
+    {{ errorMessage }}
+  </div>
+</div>
