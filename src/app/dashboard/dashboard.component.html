@@ -1,7 +1,7 @@
 <div class="dashboard-container">
   @if (userRole === 'admin') {
     <app-admin-dashboard></app-admin-dashboard>
-  } @else if (userRole === 'residente') {
+  } @else if (userRole === 'resident') {
     <app-resident-dashboard></app-resident-dashboard>
   } @else {
     <div class="role-error">
