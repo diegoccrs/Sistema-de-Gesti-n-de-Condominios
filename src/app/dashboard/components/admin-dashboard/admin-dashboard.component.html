@@ -1,74 +1,141 @@
 <div class="dashboard-container">
-  <app-user-profile-button></app-user-profile-button>
+  <header class="dashboard-header animated-fade-in-down">
+    <app-user-profile-button class="user-profile-widget"></app-user-profile-button>
+    <h1 class="mat-display-1">Panel de Administración</h1>
+    <p class="subtitle">Bienvenido, {{ adminName }}. Gestiona tu condominio con eficiencia.</p>
+  </header>
 
-  <h1>Panel de Administración - Mi Condominio Digital</h1>
+  <mat-divider class="dashboard-divider"></mat-divider>
 
-  <p class="welcome-message">
-    Bienvenido Administrador. Desde aquí podrás gestionar todos los aspectos del condominio.
-  </p>
-
-  <hr>
-
-  <section class="functionality-section">
-    <h2>Funcionalidades Disponibles:</h2>
-
-    <div class="admin-features">
-      <div class="feature-card">
-        <h3>📢 Gestión de Anuncios</h3>
-        <ul>
-          <li>Publicar nuevos anuncios</li>
-          <li>Editar anuncios existentes</li>
-          <li>Adjuntar documentos PDF</li>
-          <li>Programar publicaciones</li>
-        </ul>
-      </div>
-
-      <div class="feature-card">
-        <h3>👥 Gestión de Usuarios</h3>
-        <ul>
-          <li>Crear cuentas para residentes</li>
-          <li>Modificar permisos de acceso</li>
-          <li>Resetear contraseñas</li>
-          <li>Ver historial de accesos</li>
-        </ul>
-      </div>
-
-      <div class="feature-card">
-        <h3>💰 Gestión Financiera</h3>
-        <ul>
-          <li>Seguimiento general de pagos</li>
-          <li>Generar estados de cuenta</li>
-          <li>Configurar tasas cambiarias</li>
-          <li>Exportar reportes contables</li>
-        </ul>
-      </div>
-    </div>
-  </section>
-
-  <section class="quick-actions">
-    <h2>Acciones Rápidas</h2>
-    <div class="action-buttons">
-      <a class="btn-primary" routerLink="/anuncio">Nuevo Anunciooooo</a>
-      <button class="btn-primary">Registrar Pago</button>
-      <button class="btn-primary">Generar Reporte</button>
-    </div>
-  </section>
-
-  <section class="stats-preview">
-    <h2>Estadísticas Clave</h2>
+  <section class="overview-section">
+    <h2 class="mat-headline-6 animated-fade-in delay-1">Estadísticas Clave del Condominio</h2>
     <div class="stats-grid">
-      <div class="stat-item">
-        <h4>Pagos Pendientes</h4>
-        <p class="stat-value">15</p>
-      </div> 
-      <div class="stat-item">
-        <h4>Residentes Activos</h4>
-        <p class="stat-value">42</p>
-      </div>
-      <div class="stat-item">
-        <h4>Anuncios Activos</h4>
-        <p class="stat-value">7</p>
-      </div>
+      <mat-card class="stat-card mat-elevation-z2 animated-fade-in-up delay-2">
+        <mat-card-content>
+          <mat-icon class="stat-icon-large" color="warn">payments</mat-icon>
+          <h3 class="stat-label">Pagos Pendientes</h3>
+          <p class="stat-value">{{ pendingPaymentsCount }}</p>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card class="stat-card mat-elevation-z2 animated-fade-in-up delay-3">
+        <mat-card-content>
+          <mat-icon class="stat-icon-large" color="primary">people</mat-icon>
+          <h3 class="stat-label">Residentes Activos</h3>
+          <p class="stat-value">{{ activeResidentsCount }}</p>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card class="stat-card mat-elevation-z2 animated-fade-in-up delay-4">
+        <mat-card-content>
+          <mat-icon class="stat-icon-large" color="accent">campaign</mat-icon>
+          <h3 class="stat-label">Anuncios Publicados</h3>
+          <p class="stat-value">{{ activeAnnouncementsCount }}</p>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card class="stat-card mat-elevation-z2 animated-fade-in-up delay-5">
+        <mat-card-content>
+          <mat-icon class="stat-icon-large" color="basic">insert_drive_file</mat-icon>
+          <h3 class="stat-label">Comprobantes Pendientes</h3>
+          <p class="stat-value">{{ pendingProofCount }}</p>
+        </mat-card-content>
+      </mat-card>
     </div>
   </section>
+
+  <mat-divider class="dashboard-divider"></mat-divider>
+
+  <section class="quick-actions-section">
+    <h2 class="mat-headline-6 animated-fade-in delay-6">Acciones Rápidas</h2>
+    <div class="actions-grid">
+        <button mat-flat-button color="primary" class="action-button animated-zoom-in delay-7" (click)="goToCreateAnnouncement()">
+            <mat-icon>add_box</mat-icon>
+            <span>Crear Anuncio</span>
+        </button>
+        <button mat-flat-button color="accent" class="action-button animated-zoom-in delay-8" (click)="goToRegisterPayment()">
+            <mat-icon>payments</mat-icon>
+            <span>Registrar Pago</span>
+        </button>
+        <button mat-flat-button color="basic" class="action-button animated-zoom-in delay-9" (click)="goToManageResidents()">
+            <mat-icon>group_add</mat-icon>
+            <span>Gestionar Residentes</span>
+        </button>
+        <button mat-flat-button color="warn" class="action-button animated-zoom-in delay-10" (click)="goToReviewProofs()">
+            <mat-icon>verified</mat-icon>
+            <span>Revisar Comprobantes</span>
+        </button>
+        <button mat-flat-button color="primary" class="action-button animated-zoom-in delay-11" (click)="goToGenerateReports()">
+            <mat-icon>assessment</mat-icon>
+            <span>Generar Reportes</span>
+        </button>
+        <button mat-flat-button color="basic" class="action-button animated-zoom-in delay-12" (click)="goToManageDocuments()">
+            <mat-icon>folder</mat-icon>
+            <span>Gestionar Documentos</span>
+        </button>
+    </div>
+</section>
+
+  <mat-divider class="dashboard-divider"></mat-divider>
+
+  <section class="full-features-section">
+    <h2 class="mat-headline-6 animated-fade-in delay-13">Funcionalidades Completas</h2>
+    <div class="features-grid">
+      <mat-card class="feature-card mat-elevation-z2 animated-slide-in-up delay-14" (click)="goToManageAnnouncements()">
+        <mat-card-header>
+          <mat-icon mat-card-avatar color="primary">volume_up</mat-icon>
+          <mat-card-title>Gestión de Anuncios</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <p>Publica, edita y organiza comunicados importantes para el condominio, adjuntando documentos.</p>
+          <mat-list dense>
+            <mat-list-item><mat-icon matListItemIcon>check_circle</mat-icon> Publicar y Editar Anuncios</mat-list-item>
+            <mat-list-item><mat-icon matListItemIcon>check_circle</mat-icon> Adjuntar PDFs</mat-list-item>
+            <mat-list-item><mat-icon matListItemIcon>check_circle</mat-icon> Programar Publicaciones</mat-list-item>
+          </mat-list>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card class="feature-card mat-elevation-z2 animated-slide-in-up delay-15" (click)="goToFinancialManagement()">
+        <mat-card-header>
+          <mat-icon mat-card-avatar color="accent">paid</mat-icon>
+          <mat-card-title>Gestión Financiera</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <p>Supervisa los pagos, genera estados de cuenta y gestiona las finanzas del condominio.</p>
+          <mat-list dense>
+            <mat-list-item><mat-icon matListItemIcon>check_circle</mat-icon> Seguimiento de Pagos</mat-list-item>
+            <mat-list-item><mat-icon matListItemIcon>check_circle</mat-icon> Estados de Cuenta</mat-list-item>
+            <mat-list-item><mat-icon matListItemIcon>check_circle</mat-icon> Configurar Tasas (USD, VES,
+              EUR)</mat-list-item>
+          </mat-list>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card class="feature-card mat-elevation-z2 animated-slide-in-up delay-16" (click)="goToUserManagement()">
+        <mat-card-header>
+          <mat-icon mat-card-avatar color="warn">person_add</mat-icon>
+          <mat-card-title>Gestión de Usuarios</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <p>Administra los residentes del condominio, sus cuentas y sus permisos de acceso.</p>
+          <mat-list dense>
+            <mat-list-item><mat-icon matListItemIcon>check_circle</mat-icon> Crear y Modificar Cuentas</mat-list-item>
+            <mat-list-item><mat-icon matListItemIcon>check_circle</mat-icon> Gestión de Permisos</mat-list-item>
+            <mat-list-item><mat-icon matListItemIcon>check_circle</mat-icon> Reiniciar Contraseñas</mat-list-item>
+          </mat-list>
+        </mat-card-content>
+      </mat-card>
+    </div>
+  </section>
+
+  <div *ngIf="isLoading && !errorMessage" class="global-loading-overlay">
+    <mat-spinner diameter="60"></mat-spinner>
+    <p>Cargando panel de administración...</p>
+  </div>
+
+  <div *ngIf="errorMessage" class="error-message mat-elevation-z2 animated-fade-in">
+    <mat-icon class="error-icon">error_outline</mat-icon>
+    <p>{{ errorMessage }}</p>
+  </div>
 </div>

@@ -8,6 +8,8 @@ import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { SupabaseClient, createClient } from '@supabase/supabase-js';
 import { environment } from '../../../environments/environment';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner'; // Importar para el spinner
+import { MatIconModule } from '@angular/material/icon'; // Importar para el icono de error y logo
 
 const supabase: SupabaseClient = createClient(
   environment.supabaseUrl,
@@ -24,7 +26,9 @@ const supabase: SupabaseClient = createClient(
     MatButtonModule,
     MatCardModule,
     MatFormFieldModule,
-    RouterLink
+    RouterLink,
+    MatProgressSpinnerModule, // Añadido
+    MatIconModule // Añadido
   ],
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.css']
@@ -33,6 +37,7 @@ export class LoginComponent {
   private fb = inject(FormBuilder);
   private router = inject(Router);
   isLoading = false;
+  currentYear = new Date().getFullYear(); // Para el footer dinámico
 
   loginForm = this.fb.group({
     email: ['', [Validators.required, Validators.email]],
@@ -44,12 +49,12 @@ export class LoginComponent {
   async login() {
     if (this.loginForm.invalid) {
       this.loginForm.markAllAsTouched();
-      this.errorMessage = 'Complete los campos correctamente';
+      this.errorMessage = 'Por favor, complete todos los campos requeridos y válidos.'; // Mensaje más genérico y amigable
       return;
     }
 
     this.isLoading = true;
-    this.errorMessage = null;
+    this.errorMessage = null; // Limpiar mensaje de error previo
 
     const { email, password } = this.loginForm.value;
 
@@ -79,7 +84,7 @@ export class LoginComponent {
         .single();
 
       if (profile?.role) {
-        // Forzar actualización de la sesión
+        // Forzar actualización de la sesión para asegurar el rol
         await supabase.auth.refreshSession();
         console.log('Rol asignado:', profile.role);
       }
@@ -89,6 +94,7 @@ export class LoginComponent {
 
     } catch (error) {
       console.error('Error post-login:', error);
+      // En caso de error post-login, aún redirigir al dashboard para no bloquear al usuario
       this.router.navigate(['/dashboard'], { replaceUrl: true });
     }
   }
@@ -96,12 +102,14 @@ export class LoginComponent {
   private handleLoginError(error: any) {
     console.error('Error de login:', error);
     
-    if (error.message.includes('Invalid login credentials')) {
-      this.errorMessage = 'Credenciales incorrectas';
+    if (error.message.includes('Invalid login credentials') || error.message.includes('AuthApiError: Invalid login credentials')) {
+      this.errorMessage = 'Correo o contraseña incorrectos. Por favor, verifica tus datos.';
     } else if (error.message.includes('Email not confirmed')) {
-      this.errorMessage = 'Confirma tu correo primero';
+      this.errorMessage = 'Tu cuenta no ha sido confirmada. Revisa tu correo electrónico para verificarla.';
+    } else if (error.message.includes('User not found')) {
+      this.errorMessage = 'Usuario no encontrado. Asegúrate de haber ingresado el correo correcto.';
     } else {
-      this.errorMessage = 'Error inesperado. Intenta nuevamente';
+      this.errorMessage = 'Ha ocurrido un error inesperado. Por favor, inténtalo de nuevo más tarde.';
     }
   }
 }

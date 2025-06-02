@@ -1,69 +1,213 @@
+/* Importa Google Fonts para una tipografía moderna y consistente */
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&family=Open+Sans:wght@400;600;700&display=swap');
+
+:host {
+    display: block;
+    overflow-x: hidden;
+    font-family: 'Open Sans', sans-serif;
+}
+
+/* --- Animaciones de Entrada --- */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.animated-fade-in-up {
+    animation: fadeInUp 0.8s ease-out forwards;
+    opacity: 0;
+}
+.animated-fade-in {
+    animation: fadeIn 0.8s ease-out forwards;
+    opacity: 0;
+}
+
+.delay-1 { animation-delay: 0.2s; }
+.delay-2 { animation-delay: 0.4s; }
+.delay-3 { animation-delay: 0.6s; }
+.delay-4 { animation-delay: 0.8s; }
+.delay-5 { animation-delay: 1.0s; }
+.delay-6 { animation-delay: 1.2s; }
+
+
 .login-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 100vh; 
-  background-color: #f5f5f5; 
-  padding: 20px; 
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background: linear-gradient(135deg, #e0f7fa 0%, #c2e5f0 50%, #b3e0ed 100%); /* Degradado de fondo suave */
+    padding: 20px;
+    box-sizing: border-box;
 }
 
 .login-card {
-  width: 100%;
-  max-width: 400px;
-  padding: 30px; 
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15); 
-  border-radius: 10px; 
-  background-color: #ffffff; 
+    width: 100%;
+    max-width: 450px; /* Ligeramente más ancho */
+    padding: 40px; /* Más padding interno */
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2); /* Sombra más pronunciada */
+    border-radius: 15px; /* Bordes más redondeados */
+    background-color: #ffffff;
+    opacity: 0; /* Oculto para la animación inicial */
+    animation: fadeIn 1s ease-out forwards;
 }
 
-mat-card-header {
-  text-align: center;
-  margin-bottom: 25px;
-  display: block; 
+.login-card-header {
+    text-align: center;
+    margin-bottom: 30px; /* Más espacio inferior */
+    display: block;
 }
 
-mat-card-title {
-  font-size: 28px; 
-  font-weight: 600;
-  color: #3f51b5; 
+.login-logo {
+    width: 80px; /* Tamaño del logo */
+    height: auto;
+    margin-bottom: 20px;
 }
 
-.full-width-input { 
-  width: 100%;
-  margin-bottom: 20px;
+.login-card-header .mat-headline-5 { /* Usamos la clase de tipografía de Angular Material */
+    font-family: 'Montserrat', sans-serif;
+    font-size: 2.2rem; /* Más grande para impacto */
+    font-weight: 700;
+    color: #3f51b5;
+    margin-bottom: 8px;
 }
 
-button[type="submit"] {
-  width: 100%;
-  padding: 12px 0; 
-  font-size: 18px; 
-  font-weight: bold;
-  margin-top: 15px; 
-  border-radius: 5px; 
+mat-card-subtitle {
+    font-family: 'Open Sans', sans-serif;
+    font-size: 1rem;
+    color: #757575;
 }
+
+.full-width-input {
+    width: 100%;
+    margin-bottom: 25px; /* Más espacio entre campos */
+}
+
+/* Estilos para los campos de formulario de Angular Material */
+mat-form-field.mat-form-field-appearance-outline .mat-form-field-wrapper {
+    background-color: #f8f9fa; /* Fondo ligeramente gris para los campos */
+    border-radius: 8px; /* Bordes redondeados para los campos */
+}
+
+mat-form-field.mat-focused .mat-form-field-outline-thick {
+    color: #3f51b5 !important; /* Color del borde al enfocar */
+}
+
+input.mat-input-element {
+    font-family: 'Open Sans', sans-serif;
+    font-size: 1.1rem;
+}
+
+.full-width-button {
+    width: 100%;
+    padding: 15px 0; /* Más padding */
+    font-size: 1.1rem; /* Tamaño de fuente del botón */
+    font-weight: 600;
+    margin-top: 20px; /* Más espacio superior */
+    border-radius: 8px; /* Bordes redondeados para el botón */
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+    display: flex; /* Para centrar spinner/texto */
+    justify-content: center;
+    align-items: center;
+    gap: 10px; /* Espacio entre spinner y texto */
+}
+
+.full-width-button:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+}
+
+.full-width-button[disabled] {
+    opacity: 0.7;
+    cursor: not-allowed;
+}
+
+/* Estilo para el spinner de carga */
+mat-progress-spinner {
+    stroke: white; /* Color del spinner */
+}
+
 
 .forgot-password {
-  margin-top: 20px;
-  text-align: center;
+    margin-top: 25px; /* Más espacio */
+    text-align: center;
 }
 
 .forgot-password a {
-  color: #3f51b5;
-  text-decoration: none;
-  font-size: 0.9em;
+    font-family: 'Open Sans', sans-serif;
+    color: #3f51b5;
+    text-decoration: none;
+    font-size: 0.95em;
+    font-weight: 600; /* Más audaz */
+    transition: color 0.2s ease;
 }
 
 .forgot-password a:hover {
-  text-decoration: underline;
+    text-decoration: underline;
+    color: #5c6bc0; /* Color ligeramente diferente al pasar el ratón */
 }
 
 .error-message {
-  color: #f44336; 
-  background-color: #ffebee; 
-  border: 1px solid #ef9a9a; 
-  padding: 10px;
-  border-radius: 4px;
-  margin-top: 20px;
-  text-align: center;
-  font-size: 0.9em;
+    color: #f44336;
+    background-color: #ffebee;
+    border: 1px solid #ef9a9a;
+    padding: 12px; /* Más padding */
+    border-radius: 6px; /* Más redondeado */
+    margin-top: 25px; /* Más espacio superior */
+    text-align: center;
+    font-size: 0.95em;
+    display: flex; /* Para el icono de error */
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    font-weight: 500;
+}
+
+.error-message .error-icon {
+    font-size: 20px; /* Tamaño del icono de error */
+    color: #f44336;
+}
+
+.login-card-footer {
+    margin-top: 30px; /* Espacio superior */
+    text-align: center;
+    padding-top: 20px; /* Padding interno */
+    border-top: 1px solid #eee; /* Separador sutil */
+    font-size: 0.85em;
+    color: #9e9e9e;
+}
+
+/* --- Media Queries para Responsividad --- */
+@media (max-width: 768px) {
+    .login-card {
+        padding: 30px 20px;
+        max-width: 90%;
+    }
+    .login-card-header .mat-headline-5 {
+        font-size: 1.8rem;
+    }
+    .full-width-button {
+        padding: 13px 0;
+        font-size: 1rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .login-card {
+        padding: 25px 15px;
+        border-radius: 10px;
+    }
+    .login-card-header .mat-headline-5 {
+        font-size: 1.6rem;
+    }
+    .login-logo {
+        width: 70px;
+    }
+    .full-width-input {
+        margin-bottom: 20px;
+    }
 }
