@@ -161,6 +161,7 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
               expiration_date: result.expiration_date ?? null,
               is_published: result.is_published!,
               priority: result.priority!,
+              attachment_url: result.attachment_url ?? null, // Añadir attachment_url, puede ser null si no se usa
               author_id: user.id // El ID del usuario actual es el autor
             };
             await this.supabaseService.createAnnouncement(newAnnouncement);
