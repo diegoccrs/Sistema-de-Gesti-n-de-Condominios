@@ -1,17 +1,86 @@
 <div class="landing-container">
-    <mat-card class="welcome-card">
+    <mat-card class="welcome-card mat-elevation-z8">
         <mat-card-content>
-            <h1>Bienvenido a Mi Condominio Digital</h1>
-            <p class="subtitle">Administra tu condominio con facilidad y seguridad.</p>
+            <div class="hero-section">
+                <h1 class="mat-display-2 animated-fade-in-up">Bienvenido a Mi Condominio Digital</h1>
+                <p class="subtitle animated-fade-in-up delay-1">
+                    La plataforma inteligente diseñada para la gestión moderna de condominios en Venezuela.
+                    <br> Simplificamos la vida de administradores y residentes con eficiencia, transparencia y total
+                    seguridad.
+                </p>
 
-            <div class="button-group">
-                <button mat-stroked-button color="accent" routerLink="/auth/login">
-                    Iniciar Sesión
-                </button>
-                <button mat-stroked-button color="accent" routerLink="/auth/register">
-                    Registrarse
-                </button>
+                <div class="button-group animated-fade-in-up delay-2">
+                    <button mat-flat-button color="primary" routerLink="/auth/login" class="large-button">
+                        <mat-icon>login</mat-icon> Iniciar Sesión
+                    </button>
+                </div>
             </div>
+
+            <div class="features-section">
+                <h2 class="mat-headline-4 animated-fade-in-up delay-3">Beneficios clave para tu comunidad</h2>
+                <div class="feature-grid">
+                    <mat-card class="feature-card mat-elevation-z2 animated-scale-in delay-4">
+                        <mat-card-header>
+                            <mat-icon mat-card-avatar class="icon-comunicacion">campaign</mat-icon>
+                            <mat-card-title>Comunicación sin Barreras</mat-card-title>
+                        </mat-card-header>
+                        <mat-card-content>
+                            Centraliza anuncios, documentos y circulares. Recibe notificaciones importantes al instante
+                            para una comunidad siempre informada.
+                        </mat-card-content>
+                    </mat-card>
+
+                    <mat-card class="feature-card mat-elevation-z2 animated-scale-in delay-5">
+                        <mat-card-header>
+                            <mat-icon mat-card-avatar class="icon-pagos">payments</mat-icon>
+                            <mat-card-title>Gestión de Pagos Multi-moneda</mat-card-title>
+                        </mat-card-header>
+                        <mat-card-content>
+                            Simplifica el registro y seguimiento de pagos en **VES, USD y EUR**. Sube comprobantes y
+                            obtén un control financiero transparente.
+                        </mat-card-content>
+                    </mat-card>
+
+                    <mat-card class="feature-card mat-elevation-z2 animated-scale-in delay-6">
+                        <mat-card-header>
+                            <mat-icon mat-card-avatar class="icon-seguridad">gpp_good</mat-icon>
+                            <mat-card-title>Seguridad y Transparencia Garantizada</mat-card-title>
+                        </mat-card-header>
+                        <mat-card-content>
+                            Protección de datos con **Seguridad a Nivel de Fila (RLS) y Autenticación JWT**. Acceso
+                            seguro para administradores y residentes.
+                        </mat-card-content>
+                    </mat-card>
+
+                    <mat-card class="feature-card mat-elevation-z2 animated-scale-in delay-7">
+                        <mat-card-header>
+                            <mat-icon mat-card-avatar class="icon-costo">savings</mat-icon>
+                            <mat-card-title>Costo-Eficiencia Máxima</mat-card-title>
+                        </mat-card-header>
+                        <mat-card-content>
+                            Desarrollado con tecnologías de Free Tier (Supabase, Firebase Storage) para ofrecer una
+                            solución potente y de bajo costo.
+                        </mat-card-content>
+                    </mat-card>
+                </div>
+            </div>
+
+            <div class="cta-section animated-fade-in delay-8">
+                <h2 class="mat-headline-5">¿Listo para transformar la gestión de tu condominio?</h2>
+                <p>Únete a la nueva era de la administración de propiedades en Venezuela. ¡Es más fácil de lo que
+                    imaginas!</p>
+                <p class="contact-info animated-fade-in delay-9">
+                    <mat-icon class="phone-icon">phone</mat-icon> Llama Ahora: <span
+                        class="phone-number">+584241643727</span>
+                </p>
+
+                <div class="cta-button-group">
+                    <button mat-flat-button color="accent" routerLink="/auth/login" class="cta-button primary-cta">
+                        <mat-icon>arrow_forward</mat-icon> Comenzar Ahora
+                    </button>
+                </div>
+            </div>
+
         </mat-card-content>
     </mat-card>
 </div>

@@ -1,12 +1,35 @@
-<div class="dashboard-container">
-  @if (userRole === 'admin') {
-    <app-admin-dashboard></app-admin-dashboard>
-  } @else if (userRole === 'residente') {
-    <app-resident-dashboard></app-resident-dashboard>
-  } @else {
-    <div class="role-error">
-      <h2>Error de configuración de rol</h2>
-      <p>Contacta al administrador del sistema</p>
+<div *ngIf="isLoading" style="text-align: center; margin-top: 50px;">
+  <p>Cargando dashboard...</p>
+  </div>
+
+<div *ngIf="!isLoading">
+  <div [ngSwitch]="userRole">
+    <app-admin-dashboard *ngSwitchCase="'admin'"></app-admin-dashboard>
+    <app-resident-dashboard *ngSwitchCase="'resident'"></app-resident-dashboard>
+    
+    <div *ngSwitchCase="'guest'">
+      <p>Necesitas iniciar sesión para ver este contenido.</p>
+      <a routerLink="/auth/login">Iniciar Sesión</a>
     </div>
-  }
+
+    <div *ngSwitchCase="'needs_profile_setup'">
+      <p>Tu perfil no está completo. Por favor, completa tus datos para acceder.</p>
+      <a routerLink="/complete-profile">Completar Perfil</a>
+    </div>
+
+    <div *ngSwitchCase="'unknown_role'">
+      <p>Tu rol de usuario no es reconocido. Por favor, contacta al administrador.</p>
+    </div>
+
+    <div *ngSwitchCase="'error_profile'">
+      <p>Hubo un error al cargar tu perfil. Intenta de nuevo más tarde o contacta al soporte.</p>
+    </div>
+
+    <div *ngSwitchCase="'error_catch'">
+      <p>Ha ocurrido un error inesperado. Por favor, intenta de nuevo.</p>
+    </div>
+
+    <div *ngSwitchDefault>
+      <p>Cargando...</p> </div>
+  </div>
 </div>

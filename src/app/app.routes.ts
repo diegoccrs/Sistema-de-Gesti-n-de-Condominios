@@ -1,6 +1,10 @@
 // src/app/app.routes.ts
 import { Routes } from '@angular/router';
+
 import { authGuard } from './auth/guards/auth.guard';
+
+
+
 
 export const routes: Routes = [
   // Página principal
@@ -9,7 +13,7 @@ export const routes: Routes = [
     title: 'Inicio',
     loadComponent: () => import('./dashboard/landing/landing.component').then(m => m.LandingComponent)
   },
-
+  
   // Rutas de autenticación
   {
     path: 'auth',
@@ -33,7 +37,9 @@ export const routes: Routes = [
         path: 'reset-password',
         title: 'Restablecer Contraseña',
         loadComponent: () => import('./auth/reset-password/reset-password.component').then(m => m.ResetPasswordComponent)
-      }
+      },
+          	
+
     ]
   },
 
@@ -45,12 +51,28 @@ export const routes: Routes = [
     canActivate: [authGuard]
   },
 
+  // Rutas de administración
+  {
+    path: 'admin/users/create', 
+    title: 'Crear Residente',
+    loadComponent: () => import('./admin/components/admin-create-resident.component').then(m => m.AdminCreateResidentComponent),
+    canActivate: [authGuard] 
+  },
+{
+    path: 'anuncio',
+    title: 'Nuevo Anuncio',
+    loadComponent: () => import('./auth/anuncio/anuncio.component').then(m => m.AnuncioComponent),
+    canActivate: [authGuard] // opcional: si solo usuarios autenticados deben acceder
+  },
+ 
+
   // Rutas de estado
   {
     path: 'unauthorized',
     title: 'Acceso no autorizado',
     loadComponent: () => import('./auth/unauthorized/unauthorized.component').then(m => m.UnauthorizedComponent)
   },
+  
 
   // Redirecciones y comodín
   { path: '', redirectTo: '', pathMatch: 'full' },

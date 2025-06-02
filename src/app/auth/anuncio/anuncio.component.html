@@ -1,0 +1,51 @@
+<h2 mat-dialog-title>
+  Crear Anuncio
+  <button mat-icon-button class="close-button" (click)="onNoClick()" aria-label="Cerrar">
+    <mat-icon>close</mat-icon>
+  </button>
+</h2>
+
+<mat-dialog-content class="mat-typography">
+  <form #formulario="ngForm" (ngSubmit)="publicarAnuncio(formulario)" class="formulario"> <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Título del anuncio</mat-label>
+      <input matInput [(ngModel)]="anuncio.title" name="title" required>
+      <mat-error *ngIf="formulario.controls['title']?.invalid && formulario.controls['title']?.touched">
+        El título es obligatorio.
+      </mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Descripción</mat-label>
+      <textarea matInput rows="5" [(ngModel)]="anuncio.content" name="content" required></textarea>
+      <mat-error *ngIf="formulario.controls['content']?.invalid && formulario.controls['content']?.touched">
+        La descripción es obligatoria.
+      </mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Fecha de Expiración</mat-label>
+      <input
+        matInput
+        [(ngModel)]="anuncio.expiration_date"
+        name="expiration_date"
+        placeholder="Ej: 31/12/2025"
+        required
+        pattern="^(0[1-9]|[12][0-9]|3[01])\/(0[1-9]|1[0-2])\/\d{4}$" >
+      <mat-hint>Formato: DD/MM/AAAA</mat-hint>
+      <mat-error *ngIf="formulario.controls['expiration_date']?.invalid && formulario.controls['expiration_date']?.touched">
+        La fecha de expiración es obligatoria y debe ser DD/MM/AAAA.
+      </mat-error>
+    </mat-form-field>
+
+    <div *ngIf="errorMessage" class="alert-message error-message animated-fade-in">
+      <mat-icon>error_outline</mat-icon> {{ errorMessage }}
+    </div>
+
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="onNoClick()" [disabled]="isLoading">Cancelar</button>
+  <button mat-flat-button color="primary" (click)="publicarAnuncio(formulario)" [disabled]="formulario.invalid || isLoading"> <mat-spinner *ngIf="isLoading" diameter="20" color="accent"></mat-spinner> <span *ngIf="!isLoading">Publicar Anuncio</span>
+  </button>
+</mat-dialog-actions>

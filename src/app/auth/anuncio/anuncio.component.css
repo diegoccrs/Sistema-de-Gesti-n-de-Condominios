@@ -1,0 +1,102 @@
+/* Estilos para el formulario dentro del diálogo */
+.formulario {
+  display: flex;
+  flex-direction: column;
+  gap: 15px; /* Espacio entre los campos de Material */
+}
+
+.full-width {
+  width: 100%;
+}
+
+/* Estilos para el botón de cerrar en el título del diálogo */
+h2.mat-dialog-title {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 24px; /* Padding del título del diálogo */
+  padding-bottom: 16px;
+  border-bottom: 1px solid #eee;
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 700;
+  color: #333;
+}
+
+.close-button {
+  color: #757575;
+}
+
+.close-button:hover {
+  color: #333;
+}
+
+mat-dialog-content {
+  padding: 24px; /* Padding del contenido del diálogo */
+}
+
+mat-dialog-actions {
+  padding: 16px 24px 24px; /* Padding de las acciones del diálogo */
+  border-top: 1px solid #eee;
+}
+
+/* Estilos para el botón de publicar (similar al de tu diseño original) */
+button[mat-flat-button][color="primary"] {
+  background-color: #1f2937; /* Color oscuro del diseño original */
+  color: white;
+  min-width: 120px; /* Para que el spinner no lo achique */
+  height: 48px; /* Altura estándar para botones de Material */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  font-weight: 600;
+  transition: background-color 0.2s ease-in-out;
+}
+
+button[mat-flat-button][color="primary"]:hover {
+  background-color: #111827;
+}
+
+button[mat-flat-button][color="primary"][disabled] {
+    background-color: #b0b0b0; /* Gris cuando está deshabilitado */
+    color: #eeeeee;
+    cursor: not-allowed;
+}
+
+
+/* Spinner dentro del botón */
+mat-spinner {
+  margin-right: 8px;
+}
+
+/* Mensajes de alerta/error */
+.alert-message {
+  padding: 10px 15px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.9em;
+  margin-top: 15px;
+  margin-bottom: 15px; /* Espacio para que no se pegue a las acciones */
+}
+
+.error-message {
+  background-color: #ffebee;
+  color: #f44336;
+  border: 1px solid #ef9a9a;
+}
+.error-message mat-icon {
+  color: #f44336;
+}
+
+/* Animaciones para mensajes de estado */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.animated-fade-in {
+    animation: fadeIn 0.5s ease-out forwards;
+    opacity: 0;
+}

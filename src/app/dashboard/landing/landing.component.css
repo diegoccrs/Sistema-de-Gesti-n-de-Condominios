@@ -1,60 +1,435 @@
+/* Importa Google Fonts para una tipografía moderna y consistente */
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&family=Open+Sans:wght@400;600;700&display=swap');
 
+:host {
+    display: block;
+    overflow-x: hidden; /* Evita el scroll horizontal */
+    font-family: 'Open Sans', sans-serif; /* Fuente base para todo el componente */
+}
 
 .landing-container {
     display: flex;
     justify-content: center;
     align-items: center;
-    min-height: calc(100vh - 64px); 
-    background-color: #f0f2f5; 
-    padding: 20px;
+    min-height: calc(100vh - 64px); /* Ajustado para un posible toolbar fijo */
+    background: linear-gradient(135deg, #e0f7fa 0%, #c2e5f0 50%, #b3e0ed 100%); /* Degradado suave y profesional */
+    padding: 30px;
+    box-sizing: border-box;
+    position: relative;
+    overflow: hidden;
 }
 
+/* --- Animaciones de Entrada --- */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes scaleIn {
+    from { opacity: 0; transform: scale(0.9); }
+    to { opacity: 1; transform: scale(1); }
+}
+
+.animated-fade-in-up {
+    animation: fadeInUp 0.8s ease-out forwards;
+    opacity: 0;
+}
+.animated-scale-in {
+    animation: scaleIn 0.7s ease-out forwards;
+    opacity: 0;
+}
+.animated-fade-in {
+    animation: fadeIn 0.8s ease-out forwards;
+    opacity: 0;
+}
+
+/* Retrasos para animaciones secuenciales */
+.delay-1 { animation-delay: 0.2s; }
+.delay-2 { animation-delay: 0.4s; }
+.delay-3 { animation-delay: 0.6s; }
+.delay-4 { animation-delay: 0.8s; }
+.delay-5 { animation-delay: 1.0s; }
+.delay-6 { animation-delay: 1.2s; }
+.delay-7 { animation-delay: 1.4s; }
+.delay-8 { animation-delay: 1.6s; }
+
+
 .welcome-card {
-    padding: 3rem; 
+    padding: 4rem 3rem;
     text-align: center;
-    max-width: 600px; 
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1); 
-    border-radius: 12px; 
+    max-width: 1000px; /* Más ancho para acomodar más contenido */
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+    border-radius: 20px;
+    background-color: white;
+    z-index: 1;
+    opacity: 0; /* Oculto para la animación inicial */
+    animation: fadeIn 1s ease-out forwards;
+}
+
+/* --- Sección Hero (Principal) --- */
+.hero-section {
+    margin-bottom: 5rem; /* Más espacio inferior */
 }
 
 h1 {
-    font-size: 3rem; 
-    color: #3f51b5; 
-    margin-bottom: 1rem;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 4rem; /* Título principal aún más grande e impactante */
+    color: #2c3e50;
+    margin-bottom: 1.5rem;
+    line-height: 1.1;
+    font-weight: 800;
 }
 
 .subtitle {
-    font-size: 1.25rem; 
+    font-family: 'Open Sans', sans-serif;
+    font-size: 1.6rem; /* Subtítulo más grande y legible */
     color: #555;
-    margin-bottom: 2.5rem; 
+    margin-bottom: 4rem; /* Más espacio antes de los botones */
+    line-height: 1.8;
+    max-width: 800px; /* Ancho óptimo para legibilidad */
+    margin-left: auto;
+    margin-right: auto;
+    font-weight: 400;
 }
 
 .button-group {
     display: flex;
     justify-content: center;
-    gap: 20px; 
-    flex-wrap: wrap; 
+    gap: 30px;
+    flex-wrap: wrap;
 }
 
-.button-group button {
-    min-width: 180px; 
-    padding: 15px 25px; 
-    font-size: 1.1rem;
-    font-weight: 500;
-    border-radius: 8px; 
-    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+.large-button {
+    min-width: 280px; /* Botones más grandes */
+    padding: 22px 40px; /* Más padding para los botones */
+    font-size: 1.4rem; /* Texto más grande en el botón */
+    font-weight: 700;
+    border-radius: 12px;
+    transition: transform 0.3s cubic-bezier(.17,.67,.83,.67), box-shadow 0.3s cubic-bezier(.17,.67,.83,.67);
 }
 
-.button-group button:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+.large-button:hover {
+    transform: translateY(-8px); /* Desplazamiento más notorio */
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3); /* Sombra más intensa */
+}
+
+/* Colores y estilos de botones Angular Material */
+.mat-flat-button.mat-primary {
+    background-color: #3f51b5; /* Azul primario de Material Design */
+    color: white;
+}
+.mat-flat-button.mat-primary:hover {
+    background-color: #303f9f;
 }
 
 .mat-stroked-button.mat-accent {
-    border-color: #ff4081; 
-    color: #ff4081; 
+    border-color: #ff4081; /* Rosa acento de Material Design */
+    color: #ff4081;
+    background-color: transparent;
+}
+.mat-stroked-button.mat-accent:hover {
+    background-color: rgba(255, 64, 129, 0.12);
 }
 
-.mat-stroked-button.mat-accent:hover {
-    background-color: rgba(255, 64, 129, 0.04); 
+/* --- Sección de Características (Features) --- */
+.features-section {
+    margin-top: 6rem; /* Más espacio superior */
+    padding-top: 2rem; /* Padding interno */
+    border-top: 1px solid #eee; /* Separador sutil */
+}
+
+.features-section h2 {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 2.8rem; /* Título de sección más grande */
+    color: #2c3e50;
+    margin-bottom: 3.5rem;
+    font-weight: 700;
+}
+
+.feature-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 40px; /* Más espacio entre las tarjetas */
+    justify-content: center;
+}
+
+.feature-card {
+    background-color: #f8f9fa;
+    border-radius: 18px; /* Bordes ligeramente más redondeados */
+    padding: 30px; /* Más padding interno */
+    text-align: left;
+    transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+    cursor: default;
+    border: 1px solid #e0e0e0; /* Borde suave */
+}
+
+.feature-card:hover {
+    transform: translateY(-12px); /* Efecto de "levantamiento" más pronunciado */
+    box-shadow: 0 18px 35px rgba(0, 0, 0, 0.25); /* Sombra más intensa */
+}
+
+.feature-card .mat-card-header {
+    margin-bottom: 20px;
+}
+
+.feature-card .mat-card-avatar {
+    background-color: #e3f2fd; /* Fondo azul claro por defecto */
+    color: #3f51b5; /* Azul de icono por defecto */
+    border-radius: 50%;
+    width: 65px; /* Tamaño del avatar más grande */
+    height: 65px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 36px; /* Tamaño del icono más grande */
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1); /* Sombra sutil en el avatar */
+}
+
+/* Colores personalizados para los avatares de iconos */
+.feature-card .mat-card-avatar.icon-comunicacion { background-color: #e3f2fd; color: #3f51b5; } /* Azul */
+.feature-card .mat-card-avatar.icon-pagos { background-color: #ffe0b2; color: #ff9800; } /* Naranja */
+.feature-card .mat-card-avatar.icon-seguridad { background-color: #c8e6c9; color: #4caf50; } /* Verde */
+.feature-card .mat-card-avatar.icon-costo { background-color: #ffcdd2; color: #f44336; } /* Rojo */
+
+.feature-card .mat-card-title {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #333;
+    margin-left: 15px;
+}
+
+.feature-card .mat-card-content {
+    font-family: 'Open Sans', sans-serif;
+    font-size: 1.05rem;
+    color: #616161;
+    line-height: 1.7;
+}
+
+/* --- Sección Call to Action (CTA) Final --- */
+.cta-section {
+    margin-top: 6rem; /* Espacio superior */
+    padding: 3.5rem 2rem; /* Padding interno */
+    background: linear-gradient(45deg, #3f51b5, #5c6bc0); /* Fondo degradado vibrante para CTA */
+    color: white;
+    border-radius: 15px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+    animation: fadeInUp 0.8s ease-out forwards; /* Animación de entrada */
+}
+
+.cta-section h2 {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    color: white; /* Asegura el color blanco para el texto */
+}
+
+.cta-section p {
+    font-family: 'Open Sans', sans-serif;
+    font-size: 1.25rem;
+    line-height: 1.6;
+    margin-bottom: 2.5rem;
+    max-width: 700px;
+    margin-left: auto;
+    margin-right: auto;
+    color: rgba(255, 255, 255, 0.9); /* Blanco ligeramente translúcido */
+}
+
+.cta-button {
+    min-width: 280px;
+    padding: 22px 40px;
+    font-size: 1.4rem;
+    font-weight: 700;
+    border-radius: 12px;
+    background-color: #ff4081; /* Color acento vibrante */
+    color: white;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    transition: background-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.cta-button:hover {
+    background-color: #e0005a; /* Color más oscuro al pasar el ratón */
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+}
+
+/* --- Media Queries para Responsividad Completa --- */
+@media (max-width: 1024px) {
+    .welcome-card {
+        padding: 3rem 2.5rem;
+    }
+    h1 {
+        font-size: 3.5rem;
+    }
+    .subtitle {
+        font-size: 1.4rem;
+        max-width: 700px;
+    }
+    .large-button {
+        min-width: 250px;
+        padding: 20px 30px;
+        font-size: 1.3rem;
+    }
+    .features-section h2 {
+        font-size: 2.4rem;
+    }
+    .feature-grid {
+        gap: 30px;
+    }
+    .feature-card .mat-card-avatar {
+        width: 60px;
+        height: 60px;
+        font-size: 32px;
+    }
+    .feature-card .mat-card-title {
+        font-size: 1.4rem;
+    }
+    .cta-section h2 {
+        font-size: 2.2rem;
+    }
+    .cta-section p {
+        font-size: 1.15rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .landing-container {
+        padding: 20px;
+    }
+    .welcome-card {
+        padding: 2.5rem 1.5rem;
+        max-width: 100%;
+    }
+    h1 {
+        font-size: 2.8rem;
+    }
+    .subtitle {
+        font-size: 1.2rem;
+        max-width: 90%;
+    }
+    .button-group {
+        flex-direction: column;
+        gap: 20px;
+    }
+    .large-button {
+        width: 100%;
+        min-width: unset;
+        padding: 18px 25px;
+        font-size: 1.2rem;
+    }
+    .features-section {
+        margin-top: 4rem;
+    }
+    .features-section h2 {
+        font-size: 2rem;
+    }
+    .feature-grid {
+        grid-template-columns: 1fr; /* Una columna en móviles */
+        gap: 25px;
+    }
+    .feature-card {
+        text-align: center;
+    }
+    .feature-card .mat-card-header {
+        flex-direction: column; /* Apila avatar y título */
+        align-items: center;
+        margin-bottom: 10px;
+    }
+    .feature-card .mat-card-title {
+        margin-left: 0;
+        margin-top: 10px;
+    }
+    .cta-section {
+        padding: 3rem 1.5rem;
+        margin-top: 4rem;
+    }
+    .cta-section h2 {
+        font-size: 1.8rem;
+    }
+    .cta-section p {
+        font-size: 1rem;
+    }
+    .cta-button {
+        width: 100%;
+        min-width: unset;
+        padding: 18px 25px;
+        font-size: 1.2rem;
+    }
+}
+
+@media (max-width: 480px) {
+    h1 {
+        font-size: 2.2rem;
+    }
+    .subtitle {
+        font-size: 1rem;
+    }
+    .features-section h2 {
+        font-size: 1.6rem;
+    }
+    .cta-section h2 {
+        font-size: 1.6rem;
+    }
+}
+
+.contact-info {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 1.6rem; /* Tamaño de fuente notable */
+    font-weight: 700; /* Negrita para resaltar */
+    color: white; /* Color blanco para contraste con el fondo azul */
+    display: flex; /* Para alinear el ícono y el texto */
+    align-items: center; /* Centrar verticalmente */
+    justify-content: center; /* Centrar horizontalmente */
+    gap: 12px; /* Espacio entre el ícono y el texto */
+    margin-top: 1rem; /* Espacio superior */
+    margin-bottom: 2.5rem; /* Espacio inferior antes del grupo de botones */
+    padding: 10px 20px;
+    border-radius: 8px;
+    background-color: rgba(255, 255, 255, 0.1); /* Fondo sutil para destacarlo */
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* Sombra suave */
+    /* Animación de entrada */
+    animation: fadeIn 0.8s ease-out forwards;
+    animation-delay: 1.6s; /* Ajusta este delay para que aparezca después de otros elementos */
+    opacity: 0; /* Oculto por defecto para la animación */
+}
+
+.contact-info .phone-icon {
+    font-size: 1.5rem; /* Tamaño del ícono */
+    color: #ffffff; /* Un verde vibrante para el ícono de teléfono */
+    transform: rotate(5deg); /* Pequeña rotación para darle un toque dinámico */
+}
+
+.contact-info .phone-number {
+    letter-spacing: 1.5px; /* Espaciado entre letras para el número */
+    font-weight: 800; /* Más negrita para el número */
+}
+
+/* --- Media Queries para Responsividad (Ajustes para el número de teléfono) --- */
+@media (max-width: 768px) {
+    .contact-info {
+        font-size: 1.3rem; /* Tamaño de fuente más pequeño en móviles */
+        gap: 8px; /* Espacio más pequeño en móviles */
+        padding: 8px 15px;
+        margin-bottom: 1.5rem; /* Ajuste el margen inferior en móviles */
+    }
+    .contact-info .phone-icon {
+        font-size: 1.8rem; /* Ícono más pequeño en móviles */
+    }
+}
+
+@media (max-width: 480px) {
+    .contact-info {
+        font-size: 1.1rem;
+        padding: 7px 10px;
+
+    }
+    .contact-info .phone-icon {
+        font-size: 1.5rem;
+    }
 }
