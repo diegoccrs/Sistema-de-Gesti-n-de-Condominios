@@ -1,0 +1,21 @@
+/* src/app/dashboard/components/admin-dashboard/announcement-form-dialog/announcement-form-dialog.component.css */
+
+.dialog-content {
+  padding-top: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 15px; /* Espacio entre los elementos del formulario */
+}
+
+mat-form-field {
+  width: 100%; /* Asegura que los campos de formulario ocupen todo el ancho */
+}
+
+.publish-checkbox {
+  margin-top: 10px;
+  margin-bottom: 20px;
+}
+
+mat-dialog-actions {
+  padding: 15px 24px;
+}
