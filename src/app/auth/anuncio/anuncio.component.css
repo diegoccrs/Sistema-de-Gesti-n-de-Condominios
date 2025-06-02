@@ -2,7 +2,8 @@
 .formulario {
   display: flex;
   flex-direction: column;
-  gap: 15px; /* Espacio entre los campos de Material */
+  gap: 15px;
+  /* Espacio entre los campos de Material */
 }
 
 .full-width {
@@ -14,7 +15,8 @@ h2.mat-dialog-title {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 24px; /* Padding del título del diálogo */
+  padding: 24px;
+  /* Padding del título del diálogo */
   padding-bottom: 16px;
   border-bottom: 1px solid #eee;
   font-family: 'Montserrat', sans-serif;
@@ -31,20 +33,25 @@ h2.mat-dialog-title {
 }
 
 mat-dialog-content {
-  padding: 24px; /* Padding del contenido del diálogo */
+  padding: 24px;
+  /* Padding del contenido del diálogo */
 }
 
 mat-dialog-actions {
-  padding: 16px 24px 24px; /* Padding de las acciones del diálogo */
+  padding: 16px 24px 24px;
+  /* Padding de las acciones del diálogo */
   border-top: 1px solid #eee;
 }
 
 /* Estilos para el botón de publicar (similar al de tu diseño original) */
 button[mat-flat-button][color="primary"] {
-  background-color: #1f2937; /* Color oscuro del diseño original */
+  background-color: #1f2937;
+  /* Color oscuro del diseño original */
   color: white;
-  min-width: 120px; /* Para que el spinner no lo achique */
-  height: 48px; /* Altura estándar para botones de Material */
+  min-width: 120px;
+  /* Para que el spinner no lo achique */
+  height: 48px;
+  /* Altura estándar para botones de Material */
   display: flex;
   justify-content: center;
   align-items: center;
@@ -58,9 +65,10 @@ button[mat-flat-button][color="primary"]:hover {
 }
 
 button[mat-flat-button][color="primary"][disabled] {
-    background-color: #b0b0b0; /* Gris cuando está deshabilitado */
-    color: #eeeeee;
-    cursor: not-allowed;
+  background-color: #b0b0b0;
+  /* Gris cuando está deshabilitado */
+  color: #eeeeee;
+  cursor: not-allowed;
 }
 
 
@@ -78,7 +86,8 @@ mat-spinner {
   gap: 10px;
   font-size: 0.9em;
   margin-top: 15px;
-  margin-bottom: 15px; /* Espacio para que no se pegue a las acciones */
+  margin-bottom: 15px;
+  /* Espacio para que no se pegue a las acciones */
 }
 
 .error-message {
@@ -86,17 +95,35 @@ mat-spinner {
   color: #f44336;
   border: 1px solid #ef9a9a;
 }
+
 .error-message mat-icon {
   color: #f44336;
 }
 
 /* Animaciones para mensajes de estado */
 @keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
 }
 
 .animated-fade-in {
-    animation: fadeIn 0.5s ease-out forwards;
-    opacity: 0;
+  animation: fadeIn 0.5s ease-out forwards;
+  opacity: 0;
+}
+
+/* ================= Archivo adjunto ================= */
+.file-upload {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-family: 'Montserrat', sans-serif;
+}
+
+.file-upload input[type='file'] {
+  font-family: inherit;
 }

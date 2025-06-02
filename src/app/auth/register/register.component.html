@@ -1,7 +1,7 @@
 <div class="register-container">
   <mat-card class="register-card">
     <mat-card-header>
-      <mat-card-title>Registrar Nuevo Usuario</mat-card-title>
+      <mat-card-title>Registrate</mat-card-title>
     </mat-card-header>
     <mat-card-content>
       <form [formGroup]="registerForm" (ngSubmit)="register()">
@@ -9,7 +9,8 @@
         <mat-form-field appearance="outline" class="full-width-input">
           <mat-label>Nombre</mat-label>
           <input matInput formControlName="firstName" required>
-          <mat-error *ngIf="registerForm.controls['firstName'].hasError('required') && registerForm.controls['firstName'].touched">
+          <mat-error
+            *ngIf="registerForm.controls['firstName'].hasError('required') && registerForm.controls['firstName'].touched">
             El nombre es requerido.
           </mat-error>
         </mat-form-field>
@@ -17,7 +18,8 @@
         <mat-form-field appearance="outline" class="full-width-input">
           <mat-label>Apellido</mat-label>
           <input matInput formControlName="lastName" required>
-          <mat-error *ngIf="registerForm.controls['lastName'].hasError('required') && registerForm.controls['lastName'].touched">
+          <mat-error
+            *ngIf="registerForm.controls['lastName'].hasError('required') && registerForm.controls['lastName'].touched">
             El apellido es requerido.
           </mat-error>
         </mat-form-field>
@@ -25,7 +27,8 @@
         <mat-form-field appearance="outline" class="full-width-input">
           <mat-label>Correo Electrónico</mat-label>
           <input matInput formControlName="email" type="email" required>
-          <mat-error *ngIf="registerForm.controls['email'].hasError('required') && registerForm.controls['email'].touched">
+          <mat-error
+            *ngIf="registerForm.controls['email'].hasError('required') && registerForm.controls['email'].touched">
             El correo electrónico es requerido.
           </mat-error>
           <mat-error *ngIf="registerForm.controls['email'].hasError('email') && registerForm.controls['email'].touched">
@@ -36,10 +39,12 @@
         <mat-form-field appearance="outline" class="full-width-input">
           <mat-label>Contraseña</mat-label>
           <input matInput formControlName="password" type="password" required>
-          <mat-error *ngIf="registerForm.controls['password'].hasError('required') && registerForm.controls['password'].touched">
+          <mat-error
+            *ngIf="registerForm.controls['password'].hasError('required') && registerForm.controls['password'].touched">
             La contraseña es requerida.
           </mat-error>
-          <mat-error *ngIf="registerForm.controls['password'].hasError('minlength') && registerForm.controls['password'].touched">
+          <mat-error
+            *ngIf="registerForm.controls['password'].hasError('minlength') && registerForm.controls['password'].touched">
             La contraseña debe tener al menos 6 caracteres.
           </mat-error>
         </mat-form-field>
@@ -47,7 +52,8 @@
         <mat-form-field appearance="outline" class="full-width-input">
           <mat-label>Confirmar Contraseña</mat-label>
           <input matInput formControlName="confirmPassword" type="password" required>
-          <mat-error *ngIf="registerForm.controls['confirmPassword'].hasError('required') && registerForm.controls['confirmPassword'].touched">
+          <mat-error
+            *ngIf="registerForm.controls['confirmPassword'].hasError('required') && registerForm.controls['confirmPassword'].touched">
             La confirmación de contraseña es requerida.
           </mat-error>
           <mat-error *ngIf="registerForm.hasError('mismatch') && registerForm.controls['confirmPassword'].touched">
@@ -56,7 +62,7 @@
         </mat-form-field>
 
         <button mat-raised-button color="primary" type="submit" [disabled]="registerForm.invalid">
-          Registrar
+          Registrarse
         </button>
 
         <div *ngIf="successMessage" class="success-message">
@@ -67,7 +73,7 @@
         </div>
 
         <div class="login-link">
-            ¿Ya tienes una cuenta? <a routerLink="/auth/login">Iniciar Sesión</a>
+          ¿Ya tienes una cuenta? <a routerLink="/auth/login">Iniciar Sesión</a>
         </div>
 
       </form>
