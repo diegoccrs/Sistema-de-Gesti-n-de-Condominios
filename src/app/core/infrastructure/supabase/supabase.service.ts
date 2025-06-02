@@ -1,16 +1,19 @@
 // src/app/services/supabase.service.ts
 import { Injectable } from '@angular/core';
 import { createClient, SupabaseClient, User } from '@supabase/supabase-js';
-import { environment } from '../../../../environments/environment';
-import { BehaviorSubject } from 'rxjs';
+import { environment } from '../../../../environments/environment'; // ✅ RUTA ABSOLUTA CRÍTICA para environments
+import { BehaviorSubject, Observable } from 'rxjs'; // Añadir Observable para consistencia
+
+// Importaciones de modelos
 import { Payment } from '../../domain/models/payment.model';
 import { Profile } from '../../domain/models/profile.model';
+import { Announcement } from '../../domain/models/announcement.model'; // ✅ Importación corregida y consistente con el modelo
 
 @Injectable({
   providedIn: 'root'
 })
 export class SupabaseService {
-  private supabase: SupabaseClient;
+  public supabase: SupabaseClient; // ✅ Hacer público para que otros componentes puedan acceder al cliente si es necesario (ej. para realtime)
   private currentUserSubject = new BehaviorSubject<User | null>(null);
   public currentUser$ = this.currentUserSubject.asObservable();
 
@@ -74,14 +77,11 @@ export class SupabaseService {
       .eq('id', id)
       .single(); 
     
-    // Si el error es PGRST116, significa que no se encontraron filas (0 rows).
-    // En este caso, no es un error real, sino una ausencia de datos, por lo que devolvemos null.
-    // Si es cualquier otro tipo de error, lo relanzamos.
-    if (error && error.code !== 'PGRST116') {
+    if (error && error.code !== 'PGRST116') { // PGRST116 es "no rows found"
       console.error('Error al obtener el perfil (no PGRST116):', error);
       throw error;
     }
-    return data; // Si no hay datos, data será null
+    return data;
   }
 
   async updateProfile(id: string, updates: Partial<Profile>) {
@@ -165,8 +165,6 @@ export class SupabaseService {
   }
 
   async getPendingPayments(): Promise<Payment[]> {
-    const today = new Date().toISOString().split('T')[0];
-    
     const { data, error } = await this.supabase
       .from('payments')
       .select('*')
@@ -199,7 +197,8 @@ export class SupabaseService {
       .upload(filePath, file);
     
     if (error) throw error;
-    return this.getPublicUrl('comprobantes', filePath);
+    // data.path contiene el path del archivo subido dentro del bucket
+    return this.getPublicUrl('comprobantes', data.path); 
   }
 
   getPublicUrl(bucket: string, filePath: string): string {
@@ -211,9 +210,13 @@ export class SupabaseService {
   }
 
   // ==================== REAL-TIME SUBSCRIPTIONS ====================
+  // Considera usar un método para suscribirse a un canal específico para mayor control
+  // y para desuscribirse cuando no sea necesario.
+  // Este método subscribeToPayments ya es genérico.
+
   subscribeToPayments(callback: (payload: any) => void) {
     return this.supabase
-      .channel('payments')
+      .channel('payments_changes') // Nombre de canal único
       .on('postgres_changes', 
         { event: '*', schema: 'public', table: 'payments' }, 
         callback
@@ -236,24 +239,93 @@ export class SupabaseService {
       .subscribe();
   }
 
+  // ==================== ANNOUNCEMENT METHODS ====================
+  async getAnnouncements(): Promise<Announcement[]> {
+    const { data, error } = await this.supabase
+      .from('announcements')
+      .select('*')
+      .order('created_at', { ascending: false });
+
+    if (error) {
+      console.error('Error fetching announcements:', error);
+      throw error;
+    }
+    return data || [];
+  }
+
+  // El `author_id` lo vamos a recibir como parte del objeto 'announcement'
+  // El componente padre (AdminDashboardComponent) será responsable de obtener el ID del usuario actual.
+  async createAnnouncement(announcement: Omit<Announcement, 'id' | 'created_at' | 'updated_at'> & { author_id: string }): Promise<Announcement> {
+    const { data, error } = await this.supabase
+      .from('announcements')
+      .insert(announcement)
+      .select()
+      .single();
+
+    if (error) {
+      console.error('Error creating announcement:', error);
+      throw error;
+    }
+    return data;
+  }
+
+  async updateAnnouncement(id: string, updates: Partial<Announcement>): Promise<Announcement> {
+    // Supabase puede manejar 'updated_at' automáticamente con un trigger/default value.
+    // Si no tienes un trigger, puedes añadir `updated_at: new Date().toISOString()` a `updates` aquí.
+    const { data, error } = await this.supabase
+      .from('announcements')
+      .update(updates)
+      .eq('id', id)
+      .select()
+      .single();
+
+    if (error) {
+      console.error('Error updating announcement:', error);
+      throw error;
+    }
+    return data;
+  }
+
+  async deleteAnnouncement(id: string): Promise<void> {
+    const { error } = await this.supabase
+      .from('announcements')
+      .delete()
+      .eq('id', id);
+
+    if (error) {
+      console.error('Error deleting announcement:', error);
+      throw error;
+    }
+  }
+
   // ==================== UTILITY METHODS ====================
-  formatCurrency(amount: number): string {
-    return new Intl.NumberFormat('es-MX', {
+  formatCurrency(amount: number, currency: string = 'VES'): string {
+    // Puedes extender esto para manejar USD, EUR, etc.
+    return new Intl.NumberFormat('es-VE', {
       style: 'currency',
-      currency: 'MXN'
+      currency: currency,
+      minimumFractionDigits: 2
     }).format(amount);
   }
 
   isPaymentOverdue(dueDate: string): boolean {
     const today = new Date();
     const due = new Date(dueDate);
+    // Comparar solo las fechas, ignorando la hora
+    today.setHours(0, 0, 0, 0);
+    due.setHours(0, 0, 0, 0);
     return due < today;
   }
 
   getDaysPastDue(dueDate: string): number {
     const today = new Date();
     const due = new Date(dueDate);
+    // Asegurarse de que las fechas sean solo fechas para el cálculo de días exactos
+    today.setHours(0, 0, 0, 0);
+    due.setHours(0, 0, 0, 0);
+
     const diffTime = today.getTime() - due.getTime();
-    return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    if (diffTime <= 0) return 0; // No está vencido o es hoy
+    return Math.floor(diffTime / (1000 * 60 * 60 * 24)); // Usar floor para días completos
   }
 }

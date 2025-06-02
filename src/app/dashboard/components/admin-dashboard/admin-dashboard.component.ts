@@ -1,199 +1,238 @@
-import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { UserProfileButtonComponent } from '../user-profile-button/user-profile-button.component';
-import { RouterModule, Router } from '@angular/router';
+// src/app/dashboard/components/admin-dashboard/admin-dashboard.component.ts
+import { Component, OnInit, OnDestroy } from '@angular/core';
+import { CommonModule, DatePipe } from '@angular/common'; // Importar DatePipe aquí
 import { MatCardModule } from '@angular/material/card';
-import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
+import { MatButtonModule } from '@angular/material/button';
 import { MatDividerModule } from '@angular/material/divider';
-import { MatListModule } from '@angular/material/list';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { SupabaseClient, createClient } from '@supabase/supabase-js';
-import { environment } from '../../../../environments/environment';
-
-// Importar MatDialog y AnuncioComponent
 import { MatDialog } from '@angular/material/dialog';
-import { AnuncioComponent } from '../../../auth/anuncio/anuncio.component'; // Asegúrate de la ruta correcta
+import { MatTableModule } from '@angular/material/table';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { Router, RouterModule } from '@angular/router';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner'; // Asegurarse de importar si se usa en el HTML del componente
 
-const supabase: SupabaseClient = createClient(
-  environment.supabaseUrl,
-  environment.supabaseKey
-);
+import { SupabaseService } from '../../../core/infrastructure/supabase/supabase.service';
+import { Announcement } from '../../../core/domain/models/announcement.model';
+import { AnnouncementFormDialogComponent } from './announcement-form-dialog/announcement-form-dialog.component';
+import { UserProfileButtonComponent } from '../user-profile-button/user-profile-button.component';
+import { Subject, takeUntil } from 'rxjs'; // Para la desuscripción de observables
 
 @Component({
   selector: 'app-admin-dashboard',
   standalone: true,
   imports: [
     CommonModule,
-    UserProfileButtonComponent,
-    RouterModule,
     MatCardModule,
-    MatButtonModule,
     MatIconModule,
+    MatButtonModule,
     MatDividerModule,
-    MatListModule,
-    MatProgressSpinnerModule
-    // MatDialogModule no se importa aquí, solo el servicio MatDialog
+    MatTableModule,
+    MatTooltipModule,
+    RouterModule,
+    UserProfileButtonComponent,
+    MatProgressBarModule,
+    MatProgressSpinnerModule // Añadir MatProgressSpinnerModule
   ],
   templateUrl: './admin-dashboard.component.html',
-  styleUrls: ['./admin-dashboard.component.css']
+  styleUrls: ['./admin-dashboard.component.css'],
+  providers: [DatePipe] // Proveer DatePipe para usar en el template
 })
-export class AdminDashboardComponent implements OnInit {
+export class AdminDashboardComponent implements OnInit, OnDestroy {
   adminName: string = 'Administrador';
-  isLoading = true;
-  errorMessage: string | null = null;
-
   pendingPaymentsCount: number = 0;
   activeResidentsCount: number = 0;
   activeAnnouncementsCount: number = 0;
   pendingProofCount: number = 0;
 
-  // Inyectar MatDialog en el constructor
-  constructor(private router: Router, public dialog: MatDialog) { }
+  announcements: Announcement[] = [];
+  displayedAnnouncementColumns: string[] = ['title', 'content_snippet', 'created_at', 'expiration_date', 'is_published', 'priority', 'actions'];
 
-  async ngOnInit() {
-    this.isLoading = true;
+  isLoading: boolean = true; // Controla la carga inicial y la de los anuncios
+  errorMessage: string | null = null;
+
+  private destroy$ = new Subject<void>(); // Para desuscribir observables al destruir el componente
+
+  constructor(
+    private supabaseService: SupabaseService,
+    public dialog: MatDialog,
+    private router: Router,
+    private datePipe: DatePipe // Inyectar DatePipe
+  ) {}
+
+  async ngOnInit(): Promise<void> {
+    await this.loadAdminData();
+    await this.loadAnnouncements();
+    this.listenForAnnouncementsChanges(); // Suscribirse a cambios en tiempo real
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+    // Desuscribirse del canal de Supabase en tiempo real
+    const channel = this.supabaseService.supabase.channel('announcements_changes');
+    if (channel) {
+      this.supabaseService.supabase.removeChannel(channel);
+    }
+  }
+
+  async loadAdminData(): Promise<void> {
+    this.isLoading = true; // Activar loading global al inicio
     this.errorMessage = null;
-
     try {
-      await Promise.all([
-        this.loadAdminProfile(),
-        this.loadDashboardStats()
-      ]);
-    } catch (error) {
-      console.error('Error al cargar el dashboard del administrador:', error);
-      this.errorMessage = 'Hubo un problema al cargar los datos. Por favor, intenta recargar la página.';
+      const user = await this.supabaseService.getCurrentUser();
+      if (user) {
+        const profile = await this.supabaseService.getProfile(user.id);
+        if (profile) {
+          this.adminName = profile.first_name || 'Administrador';
+
+          // Aquí deberías obtener los datos reales de tus contadores
+          const allPayments = await this.supabaseService.getAllPayments();
+          this.pendingPaymentsCount = allPayments.filter(p => p.status === 'pending').length;
+
+          // Placeholder para otros contadores
+          this.activeResidentsCount = 0; // Implementar lógica para obtener esto
+          this.pendingProofCount = 0; // Implementar lógica para obtener esto
+        }
+      }
+    } catch (error: any) {
+      console.error('Error al cargar datos del administrador:', error);
+      this.errorMessage = `Error al cargar datos: ${error.message || error}`;
     } finally {
-      this.isLoading = false;
+      // El isLoading global se desactivará después de que loadAnnouncements también termine
+      // Si solo quieres que este método controle su propio loading, usa una variable separada.
+      // Por ahora, se mantendrá un loading global.
     }
   }
 
-  private async loadAdminProfile() {
-    const { data: userSession, error: sessionError } = await supabase.auth.getSession();
-
-    if (sessionError || !userSession?.session) {
-      console.error('Error obteniendo sesión del administrador:', sessionError);
-      return;
-    }
-
-    const userId = userSession.session.user.id;
-
-    const { data: profile, error: profileError } = await supabase
-      .from('profiles')
-      .select('first_name, role')
-      .eq('id', userId)
-      .single();
-
-    if (profileError) {
-      console.error('Error al cargar el perfil del administrador:', profileError);
-      this.adminName = 'Administrador';
-    } else if (profile && profile.first_name) {
-      this.adminName = profile.first_name;
-    } else {
-      this.adminName = 'Administrador';
+  async loadAnnouncements(): Promise<void> {
+    this.isLoading = true; // Activar indicador de carga para los anuncios específicamente si loadAdminData ya terminó
+    this.errorMessage = null;
+    try {
+      this.announcements = await this.supabaseService.getAnnouncements();
+      this.activeAnnouncementsCount = this.announcements.filter(a => a.is_published).length;
+    } catch (error: any) {
+      console.error('Error al cargar anuncios:', error);
+      this.errorMessage = `Error al cargar anuncios: ${error.message || error}`;
+    } finally {
+      this.isLoading = false; // Desactivar indicador de carga una vez que los anuncios se hayan cargado o haya habido un error.
     }
   }
 
-  private async loadDashboardStats() {
-    const { count: paymentsCount, error: paymentsError } = await supabase
-      .from('payments')
-      .select('id', { count: 'exact', head: true })
-      .eq('status', 'pending_admin_review');
-
-    if (paymentsError) {
-      console.error('Error cargando pagos pendientes:', paymentsError);
-    } else {
-      this.pendingPaymentsCount = paymentsCount || 0;
-    }
-
-    const { count: residentsCount, error: residentsError } = await supabase
-      .from('profiles')
-      .select('id', { count: 'exact', head: true })
-      .eq('role', 'resident')
-      
-
-    if (residentsError) {
-      console.error('Error cargando residentes activos:', residentsError);
-    } else {
-      this.activeResidentsCount = residentsCount || 0;
-    }
-
-    const { count: announcementsCount, error: announcementsError } = await supabase
-      .from('announcements')
-      .select('id', { count: 'exact', head: true })
-      
-
-    if (announcementsError) {
-      console.error('Error cargando anuncios activos:', announcementsError);
-    } else {
-      this.activeAnnouncementsCount = announcementsCount || 0;
-    }
-
-    const { count: proofsCount, error: proofsError } = await supabase
-      .from('payment_proofs')
-      .select('id', { count: 'exact', head: true })
-      .eq('status', 'pending_review');
-
-    if (proofsError) {
-        console.error('Error cargando comprobantes pendientes:', proofsError);
-    } else {
-        this.pendingProofCount = proofsCount || 0;
-    }
+  listenForAnnouncementsChanges(): void {
+    this.supabaseService.supabase
+      .channel('announcements_changes') // Nombre de canal único
+      .on('postgres_changes',
+        { event: '*', schema: 'public', table: 'announcements' },
+        (payload) => {
+          console.log('Cambio en anuncios detectado:', payload);
+          // Recargar los anuncios para reflejar el cambio en la tabla
+          this.loadAnnouncements();
+        }
+      )
+      .subscribe();
   }
 
-  // --- NUEVO MÉTODO PARA ABRIR EL DIÁLOGO DE ANUNCIO ---
-  goToCreateAnnouncement(): void {
-    const dialogRef = this.dialog.open(AnuncioComponent, {
-      width: '600px', // Ancho deseado del diálogo
-      disableClose: true, // Opcional: Para evitar cerrar el diálogo haciendo clic fuera o con Escape
-      data: { /* puedes pasar datos si el diálogo los necesita */ }
+  openAnnouncementFormDialog(announcement?: Announcement): void {
+    const dialogRef = this.dialog.open(AnnouncementFormDialogComponent, {
+      width: '500px', // Ancho del diálogo
+      data: { announcement: announcement } // Pasa el objeto anuncio si es para edición
     });
 
-    // Suscribirse al evento afterClosed para saber cuando el diálogo se cierra
-    dialogRef.afterClosed().subscribe(result => {
-      if (result && result.success) {
-        // Lógica a ejecutar si el anuncio se publicó con éxito
-        console.log(result.message);
-        // Opcional: mostrar un Snackbar de éxito o recargar estadísticas de anuncios
-        this.loadDashboardStats(); // Recargar las estadísticas para que el nuevo anuncio se refleje
-      } else if (result === undefined) {
-        // El diálogo se cerró sin enviar (por ejemplo, con el botón Cancelar o Escape)
-        console.log('Creación de anuncio cancelada.');
+    dialogRef.afterClosed().subscribe(async (result: Partial<Announcement> | undefined) => {
+      if (result) { // Si el diálogo se cerró con datos (es decir, el usuario "guardó")
+        this.isLoading = true; // Activar barra de progreso en el dashboard
+        this.errorMessage = null;
+        try {
+          const user = await this.supabaseService.getCurrentUser();
+          if (!user) {
+            throw new Error('No se pudo obtener el usuario actual. Por favor, asegúrese de estar logueado.');
+          }
+
+          if (announcement) { // Modo edición: 'announcement' original existe
+            // Llamamos a updateAnnouncement con el ID del anuncio original y los datos del formulario
+            await this.supabaseService.updateAnnouncement(announcement.id, result);
+            console.log('Anuncio actualizado con éxito:', result);
+          } else { // Modo creación: 'announcement' original es undefined
+            // Creamos un nuevo objeto, añadiendo el author_id
+            const newAnnouncement: Omit<Announcement, 'id' | 'created_at' | 'updated_at'> & { author_id: string } = {
+              title: result.title!, // Usamos ! para asegurar que no es null/undefined
+              content: result.content ?? null,
+              expiration_date: result.expiration_date ?? null,
+              is_published: result.is_published!,
+              priority: result.priority!,
+              author_id: user.id // El ID del usuario actual es el autor
+            };
+            await this.supabaseService.createAnnouncement(newAnnouncement);
+            console.log('Anuncio creado con éxito:', newAnnouncement);
+          }
+          await this.loadAnnouncements(); // Recargar la lista de anuncios para mostrar el cambio
+        } catch (error: any) {
+          console.error('Error al guardar el anuncio:', error);
+          this.errorMessage = `Error al guardar el anuncio: ${error.message || error}`;
+        } finally {
+          this.isLoading = false; // Desactivar barra de progreso
+        }
       }
     });
   }
 
-  // Los demás métodos de navegación se mantienen, pero ya no se usan para el anuncio
-  goToRegisterPayment() {
-    this.router.navigate(['/admin/payments/register']);
+  async deleteAnnouncement(announcementId: string): Promise<void> {
+    if (confirm('¿Estás seguro de que quieres eliminar este anuncio? Esta acción no se puede deshacer.')) {
+      this.isLoading = true;
+      this.errorMessage = null;
+      try {
+        await this.supabaseService.deleteAnnouncement(announcementId);
+        console.log('Anuncio eliminado con éxito:', announcementId);
+        await this.loadAnnouncements(); // Recargar la lista después de la eliminación
+      } catch (error: any) {
+        console.error('Error al eliminar el anuncio:', error);
+        this.errorMessage = `Error al eliminar el anuncio: ${error.message || error}`;
+      } finally {
+        this.isLoading = false;
+      }
+    }
   }
 
-  goToManageResidents() {
-    this.router.navigate(['/admin/users/manage']);
+  // Helper para formatear el snippet del contenido en la tabla
+  getContentSnippet(content: string | null): string {
+    if (!content) return '';
+    return content.length > 50 ? content.substring(0, 47) + '...' : content;
   }
 
-  goToReviewProofs() {
-    this.router.navigate(['/admin/payments/proofs']);
+  // Métodos de navegación para las acciones rápidas y funcionalidades completas
+  goToRegisterPayment(): void {
+    this.router.navigate(['/admin/payments/create']);
   }
 
-  goToGenerateReports() {
+  goToManageResidents(): void {
+    this.router.navigate(['/admin/residents']);
+  }
+
+  goToReviewProofs(): void {
+    this.router.navigate(['/admin/proofs']);
+  }
+
+  goToGenerateReports(): void {
     this.router.navigate(['/admin/reports']);
   }
 
-  goToManageDocuments() {
-    this.router.navigate(['/admin/documents/manage']);
+  goToManageDocuments(): void {
+    this.router.navigate(['/admin/documents']);
   }
 
-  goToManageAnnouncements() {
-    // Si quieres una página para gestionar anuncios existentes, iría aquí
-    this.router.navigate(['/admin/announcements/manage']);
+  goToManageAnnouncements(): void {
+    // Si la gestión de anuncios es en esta misma página, simplemente recargamos
+    // y hacemos scroll si es necesario. Si fuera una página separada, navegaríamos.
+    this.loadAnnouncements();
+    document.querySelector('.admin-announcements-list-section')?.scrollIntoView({ behavior: 'smooth' });
   }
 
-  goToFinancialManagement() {
+  goToFinancialManagement(): void {
     this.router.navigate(['/admin/financial']);
   }
 
-  goToUserManagement() {
+  goToUserManagement(): void {
     this.router.navigate(['/admin/users']);
   }
 }
