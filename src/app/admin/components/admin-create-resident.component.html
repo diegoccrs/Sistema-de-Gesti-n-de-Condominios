@@ -1,0 +1,73 @@
+<div class="create-resident-container">
+  <mat-card class="mat-elevation-z4">
+    <mat-card-header>
+      <mat-card-title>Crear Nuevo Residente</mat-card-title>
+      <mat-card-subtitle>Complete los datos para registrar un nuevo residente.</mat-card-subtitle>
+    </mat-card-header>
+    <mat-card-content>
+      <form [formGroup]="createResidentForm" (ngSubmit)="onSubmit()">
+        <mat-form-field appearance="outline" class="full-width-input">
+          <mat-label>Nombre</mat-label>
+          <input matInput formControlName="firstName" required>
+          <mat-error *ngIf="createResidentForm.get('firstName')?.hasError('required')">
+            El nombre es requerido.
+          </mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width-input">
+          <mat-label>Apellido</mat-label>
+          <input matInput formControlName="lastName" required>
+          <mat-error *ngIf="createResidentForm.get('lastName')?.hasError('required')">
+            El apellido es requerido.
+          </mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width-input">
+          <mat-label>Correo Electrónico</mat-label>
+          <input matInput formControlName="email" type="email" required>
+          <mat-error *ngIf="createResidentForm.get('email')?.hasError('required')">
+            El correo es requerido.
+          </mat-error>
+          <mat-error *ngIf="createResidentForm.get('email')?.hasError('email')">
+            Ingrese un correo válido.
+          </mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width-input">
+          <mat-label>Contraseña Temporal</mat-label>
+          <input matInput formControlName="password" type="password" required>
+          <mat-hint>Mínimo 8 caracteres. El residente deberá cambiarla.</mat-hint>
+          <mat-error *ngIf="createResidentForm.get('password')?.hasError('required')">
+            La contraseña es requerida.
+          </mat-error>
+          <mat-error *ngIf="createResidentForm.get('password')?.hasError('minlength')">
+            La contraseña debe tener al menos 8 caracteres.
+          </mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width-input">
+          <mat-label>Apartamento / Nro. Casa</mat-label>
+          <input matInput formControlName="apartamento">
+          </mat-form-field>
+
+        <div class="form-actions">
+          <button mat-stroked-button routerLink="/dashboard" type="button" [disabled]="isLoading">
+            <mat-icon>arrow_back</mat-icon>
+            Cancelar
+          </button>
+          <button mat-flat-button color="primary" type="submit" [disabled]="isLoading || createResidentForm.invalid">
+            <mat-spinner *ngIf="isLoading" diameter="20" color="accent" class="button-spinner"></mat-spinner>
+            <span *ngIf="!isLoading">Crear Residente</span>
+          </button>
+        </div>
+
+        <div *ngIf="successMessage" class="message success-message">
+          <mat-icon>check_circle</mat-icon> {{ successMessage }}
+        </div>
+        <div *ngIf="errorMessage" class="message error-message">
+          <mat-icon>error_outline</mat-icon> {{ errorMessage }}
+        </div>
+      </form>
+    </mat-card-content>
+  </mat-card>
+</div>

@@ -1,3 +1,4 @@
+// src/app/services/supabase.service.ts
 import { Injectable } from '@angular/core';
 import { createClient, SupabaseClient, User } from '@supabase/supabase-js';
 import { environment } from '../../../../environments/environment';
@@ -71,10 +72,16 @@ export class SupabaseService {
       .from('profiles')
       .select('*')
       .eq('id', id)
-      .single();
+      .single(); 
     
-    if (error) throw error;
-    return data;
+    // Si el error es PGRST116, significa que no se encontraron filas (0 rows).
+    // En este caso, no es un error real, sino una ausencia de datos, por lo que devolvemos null.
+    // Si es cualquier otro tipo de error, lo relanzamos.
+    if (error && error.code !== 'PGRST116') {
+      console.error('Error al obtener el perfil (no PGRST116):', error);
+      throw error;
+    }
+    return data; // Si no hay datos, data será null
   }
 
   async updateProfile(id: string, updates: Partial<Profile>) {
@@ -158,6 +165,8 @@ export class SupabaseService {
   }
 
   async getPendingPayments(): Promise<Payment[]> {
+    const today = new Date().toISOString().split('T')[0];
+    
     const { data, error } = await this.supabase
       .from('payments')
       .select('*')
