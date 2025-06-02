@@ -13,17 +13,17 @@ export const authGuard: CanActivateFn = async () => {
   
   try {
     // Obtener sesión actualizada
-    const { data: { session }, error } = await supabase.auth.getSession();
+    const { data: { user }, error: userError } = await supabase.auth.getUser();
 
-    if (error || !session) {
-      console.warn('[AuthGuard] Sesión inválida. Redirigiendo a login...');
+    if (userError || !user) {
+      console.warn('[AuthGuard] No active user found or error fetching user. Redirigiendo a login...', userError);
       router.navigate(['/auth/login'], {
         queryParams: { returnUrl: router.url }
       });
       return false;
     }
 
-    console.log('[AuthGuard] Sesión válida detectada');
+    console.log('[AuthGuard] Active user found:', user.id);
     return true;
 
   } catch (error) {

@@ -50,6 +50,14 @@ export const routes: Routes = [
     loadComponent: () => import('./dashboard/dashboard.component').then(m => m.DashboardComponent),
     canActivate: [authGuard]
   },
+
+  // Rutas de administración
+  {
+    path: 'admin/users/create', 
+    title: 'Crear Residente',
+    loadComponent: () => import('./admin/components/admin-create-resident.component').then(m => m.AdminCreateResidentComponent),
+    canActivate: [authGuard] 
+  },
 {
     path: 'anuncio',
     title: 'Nuevo Anuncio',
