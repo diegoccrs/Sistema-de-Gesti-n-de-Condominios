@@ -110,7 +110,7 @@ export class AdminDashboardComponent implements OnInit {
       .from('profiles')
       .select('id', { count: 'exact', head: true })
       .eq('role', 'resident')
-      .eq('is_active', true);
+      
 
     if (residentsError) {
       console.error('Error cargando residentes activos:', residentsError);
@@ -121,7 +121,7 @@ export class AdminDashboardComponent implements OnInit {
     const { count: announcementsCount, error: announcementsError } = await supabase
       .from('announcements')
       .select('id', { count: 'exact', head: true })
-      .eq('is_active', true);
+      
 
     if (announcementsError) {
       console.error('Error cargando anuncios activos:', announcementsError);
