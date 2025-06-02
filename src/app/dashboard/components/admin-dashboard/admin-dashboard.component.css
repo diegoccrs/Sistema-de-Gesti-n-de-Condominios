@@ -81,6 +81,8 @@ mat-divider {
   flex-wrap: wrap;
   gap: 15px;
   margin-bottom: 30px;
+  justify-content: center;
+  align-items: center;
 }
 
 .action-button {
