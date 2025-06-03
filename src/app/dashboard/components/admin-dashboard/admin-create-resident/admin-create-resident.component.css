@@ -1,0 +1,9 @@
+/* styles.css o tu archivo de tema */
+.snackbar-success {
+  background-color: #4CAF50 !important; /* Green */
+  color: white !important;
+}
+.snackbar-error {
+  background-color: #f44336 !important; /* Red */
+  color: white !important;
+}

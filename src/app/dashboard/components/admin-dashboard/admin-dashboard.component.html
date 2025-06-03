@@ -1,178 +1,149 @@
-<div class="admin-dashboard-container">
-  <mat-progress-bar *ngIf="isLoading" mode="indeterminate"></mat-progress-bar>
+<div class="dashboard-container">
+  <app-user-profile-button></app-user-profile-button>
 
-  <div class="header">
-    <h1>Bienvenido, {{ adminName }}</h1>
-    <app-user-profile-button></app-user-profile-button>
-  </div>
+  <mat-card class="dashboard-card">
+    <mat-card-header>
+      <mat-card-title>Panel de Administración</mat-card-title>
+      <mat-card-subtitle>Bienvenido, {{ adminName }}. Aquí tienes un resumen de tu condominio.</mat-card-subtitle>
+    </mat-card-header>
+    <mat-card-content>
+      <mat-progress-bar *ngIf="isLoading" mode="indeterminate" color="primary"></mat-progress-bar>
+      <div *ngIf="errorMessage" class="error-message mat-error-text">
+        <mat-icon>error_outline</mat-icon> {{ errorMessage }}
+      </div>
 
-  <mat-divider></mat-divider>
+      <div class="metrics-grid">
+        <mat-card class="metric-card mat-elevation-z2">
+          <mat-icon color="primary">attach_money</mat-icon>
+          <h3>Pagos Pendientes</h3>
+          <p>{{ pendingPaymentsCount }}</p>
+        </mat-card>
+        <mat-card class="metric-card mat-elevation-z2">
+          <mat-icon color="accent">group</mat-icon>
+          <h3>Residentes Activos</h3>
+          <p>{{ activeResidentsCount }}</p>
+        </mat-card>
+        <mat-card class="metric-card mat-elevation-z2">
+          <mat-icon color="warn">pending_actions</mat-icon>
+          <h3>Comprobantes Pendientes</h3>
+          <p>{{ pendingProofCount }}</p>
+        </mat-card>
+        <mat-card class="metric-card mat-elevation-z2">
+          <mat-icon color="success">announcement</mat-icon>
+          <h3>Anuncios Activos</h3>
+          <p>{{ activeAnnouncementsCount }}</p>
+        </mat-card>
+      </div>
 
-  <div class="quick-stats-section">
-    <h2>Resumen Rápido</h2>
-    <div class="stat-cards">
-      <mat-card class="stat-card">
-        <mat-card-header>
-          <mat-icon mat-card-avatar>payments</mat-icon>
-          <mat-card-title>Pagos Pendientes</mat-card-title>
-        </mat-card-header>
-        <mat-card-content>
-          <h3>{{ pendingPaymentsCount }}</h3>
-        </mat-card-content>
-      </mat-card>
+      <mat-divider></mat-divider>
 
-      <mat-card class="stat-card">
-        <mat-card-header>
-          <mat-icon mat-card-avatar>people</mat-icon>
-          <mat-card-title>Residentes Activos</mat-card-title>
-        </mat-card-header>
-        <mat-card-content>
-          <h3>{{ activeResidentsCount }}</h3>
-        </mat-card-content>
-      </mat-card>
+      <h3 class="section-title">Acciones Rápidas</h3>
+      <div class="actions-grid">
+        <button mat-flat-button color="primary" class="action-button" (click)="openAnnouncementFormDialog()">
+          <mat-icon>campaign</mat-icon>
+          Publicar Anuncio
+        </button>
+        <button mat-flat-button color="accent" class="action-button" (click)="goToRegisterPayment()">
+          <mat-icon>payment</mat-icon>
+          Registrar Pago
+        </button>
+        <button mat-flat-button color="primary" class="action-button" (click)="openCreateResidentDialog()">
+          <mat-icon>person_add</mat-icon>
+          Crear Nuevo Residente
+        </button>
+        <button mat-flat-button color="warn" class="action-button" (click)="goToReviewProofs()">
+          <mat-icon>receipt_long</mat-icon>
+          Revisar Comprobantes
+        </button>
+      </div>
 
-      <mat-card class="stat-card">
-        <mat-card-header>
-          <mat-icon mat-card-avatar>campaign</mat-icon>
-          <mat-card-title>Anuncios Publicados</mat-card-title>
-        </mat-card-header>
-        <mat-card-content>
-          <h3>{{ activeAnnouncementsCount }}</h3>
-        </mat-card-content>
-      </mat-card>
+      <mat-divider></mat-divider>
 
-      <mat-card class="stat-card">
-        <mat-card-header>
-          <mat-icon mat-card-avatar>receipt_long</mat-icon>
-          <mat-card-title>Comprobantes Pendientes</mat-card-title>
-        </mat-card-header>
-        <mat-card-content>
-          <h3>{{ pendingProofCount }}</h3>
-        </mat-card-content>
-      </mat-card>
-    </div>
-  </div>
+      <h3 class="section-title admin-announcements-list-section">Anuncios del Condominio</h3>
+      <div class="table-container mat-elevation-z2">
+        <table mat-table [dataSource]="announcements" class="full-width-table">
+          <ng-container matColumnDef="title">
+            <th mat-header-cell *matHeaderCellDef>Título</th>
+            <td mat-cell *matCellDef="let announcement">{{ announcement.title }}</td>
+          </ng-container>
 
-  <mat-divider></mat-divider>
+          <ng-container matColumnDef="content_snippet">
+            <th mat-header-cell *matHeaderCellDef>Contenido</th>
+            <td mat-cell *matCellDef="let announcement" matTooltip="{{ announcement.content }}">
+              {{ getContentSnippet(announcement.content) }}
+            </td>
+          </ng-container>
 
-  <div class="quick-actions-section">
-    <h2>Acciones Rápidas</h2>
-    <div class="action-buttons">
-      <button mat-flat-button color="primary" class="action-button" (click)="openAnnouncementFormDialog()">
-        <mat-icon>campaign</mat-icon>
-        Crear Anuncio
-      </button>
+          <ng-container matColumnDef="created_at">
+            <th mat-header-cell *matHeaderCellDef>Creado el</th>
+            <td mat-cell *matCellDef="let announcement">
+              {{ announcement.created_at | date:'shortDate' }}
+            </td>
+          </ng-container>
 
-      <button mat-flat-button color="teal" class="action-button" routerLink="/admin/users/create">
-        <mat-icon>person_add_alt_1</mat-icon>
-        <span>Crear Residente</span>
-      </button>
-      <button mat-flat-button color="primary" class="action-button" (click)="goToRegisterPayment()">
-        <mat-icon>attach_money</mat-icon>
-        Registrar Pago
-      </button>
-      <button mat-flat-button color="primary" class="action-button" (click)="goToManageResidents()">
-        <mat-icon>people</mat-icon>
-        Gestionar Residentes
-      </button>
-      <button mat-flat-button color="primary" class="action-button" (click)="goToReviewProofs()">
-        <mat-icon>visibility</mat-icon>
-        Revisar Comprobantes
-      </button>
-      <button mat-flat-button color="primary" class="action-button" (click)="goToGenerateReports()">
-        <mat-icon>analytics</mat-icon>
-        Generar Reportes
-      </button>
-      <button mat-flat-button color="primary" class="action-button" (click)="goToManageDocuments()">
-        <mat-icon>folder_open</mat-icon>
-        Gestionar Documentos
-      </button>
-    </div>
-  </div>
+          <ng-container matColumnDef="expiration_date">
+            <th mat-header-cell *matHeaderCellDef>Expira el</th>
+            <td mat-cell *matCellDef="let announcement">
+              {{ announcement.expiration_date ? (announcement.expiration_date | date:'shortDate') : 'N/A' }}
+            </td>
+          </ng-container>
 
-  <mat-divider></mat-divider>
+          <ng-container matColumnDef="is_published">
+            <th mat-header-cell *matHeaderCellDef>Publicado</th>
+            <td mat-cell *matCellDef="let announcement">
+              <mat-icon [color]="announcement.is_published ? 'primary' : 'warn'">
+                {{ announcement.is_published ? 'check_circle' : 'cancel' }}
+              </mat-icon>
+            </td>
+          </ng-container>
 
-  <div class="admin-announcements-list-section">
-    <div class="section-header">
-      <h2>Mis Anuncios Recientes</h2>
-      <button mat-flat-button color="primary" (click)="openAnnouncementFormDialog()">
-        <mat-icon>add</mat-icon> Crear Nuevo Anuncio
-      </button>
-    </div>
+          <ng-container matColumnDef="priority">
+            <th mat-header-cell *matHeaderCellDef>Prioridad</th>
+            <td mat-cell *matCellDef="let announcement">
+              {{ announcement.priority }}
+            </td>
+          </ng-container>
 
-    <div *ngIf="errorMessage" class="alert-message error-message">
-      <mat-icon>error_outline</mat-icon> {{ errorMessage }}
-    </div>
+          <ng-container matColumnDef="actions">
+            <th mat-header-cell *matHeaderCellDef>Acciones</th>
+            <td mat-cell *matCellDef="let announcement">
+              <button mat-icon-button (click)="openAnnouncementFormDialog(announcement)" matTooltip="Editar Anuncio">
+                <mat-icon color="accent">edit</mat-icon>
+              </button>
+              <button mat-icon-button (click)="deleteAnnouncement(announcement.id)" matTooltip="Eliminar Anuncio">
+                <mat-icon color="warn">delete</mat-icon>
+              </button>
+            </td>
+          </ng-container>
 
-    <div *ngIf="isLoading && announcements.length === 0" style="text-align: center; margin-top: 20px;">
-      <mat-spinner diameter="30"></mat-spinner>
-      <p>Cargando anuncios...</p>
-    </div>
+          <tr mat-header-row *matHeaderRowDef="displayedAnnouncementColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedAnnouncementColumns;"></tr>
+        </table>
+        <div *ngIf="announcements.length === 0 && !isLoading" class="no-data-message">
+          No hay anuncios disponibles. ¡Crea el primero!
+        </div>
+      </div>
 
-    <div *ngIf="!isLoading && announcements.length > 0" class="announcements-table-container mat-elevation-z2">
-      <table mat-table [dataSource]="announcements">
+      <mat-divider></mat-divider>
+      <h3 class="section-title">Gestión Completa</h3>
+      <div class="full-management-links">
+        <button mat-button (click)="goToManageResidents()">
+          <mat-icon>people</mat-icon> Gestión de Residentes
+        </button>
+        <button mat-button (click)="goToFinancialManagement()">
+          <mat-icon>account_balance</mat-icon> Gestión Financiera
+        </button>
+        <button mat-button (click)="goToManageDocuments()">
+          <mat-icon>folder_open</mat-icon> Gestión de Documentos
+        </button>
+        <button mat-button (click)="goToGenerateReports()">
+          <mat-icon>bar_chart</mat-icon> Generar Reportes
+        </button>
+        <button mat-button (click)="goToUserManagement()">
+          <mat-icon>admin_panel_settings</mat-icon> Gestión de Usuarios y Roles
+        </button>
+      </div>
 
-        <ng-container matColumnDef="title">
-          <th mat-header-cell *matHeaderCellDef> Título </th>
-          <td mat-cell *matCellDef="let announcement"> {{ announcement.title }} </td>
-        </ng-container>
-
-        <ng-container matColumnDef="content_snippet">
-          <th mat-header-cell *matHeaderCellDef> Contenido </th>
-          <td mat-cell *matCellDef="let announcement"> {{ getContentSnippet(announcement.content) }} </td>
-        </ng-container>
-
-        <ng-container matColumnDef="created_at">
-          <th mat-header-cell *matHeaderCellDef> Publicado El </th>
-          <td mat-cell *matCellDef="let announcement">
-            {{ announcement.created_at | date:'dd/MM/yyyy' }}
-          </td>
-        </ng-container>
-
-        <ng-container matColumnDef="expiration_date">
-          <th mat-header-cell *matHeaderCellDef> Expira El </th>
-          <td mat-cell *matCellDef="let announcement">
-            {{ announcement.expiration_date ? (announcement.expiration_date | date:'dd/MM/yyyy') : 'N/A' }}
-          </td>
-        </ng-container>
-
-        <ng-container matColumnDef="is_published">
-          <th mat-header-cell *matHeaderCellDef> Visible </th>
-          <td mat-cell *matCellDef="let announcement">
-            <mat-icon [color]="announcement.is_published ? 'primary' : 'warn'">
-              {{ announcement.is_published ? 'visibility' : 'visibility_off' }}
-            </mat-icon>
-          </td>
-        </ng-container>
-
-        <ng-container matColumnDef="priority">
-          <th mat-header-cell *matHeaderCellDef> Prioridad </th>
-          <td mat-cell *matCellDef="let announcement"> {{ announcement.priority }} </td>
-        </ng-container>
-
-        <ng-container matColumnDef="actions">
-          <th mat-header-cell *matHeaderCellDef> Acciones </th>
-          <td mat-cell *matCellDef="let announcement">
-            <button mat-icon-button color="accent" (click)="openAnnouncementFormDialog(announcement)"
-              matTooltip="Editar">
-              <mat-icon>edit</mat-icon>
-            </button>
-            <button mat-icon-button color="warn" (click)="deleteAnnouncement(announcement.id)" matTooltip="Eliminar">
-              <mat-icon>delete</mat-icon>
-            </button>
-          </td>
-        </ng-container>
-
-        <tr mat-header-row *matHeaderRowDef="displayedAnnouncementColumns"></tr>
-        <tr mat-row *matRowDef="let row; columns: displayedAnnouncementColumns;"></tr>
-      </table>
-    </div>
-
-    <div *ngIf="!isLoading && announcements.length === 0" class="no-data-message">
-      <p>No hay anuncios publicados aún.</p>
-      <button mat-button color="primary" (click)="openAnnouncementFormDialog()">
-        Sé el primero en crear uno
-      </button>
-    </div>
-  </div>
+    </mat-card-content>
+  </mat-card>
 </div>
