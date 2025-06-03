@@ -1,6 +1,6 @@
 // src/app/dashboard/components/admin-dashboard/admin-dashboard.component.ts
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { CommonModule, DatePipe } from '@angular/common'; // Importar DatePipe aquí
+import { CommonModule, DatePipe } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
@@ -8,10 +8,11 @@ import { MatDividerModule } from '@angular/material/divider';
 import { MatDialog } from '@angular/material/dialog';
 import { MatTableModule } from '@angular/material/table';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { Router, RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router'; // Asegúrate de que RouterModule esté importado
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { MatSnackBar } from '@angular/material/snack-bar'; // <-- NUEVO: Importar MatSnackBar
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatToolbarModule } from '@angular/material/toolbar'; // Importar MatToolbarModule
 
 import { SupabaseService } from '../../../core/infrastructure/supabase/supabase.service';
 import { Announcement } from '../../../core/domain/models/announcement.model';
@@ -19,7 +20,7 @@ import { AnnouncementFormDialogComponent } from './announcement-form-dialog/anno
 import { UserProfileButtonComponent } from '../user-profile-button/user-profile-button.component';
 import { Subject, takeUntil } from 'rxjs';
 
-import { CreateResidentFormDialogComponent } from './create-resident-form-dialog/create-resident-form-dialog.component'; // <-- NUEVO: Importar el componente de diálogo de residente
+import { CreateResidentFormDialogComponent } from './create-resident-form-dialog/create-resident-form-dialog.component';
 
 @Component({
   selector: 'app-admin-dashboard',
@@ -32,12 +33,12 @@ import { CreateResidentFormDialogComponent } from './create-resident-form-dialog
     MatDividerModule,
     MatTableModule,
     MatTooltipModule,
-    RouterModule,
+    RouterModule, // <-- Asegúrate de que RouterModule esté aquí
     UserProfileButtonComponent,
     MatProgressBarModule,
     MatProgressSpinnerModule,
-    // ¡NUEVO! Asegúrate de que el diálogo de residente esté en los imports si es standalone
-    CreateResidentFormDialogComponent // Aunque no se usa directamente en el HTML, es una dependencia del diálogo
+    MatToolbarModule, // Añadir MatToolbarModule a los imports
+    CreateResidentFormDialogComponent
   ],
   templateUrl: './admin-dashboard.component.html',
   styleUrls: ['./admin-dashboard.component.css'],
@@ -61,9 +62,9 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
   constructor(
     private supabaseService: SupabaseService,
     public dialog: MatDialog,
-    private router: Router,
+    private router: Router, // Inyecta el Router
     private datePipe: DatePipe,
-    private snackBar: MatSnackBar // <-- NUEVO: Inyectar MatSnackBar
+    private snackBar: MatSnackBar
   ) {}
 
   async ngOnInit(): Promise<void> {
@@ -91,12 +92,19 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
         if (profile) {
           this.adminName = profile.first_name || 'Administrador';
 
-          const allPayments = await this.supabaseService.getAllPayments();
+          const allPayments = await this.supabaseService.getAllPayments(); // Asegúrate de que esta función exista y obtenga los pagos
           this.pendingPaymentsCount = allPayments.filter(p => p.status === 'pending').length;
+          // Asegúrate de que 'proof_url' exista en el modelo Payment, si no, usa la propiedad correcta
+          this.pendingProofCount = allPayments.filter(p => p.status === 'pending' && (p as any).proof_url).length;
+
+
+          // Aquí deberías cargar los conteos reales para estos:
+          // this.activeResidentsCount = await this.supabaseService.getResidentsCount();
+          // this.activeAnnouncementsCount = await this.supabaseService.getActiveAnnouncementsCount();
 
           // Placeholder para otros contadores
           this.activeResidentsCount = 0; // Implementar lógica para obtener esto
-          this.pendingProofCount = 0; // Implementar lógica para obtener esto
+          // this.pendingProofCount = 0; // Implementar lógica para obtener esto (ya lo hice con proof_url)
         }
       }
     } catch (error: any) {
@@ -180,11 +188,10 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
     });
   }
 
-  // <-- NUEVO: Método para abrir el diálogo de creación de residente -->
   openCreateResidentDialog(): void {
     const dialogRef = this.dialog.open(CreateResidentFormDialogComponent, {
-      width: '500px', // Ancho deseado para el diálogo
-      disableClose: true, // Opcional: no permite cerrar el diálogo haciendo clic fuera o con Esc
+      width: '500px',
+      disableClose: true,
     });
 
     dialogRef.afterClosed().subscribe(result => {
@@ -193,8 +200,6 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
           duration: 5000,
           panelClass: ['snackbar-success']
         });
-        // Opcional: Podrías querer recargar el contador de residentes o la lista de residentes aquí
-        // this.loadAdminData();
       } else if (result && result.message) {
         this.snackBar.open(result.message, 'Cerrar', {
           duration: 7000,
@@ -205,8 +210,6 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
       }
     });
   }
-  // <-- FIN NUEVO MÉTODO -->
-
 
   async deleteAnnouncement(announcementId: string): Promise<void> {
     if (confirm('¿Estás seguro de que quieres eliminar este anuncio? Esta acción no se puede deshacer.')) {
@@ -232,44 +235,42 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
     return content.length > 50 ? content.substring(0, 47) + '...' : content;
   }
 
-  // Métodos de navegación y nuevas acciones rápidas
   goToRegisterPayment(): void {
-    this.router.navigate(['/admin/payments/create']);
+    this.router.navigate(['/admin/payments/create']); // Asume que tienes una ruta para registrar pagos
   }
 
-  // <-- NUEVO: Método para ir a crear residente (ahora abre el diálogo) -->
   goToCreateResident(): void {
-    this.openCreateResidentDialog(); // Llama al método que abre el diálogo
+    this.openCreateResidentDialog();
   }
-  // <-- FIN NUEVO MÉTODO -->
-
 
   goToManageResidents(): void {
-    this.router.navigate(['/admin/residents']);
+    this.router.navigate(['/dashboard/residents-management']); // Actualiza esta ruta si la tienes
   }
 
   goToReviewProofs(): void {
-    this.router.navigate(['/admin/proofs']);
+    // ¡ESTE ES EL MÉTODO CLAVE QUE NAVEGA A LA CONFIRMACIÓN DE PAGOS!
+    this.router.navigate(['/dashboard/payments-confirmation']);
   }
 
   goToGenerateReports(): void {
-    this.router.navigate(['/admin/reports']);
+    this.router.navigate(['/admin/reports']); // Actualiza esta ruta si la tienes
   }
 
   goToManageDocuments(): void {
-    this.router.navigate(['/admin/documents']);
+    this.router.navigate(['/admin/documents']); // Actualiza esta ruta si la tienes
   }
 
   goToManageAnnouncements(): void {
-    this.loadAnnouncements();
-    document.querySelector('.admin-announcements-list-section')?.scrollIntoView({ behavior: 'smooth' });
+    this.router.navigate(['/dashboard/announcements-management']); // Nueva ruta para gestionar anuncios
+    // Opcional: si quieres que siga bajando, puedes remover esta navegación y solo llamar a loadAnnouncements
+    // document.querySelector('.admin-announcements-list-section')?.scrollIntoView({ behavior: 'smooth' });
   }
 
   goToFinancialManagement(): void {
-    this.router.navigate(['/admin/financial']);
+    this.router.navigate(['/admin/financial']); // Actualiza esta ruta si la tienes
   }
 
   goToUserManagement(): void {
-    this.router.navigate(['/admin/users']);
+    this.router.navigate(['/admin/users']); // Actualiza esta ruta si la tienes
   }
 }
