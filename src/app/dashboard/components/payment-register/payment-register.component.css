@@ -1,7 +1,7 @@
 .payment-register-form {
   display: flex;
   flex-direction: column;
-  gap: 10px; /* Adjust gap as needed */
+  gap: 10px; 
 }
 
 .full-width {
@@ -10,18 +10,18 @@
 
 .form-row {
   display: flex;
-  gap: 16px; /* Space between fields in a row */
+  gap: 16px; 
 }
 
 .form-field-half {
-  flex: 1; /* Each field takes half the space */
+  flex: 1; 
 }
 
 mat-dialog-actions {
-  padding: 8px 24px 16px; /* Adjust padding */
+  padding: 8px 24px 16px;
 }
 
-/* Ensure spinner is vertically aligned if inside button */
+
 button[mat-flat-button] mat-spinner {
     display: inline-block;
     vertical-align: middle;
