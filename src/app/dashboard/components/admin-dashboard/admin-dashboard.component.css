@@ -269,3 +269,51 @@ td.mat-cell .mat-icon-button mat-icon {
     align-items: stretch;
   }
 }
+
+/* src/app/dashboard/components/admin-dashboard/admin-dashboard.component.css */
+
+.metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 20px;
+  margin-bottom: 30px; /* Espacio entre las métricas y las acciones rápidas */
+}
+
+.metric-card {
+  text-align: center;
+  padding: 20px;
+  display: flex; /* Añadir flex para controlar la disposición de los hijos */
+  flex-direction: column; /* Organizar los hijos en columna */
+  justify-content: space-between; /* Empujar el botón hacia el final */
+  height: 100%; /* Asegura que todos los cards tengan la misma altura si el contenido lo permite */
+}
+
+.metric-card h3 {
+  margin-top: 10px;
+  margin-bottom: 5px;
+  font-size: 1.2em;
+}
+
+.metric-card p {
+  font-size: 2em;
+  font-weight: bold;
+  color: var(--primary-color, #673ab7); /* Usar tu color primario */
+  margin-bottom: 15px; /* Espacio antes del botón */
+}
+
+.metric-card mat-icon {
+  font-size: 3.5em; /* Iconos más grandes */
+  width: 1em; /* Ajusta el ancho para el tamaño del icono */
+  height: 1em; /* Ajusta la altura para el tamaño del icono */
+  margin-bottom: 10px;
+}
+
+.card-actions-bottom {
+  margin-top: auto; /* Esto empuja las acciones al final del card si es un flex column */
+  width: 100%; /* Asegura que el botón ocupe todo el ancho disponible */
+  display: flex;
+  justify-content: center; /* Centra el botón si es necesario */
+  padding-top: 10px; /* Espacio entre el texto y el botón */
+}
+
+/* ... Mantén o añade los demás estilos que tengas para actions-grid, etc. */

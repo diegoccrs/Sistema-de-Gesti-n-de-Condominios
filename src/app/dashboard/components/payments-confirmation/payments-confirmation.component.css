@@ -1,0 +1,149 @@
+/* Contenedor principal de la vista */
+.payments-confirmation-container {
+  padding: 24px;
+  max-width: 1200px; /* Limita el ancho para pantallas grandes */
+  margin: 0 auto; /* Centra el contenedor */
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+h2 {
+  color: #3f51b5; /* Color primario de Material */
+  margin-bottom: 20px;
+  font-weight: 500;
+  text-align: center;
+}
+
+mat-divider {
+  margin-bottom: 24px;
+  border-top-color: rgba(0, 0, 0, 0.1);
+}
+
+/* Estilos para el spinner de carga */
+.loading-spinner-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 200px; /* Asegura un espacio mínimo */
+  color: #607d8b;
+}
+
+.loading-spinner-container mat-spinner {
+  margin-bottom: 16px;
+}
+
+/* Estilos para mensajes (error, no pagos) */
+.message-container {
+  display: flex;
+  align-items: center;
+  padding: 16px;
+  border-radius: 4px;
+  margin-bottom: 20px;
+  font-size: 1.1em;
+}
+
+.message-container mat-icon {
+  margin-right: 12px;
+  font-size: 28px;
+  width: 28px;
+  height: 28px;
+}
+
+.error-message {
+  background-color: #ffebee; /* Rojo claro de Material */
+  color: #d32f2f; /* Rojo oscuro de Material */
+  border: 1px solid #d32f2f;
+  justify-content: space-between; /* Para alinear el botón de recarga */
+}
+
+.no-payments-message {
+  background-color: #e8f5e9; /* Verde claro de Material */
+  color: #2e7d32; /* Verde oscuro de Material */
+  border: 1px solid #2e7d32;
+  justify-content: center;
+  flex-direction: column;
+  text-align: center;
+  padding: 30px;
+}
+
+.no-payments-message mat-icon {
+  color: #2e7d32;
+  margin-bottom: 15px;
+  font-size: 48px;
+  width: 48px;
+  height: 48px;
+}
+
+.no-payments-message span {
+  margin-bottom: 15px;
+}
+
+/* Estilos de la tabla */
+.payments-table-wrapper {
+  overflow-x: auto; /* Permite scroll horizontal en pantallas pequeñas */
+  border-radius: 4px;
+}
+
+.full-width-table {
+  width: 100%;
+  min-width: 600px; /* Asegura un ancho mínimo para la tabla */
+}
+
+.mat-column-resident {
+  width: 20%;
+  padding-left: 16px;
+}
+
+.mat-column-amount {
+  width: 15%;
+  text-align: right; /* Alinea el monto a la derecha */
+}
+
+.mat-column-currency {
+  width: 10%;
+}
+
+.mat-column-paymentDate,
+.mat-column-reportedAt {
+  width: 15%;
+}
+
+.mat-column-proof {
+  width: 10%;
+  text-align: center;
+}
+
+.mat-column-actions {
+  width: 20%;
+  text-align: center;
+  white-space: nowrap; /* Evita que los botones se rompan en varias líneas */
+}
+
+.small-text {
+  font-size: 0.85em;
+  color: #757575; /* Gris suave */
+}
+
+/* Estilos para los botones de acción en la tabla */
+.action-button {
+  margin: 0 4px; /* Espacio entre botones */
+  min-width: 120px; /* Asegura un ancho mínimo para los botones */
+}
+
+/* Estilos personalizados para el MatSnackBar (opcional, si quieres un estilo diferente al por defecto) */
+.success-snackbar {
+  background-color: #43a047; /* Verde oscuro */
+  color: white;
+}
+
+.error-snackbar {
+  background-color: #d32f2f; /* Rojo oscuro */
+  color: white;
+}
+
+.warn-snackbar {
+  background-color: #ffb300; /* Amarillo oscuro */
+  color: white;
+}
