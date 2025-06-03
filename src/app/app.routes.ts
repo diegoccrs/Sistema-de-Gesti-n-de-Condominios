@@ -1,4 +1,6 @@
 import { Routes } from '@angular/router';
+import { PaymentsConfirmationComponent } from './dashboard/components/payments-confirmation/payments-confirmation.component';
+
 
 import { authGuard } from './auth/guards/auth.guard';
 import { isAdminGuard } from './auth/guards/is-admin.guard';
