@@ -65,7 +65,7 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
   constructor(
     private supabaseService: SupabaseService,
     public dialog: MatDialog,
-    private router: Router, // Inyecta el Router
+    private router: Router, 
     private datePipe: DatePipe,
     private snackBar: MatSnackBar
   ) {}
@@ -267,9 +267,15 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
   }
 
   goToManageAnnouncements(): void {
-    this.router.navigate(['/dashboard/announcements-management']); // Nueva ruta para gestionar anuncios
-    // Opcional: si quieres que siga bajando, puedes remover esta navegación y solo llamar a loadAnnouncements
-    // document.querySelector('.admin-announcements-list-section')?.scrollIntoView({ behavior: 'smooth' });
+    
+    const announcementsSection = document.querySelector('.admin-announcements-list-section');
+    if (announcementsSection) {
+      announcementsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    } else {
+      console.warn('Announcements section not found for scrolling.');
+      // Fallback or alternative action if needed, e.g., just load announcements
+      // await this.loadAnnouncements();
+    }
   }
 
   goToFinancialManagement(): void {
