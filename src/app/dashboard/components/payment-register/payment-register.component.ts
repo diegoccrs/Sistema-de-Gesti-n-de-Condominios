@@ -13,7 +13,7 @@ import { MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { environment } from '../../../../environments/environment';
 
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner'; // <-- IMPORT THIS
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner'; 
 
 const supabase: SupabaseClient = createClient(environment.supabaseUrl, environment.supabaseKey);
 

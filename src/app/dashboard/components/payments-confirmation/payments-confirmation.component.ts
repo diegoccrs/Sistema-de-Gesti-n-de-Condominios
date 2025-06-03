@@ -8,7 +8,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { environment } from '../../../../environments/environment';
 
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner'; // <-- IMPORT THIS
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner'; 
 
 const supabase: SupabaseClient = createClient(environment.supabaseUrl, environment.supabaseKey);
 
@@ -21,7 +21,7 @@ const supabase: SupabaseClient = createClient(environment.supabaseUrl, environme
     MatButtonModule,
     MatIconModule,
     MatToolbarModule,
-    MatProgressSpinnerModule // <-- ADD IT HERE
+    MatProgressSpinnerModule 
   ],
   templateUrl: './payments-confirmation.component.html',
   styleUrls: ['./payments-confirmation.component.css']
