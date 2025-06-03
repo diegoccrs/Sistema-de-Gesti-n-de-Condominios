@@ -1,0 +1,26 @@
+<h2 mat-dialog-title>Registrar Pago</h2>
+<form [formGroup]="paymentForm" (ngSubmit)="onSubmit()" style="padding: 24px;">
+  <mat-form-field appearance="outline" class="full-width">
+    <mat-label>Monto</mat-label>
+    <input matInput type="number" formControlName="amount" required>
+  </mat-form-field>
+  <mat-form-field appearance="outline" class="full-width">
+    <mat-label>Moneda</mat-label>
+    <mat-select formControlName="currency" required>
+      <mat-option value="VES">VES</mat-option>
+      <mat-option value="USD">USD</mat-option>
+    </mat-select>
+  </mat-form-field>
+  <mat-form-field appearance="outline" class="full-width">
+    <mat-label>Fecha de pago</mat-label>
+    <input matInput [matDatepicker]="picker" formControlName="payment_date" required>
+    <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+    <mat-datepicker #picker></mat-datepicker>
+  </mat-form-field>
+  <div class="button-row">
+    <button mat-button type="button" (click)="cerrar()" color="warn">Cancelar</button>
+    <button mat-flat-button color="primary" type="submit" [disabled]="paymentForm.invalid">
+      Registrar Pago
+    </button>
+  </div>
+</form>

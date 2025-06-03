@@ -20,6 +20,9 @@ import { AnnouncementFormDialogComponent } from './announcement-form-dialog/anno
 import { UserProfileButtonComponent } from '../user-profile-button/user-profile-button.component';
 import { Subject, takeUntil } from 'rxjs';
 
+
+import { PaymentRegisterComponent } from '../payment-register/payment-register.component';
+
 import { CreateResidentFormDialogComponent } from './create-resident-form-dialog/create-resident-form-dialog.component';
 
 @Component({
@@ -236,7 +239,10 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
   }
 
   goToRegisterPayment(): void {
-    this.router.navigate(['/admin/payments/create']); // Asume que tienes una ruta para registrar pagos
+    this.dialog.open(PaymentRegisterComponent, {
+      width: '1000px'
+    });
+    
   }
 
   goToCreateResident(): void {

@@ -1,0 +1,9 @@
+.full-width {
+  width: 100%;
+  margin-bottom: 16px;
+}
+.button-row {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
