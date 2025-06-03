@@ -444,9 +444,9 @@ mat-card-actions {
     }
 }
 
-/* Styles for the new Payment History Section */
+/* Payment History Section  */
 .payment-history-section {
-    margin-top: 40px; /* Or adjust as needed */
+    margin-top: 40px; 
     background-color: white;
     border-radius: 12px;
     padding: 25px;
@@ -504,7 +504,7 @@ mat-card-actions {
   font-size: 0.85em;
   font-weight: 500;
   color: white;
-  text-transform: capitalize; /* Or use titlecase pipe if preferred */
+  text-transform: capitalize;
 }
 
 .status-pending {
@@ -520,7 +520,7 @@ mat-card-actions {
   background-color: #f44336; /* Red */
 }
 
-.status-approved { /* If you use 'approved' as a status */
+.status-approved { 
   background-color: #2196f3; /* Blue */
 }
 
@@ -557,4 +557,31 @@ mat-card-actions {
 .payment-history-section .loading-state p {
     margin-top: 10px;
     font-size: 0.9rem;
+}
+
+.date-filter-form {
+  display: flex;
+  flex-wrap: wrap; 
+  align-items: center;
+  gap: 16px; 
+  margin-bottom: 20px; 
+  padding: 10px;
+  background-color: #f9f9f9; 
+  border-radius: 8px;
+}
+
+.date-filter-form mat-form-field {
+  flex-grow: 1; 
+  min-width: 200px;
+}
+
+.date-filter-form button {
+  height: 50px;
+}
+
+.date-filter-form .clear-filter-button mat-icon {
+  margin-right: 4px; 
+}
+.date-filter-form button mat-icon {
+    margin-right: 8px;
 }
