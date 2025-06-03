@@ -11,12 +11,17 @@ import { DatePipe, CurrencyPipe } from '@angular/common';
 import { Router } from '@angular/router';
 import { Payment } from '../../../core/domain/models/payment.model';
 import { SupabaseService } from '../../../core/infrastructure/supabase/supabase.service';
-
 import { ReactiveFormsModule, FormBuilder, FormGroup } from '@angular/forms';
-import { MatDatepickerModule } from '@angular/material/datepicker'; 
-import { MatNativeDateModule } from '@angular/material/core'; 
-import { MatFormFieldModule } from '@angular/material/form-field'; 
-import { MatInputModule } from '@angular/material/input'; 
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatNativeDateModule } from '@angular/material/core';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+
+// Imports for Payment Register Dialog
+import { MatDialog, MatDialogModule } from '@angular/material/dialog'; 
+import { PaymentRegisterComponent } from '../payment-register/payment-register.component'; 
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar'; 
+
 
 @Component({
   selector: 'app-resident-dashboard',
@@ -32,16 +37,19 @@ import { MatInputModule } from '@angular/material/input';
     DatePipe,
     CurrencyPipe,
     MatTableModule,
-    ReactiveFormsModule, 
-    MatDatepickerModule, 
-    MatNativeDateModule, 
-    MatFormFieldModule,  
-    MatInputModule       
+    ReactiveFormsModule,
+    MatDatepickerModule,
+    MatNativeDateModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatDialogModule,
+    MatSnackBarModule 
   ],
   templateUrl: './resident-dashboard.component.html',
   styleUrls: ['./resident-dashboard.component.css']
 })
 export class ResidentDashboardComponent implements OnInit {
+  
   announcements: any[] = [];
   pendingPayments: any[] = [];
   paymentHistory: Payment[] = [];
@@ -55,15 +63,15 @@ export class ResidentDashboardComponent implements OnInit {
   residentName: string = 'Residente';
   
   displayedPaymentHistoryColumns: string[] = ['concept', 'payment_date', 'amount', 'currency', 'status', 'proof_url'];
-
-  dateFilterForm: FormGroup; // <-- FormGroup for date filters
+  dateFilterForm: FormGroup;
 
   constructor(
     private router: Router,
     private supabaseService: SupabaseService,
-    private fb: FormBuilder // <-- Inject FormBuilder
+    private fb: FormBuilder,
+    private dialog: MatDialog, 
+    private snackBar: MatSnackBar 
   ) {
-    // Initialize the date filter form
     this.dateFilterForm = this.fb.group({
       startDate: [null],
       endDate: [null]
@@ -73,13 +81,12 @@ export class ResidentDashboardComponent implements OnInit {
   async ngOnInit() {
     this.isLoading = true;
     this.errorMessage = null;
-
     try {
       await Promise.all([
         this.loadUserProfile(),
         this.loadAnnouncements(),
         this.loadPendingPayments(),
-        this.loadPaymentHistory() // Initial load without filters
+        this.loadPaymentHistory()
       ]);
     } catch (error) {
       console.error('Error al cargar el dashboard:', error);
@@ -88,63 +95,34 @@ export class ResidentDashboardComponent implements OnInit {
       this.isLoading = false;
     }
   }
+  
 
-  // Updated loadPaymentHistory to accept optional date parameters
-  private async loadPaymentHistory(startDate?: Date, endDate?: Date) {
-    this.isLoadingHistory = true;
-    this.errorMessage = null; // Clear previous errors specific to history loading
-    const user = await this.supabaseService.getCurrentUser();
-    if (!user?.id) {
-      console.warn('Usuario no autenticado, no se puede cargar el historial de pagos.');
-      this.paymentHistory = [];
-      this.isLoadingHistory = false;
-      return;
-    }
-    try {
-      let finalStartDate: string | undefined;
-      let finalEndDate: string | undefined;
 
-      if (startDate) {
-        finalStartDate = startDate.toISOString().split('T')[0]; // YYYY-MM-DD
+  openPaymentRegisterDialog(): void {
+    const dialogRef = this.dialog.open(PaymentRegisterComponent, {
+      width: '500px', // Or your preferred width
+      disableClose: true 
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result && result.success) {
+        this.snackBar.open('Pago reportado exitosamente.', 'Cerrar', {
+          duration: 3000,
+          panelClass: ['snackbar-success'] 
+        });
+        // Refresh payment lists
+        this.loadPendingPayments();
+        this.loadPaymentHistory(this.dateFilterForm.value.startDate, this.dateFilterForm.value.endDate);
+      } else if (result && result.error) {
+         this.snackBar.open(`Error al reportar pago: ${result.error}`, 'Cerrar', {
+          duration: 5000,
+          panelClass: ['snackbar-error']
+        });
       }
-      if (endDate) {
-        // To include the entire end day, set time to end of day or adjust query accordingly in service
-        const endOfDay = new Date(endDate);
-        endOfDay.setHours(23, 59, 59, 999);
-        finalEndDate = endOfDay.toISOString();
-      }
-      
-      this.paymentHistory = await this.supabaseService.getPaymentsByResident(user.id, finalStartDate, finalEndDate);
-      // Sorting is now ideally handled by the service if possible, or can remain here
-      this.paymentHistory.sort((a, b) => new Date(b.payment_date).getTime() - new Date(a.payment_date).getTime());
-    } catch (error: any) {
-      console.error('Error al cargar el historial de pagos:', error);
-      this.errorMessage = 'No se pudo cargar el historial de pagos.';
-      this.paymentHistory = []; // Ensure history is empty on error
-    } finally {
-      this.isLoadingHistory = false;
-    }
+      // If result is undefined (dialog closed without action), do nothing
+    });
   }
-
-  applyDateFilter() {
-    const { startDate, endDate } = this.dateFilterForm.value;
-    // Basic validation: if end date is before start date, you might want to handle it
-    if (startDate && endDate && endDate < startDate) {
-        this.errorMessage = 'La fecha "Hasta" no puede ser anterior a la fecha "Desde".';
-        // Optionally, clear the history or don't filter
-        // this.paymentHistory = []; 
-        return;
-    }
-    this.loadPaymentHistory(startDate, endDate);
-  }
-
-  clearDateFilter() {
-    this.dateFilterForm.reset();
-    this.loadPaymentHistory(); // Load all payments
-    this.errorMessage = null; // Clear any filter-related error messages
-  }
-
-  // ... (other existing methods: loadUserProfile, loadAnnouncements, loadPendingPayments, etc.)
+  
   private async loadUserProfile() {
     const user = await this.supabaseService.getCurrentUser(); 
     if (!user?.id) {
@@ -213,6 +191,54 @@ export class ResidentDashboardComponent implements OnInit {
       this.isLoadingPayments = false;
     }
   }
+   private async loadPaymentHistory(startDate?: Date, endDate?: Date) {
+    this.isLoadingHistory = true;
+    this.errorMessage = null; 
+    const user = await this.supabaseService.getCurrentUser();
+    if (!user?.id) {
+      console.warn('Usuario no autenticado, no se puede cargar el historial de pagos.');
+      this.paymentHistory = [];
+      this.isLoadingHistory = false;
+      return;
+    }
+    try {
+      let finalStartDate: string | undefined;
+      let finalEndDate: string | undefined;
+
+      if (startDate) {
+        finalStartDate = startDate.toISOString().split('T')[0]; 
+      }
+      if (endDate) {
+        const endOfDay = new Date(endDate);
+        endOfDay.setHours(23, 59, 59, 999);
+        finalEndDate = endOfDay.toISOString();
+      }
+      
+      this.paymentHistory = await this.supabaseService.getPaymentsByResident(user.id, finalStartDate, finalEndDate);
+      this.paymentHistory.sort((a, b) => new Date(b.payment_date).getTime() - new Date(a.payment_date).getTime());
+    } catch (error: any) {
+      console.error('Error al cargar el historial de pagos:', error);
+      this.errorMessage = 'No se pudo cargar el historial de pagos.';
+      this.paymentHistory = []; 
+    } finally {
+      this.isLoadingHistory = false;
+    }
+  }
+
+  applyDateFilter() {
+    const { startDate, endDate } = this.dateFilterForm.value;
+    if (startDate && endDate && endDate < startDate) {
+        this.errorMessage = 'La fecha "Hasta" no puede ser anterior a la fecha "Desde".';
+        return;
+    }
+    this.loadPaymentHistory(startDate, endDate);
+  }
+
+  clearDateFilter() {
+    this.dateFilterForm.reset();
+    this.loadPaymentHistory(); 
+    this.errorMessage = null; 
+  }
   
   openAnnouncementDetails(announcement: any) {
     console.log('Ver detalles del anuncio:', announcement);
@@ -226,7 +252,6 @@ export class ResidentDashboardComponent implements OnInit {
 
   uploadPaymentProof() {
     console.log('Navegar a subir comprobante');
-    // this.router.navigate(['/resident/payments/upload']); // Ensure this route exists or is planned
     this.errorMessage = 'Funcionalidad "Subir Comprobante" en desarrollo.';
   }
 
