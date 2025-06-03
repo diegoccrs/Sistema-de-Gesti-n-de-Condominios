@@ -443,3 +443,118 @@ mat-card-actions {
         font-size: 0.9rem;
     }
 }
+
+/* Styles for the new Payment History Section */
+.payment-history-section {
+    margin-top: 40px; /* Or adjust as needed */
+    background-color: white;
+    border-radius: 12px;
+    padding: 25px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+}
+
+.payment-history-section .mat-card-header {
+    margin-bottom: 20px;
+}
+
+.payment-history-section .mat-headline-6 {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #333;
+    margin-left: 15px;
+    margin-bottom: 5px;
+}
+
+.payment-history-section mat-card-subtitle {
+    font-family: 'Open Sans', sans-serif;
+    font-size: 0.95rem;
+    color: #757575;
+    margin-left: 15px;
+}
+
+.table-responsive {
+  overflow-x: auto; /* Allows table to scroll horizontally on small screens */
+}
+
+.payments-history-table {
+  width: 100%;
+  margin-top: 20px;
+}
+
+.payments-history-table th.mat-header-cell,
+.payments-history-table td.mat-cell {
+  padding: 8px 16px;
+  border-bottom: 1px solid #eee;
+}
+
+.payments-history-table th.mat-header-cell {
+  font-weight: 600;
+  color: #555;
+  background-color: #f9f9f9;
+}
+.right-align {
+    text-align: right;
+}
+
+/* Status Badges */
+.status-badge {
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 0.85em;
+  font-weight: 500;
+  color: white;
+  text-transform: capitalize; /* Or use titlecase pipe if preferred */
+}
+
+.status-pending {
+  background-color: #ffc107; /* Amber */
+  color: #333;
+}
+
+.status-confirmed {
+  background-color: #4caf50; /* Green */
+}
+
+.status-rejected {
+  background-color: #f44336; /* Red */
+}
+
+.status-approved { /* If you use 'approved' as a status */
+  background-color: #2196f3; /* Blue */
+}
+
+
+/* Ensure the new section cards also have hover effects if desired */
+.payment-history-section .section-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+}
+
+/* Adjustments for empty state in history table */
+.payment-history-section .empty-state {
+    text-align: center;
+    padding: 30px 20px;
+    color: #7f8c8d;
+    font-size: 1rem;
+}
+
+.payment-history-section .empty-state .empty-icon {
+    font-size: 48px;
+    color: #ccc;
+    margin-bottom: 15px;
+}
+
+/* Adjust loading state for history */
+.payment-history-section .loading-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 30px;
+    color: #7f8c8d;
+}
+.payment-history-section .loading-state p {
+    margin-top: 10px;
+    font-size: 0.9rem;
+}

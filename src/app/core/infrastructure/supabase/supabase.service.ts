@@ -98,15 +98,18 @@ export class SupabaseService {
 
   // ==================== PAYMENT METHODS ====================
   async getPaymentsByResident(residentId: string): Promise<Payment[]> {
-    const { data, error } = await this.supabase
-      .from('payments')
-      .select('*')
-      .eq('resident_id', residentId)
-      .order('due_date', { ascending: false });
-    
-    if (error) throw error;
-    return data || [];
+  const { data, error } = await this.supabase
+    .from('payments')
+    .select('*')
+    .eq('resident_id', residentId)
+    .order('payment_date', { ascending: false }); // CHANGED from due_date to payment_date
+  
+  if (error) {
+      console.error('Supabase error in getPaymentsByResident:', error);
+      throw error;
   }
+  return data || [];
+}
 
   async getAllPayments(): Promise<Payment[]> {
     const { data, error } = await this.supabase
