@@ -4,5 +4,5 @@ export interface Profile {
   last_name: string;
   email: string;
   role: 'resident' | 'admin';
-  apartamento?: string; 
+  apartment?: string; 
 }

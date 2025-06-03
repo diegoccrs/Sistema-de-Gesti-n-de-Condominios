@@ -10,13 +10,16 @@ import { MatTableModule } from '@angular/material/table';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { Router, RouterModule } from '@angular/router';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner'; // Asegurarse de importar si se usa en el HTML del componente
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatSnackBar } from '@angular/material/snack-bar'; // <-- NUEVO: Importar MatSnackBar
 
 import { SupabaseService } from '../../../core/infrastructure/supabase/supabase.service';
 import { Announcement } from '../../../core/domain/models/announcement.model';
 import { AnnouncementFormDialogComponent } from './announcement-form-dialog/announcement-form-dialog.component';
 import { UserProfileButtonComponent } from '../user-profile-button/user-profile-button.component';
-import { Subject, takeUntil } from 'rxjs'; // Para la desuscripción de observables
+import { Subject, takeUntil } from 'rxjs';
+
+import { CreateResidentFormDialogComponent } from './create-resident-form-dialog/create-resident-form-dialog.component'; // <-- NUEVO: Importar el componente de diálogo de residente
 
 @Component({
   selector: 'app-admin-dashboard',
@@ -32,11 +35,13 @@ import { Subject, takeUntil } from 'rxjs'; // Para la desuscripción de observab
     RouterModule,
     UserProfileButtonComponent,
     MatProgressBarModule,
-    MatProgressSpinnerModule // Añadir MatProgressSpinnerModule
+    MatProgressSpinnerModule,
+    // ¡NUEVO! Asegúrate de que el diálogo de residente esté en los imports si es standalone
+    CreateResidentFormDialogComponent // Aunque no se usa directamente en el HTML, es una dependencia del diálogo
   ],
   templateUrl: './admin-dashboard.component.html',
   styleUrls: ['./admin-dashboard.component.css'],
-  providers: [DatePipe] // Proveer DatePipe para usar en el template
+  providers: [DatePipe]
 })
 export class AdminDashboardComponent implements OnInit, OnDestroy {
   adminName: string = 'Administrador';
@@ -48,28 +53,28 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
   announcements: Announcement[] = [];
   displayedAnnouncementColumns: string[] = ['title', 'content_snippet', 'created_at', 'expiration_date', 'is_published', 'priority', 'actions'];
 
-  isLoading: boolean = true; // Controla la carga inicial y la de los anuncios
+  isLoading: boolean = true;
   errorMessage: string | null = null;
 
-  private destroy$ = new Subject<void>(); // Para desuscribir observables al destruir el componente
+  private destroy$ = new Subject<void>();
 
   constructor(
     private supabaseService: SupabaseService,
     public dialog: MatDialog,
     private router: Router,
-    private datePipe: DatePipe // Inyectar DatePipe
+    private datePipe: DatePipe,
+    private snackBar: MatSnackBar // <-- NUEVO: Inyectar MatSnackBar
   ) {}
 
   async ngOnInit(): Promise<void> {
     await this.loadAdminData();
     await this.loadAnnouncements();
-    this.listenForAnnouncementsChanges(); // Suscribirse a cambios en tiempo real
+    this.listenForAnnouncementsChanges();
   }
 
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
-    // Desuscribirse del canal de Supabase en tiempo real
     const channel = this.supabaseService.supabase.channel('announcements_changes');
     if (channel) {
       this.supabaseService.supabase.removeChannel(channel);
@@ -77,7 +82,7 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
   }
 
   async loadAdminData(): Promise<void> {
-    this.isLoading = true; // Activar loading global al inicio
+    this.isLoading = true;
     this.errorMessage = null;
     try {
       const user = await this.supabaseService.getCurrentUser();
@@ -86,7 +91,6 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
         if (profile) {
           this.adminName = profile.first_name || 'Administrador';
 
-          // Aquí deberías obtener los datos reales de tus contadores
           const allPayments = await this.supabaseService.getAllPayments();
           this.pendingPaymentsCount = allPayments.filter(p => p.status === 'pending').length;
 
@@ -100,13 +104,11 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
       this.errorMessage = `Error al cargar datos: ${error.message || error}`;
     } finally {
       // El isLoading global se desactivará después de que loadAnnouncements también termine
-      // Si solo quieres que este método controle su propio loading, usa una variable separada.
-      // Por ahora, se mantendrá un loading global.
     }
   }
 
   async loadAnnouncements(): Promise<void> {
-    this.isLoading = true; // Activar indicador de carga para los anuncios específicamente si loadAdminData ya terminó
+    this.isLoading = true;
     this.errorMessage = null;
     try {
       this.announcements = await this.supabaseService.getAnnouncements();
@@ -115,18 +117,17 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
       console.error('Error al cargar anuncios:', error);
       this.errorMessage = `Error al cargar anuncios: ${error.message || error}`;
     } finally {
-      this.isLoading = false; // Desactivar indicador de carga una vez que los anuncios se hayan cargado o haya habido un error.
+      this.isLoading = false;
     }
   }
 
   listenForAnnouncementsChanges(): void {
     this.supabaseService.supabase
-      .channel('announcements_changes') // Nombre de canal único
+      .channel('announcements_changes')
       .on('postgres_changes',
         { event: '*', schema: 'public', table: 'announcements' },
         (payload) => {
           console.log('Cambio en anuncios detectado:', payload);
-          // Recargar los anuncios para reflejar el cambio en la tabla
           this.loadAnnouncements();
         }
       )
@@ -135,13 +136,13 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
 
   openAnnouncementFormDialog(announcement?: Announcement): void {
     const dialogRef = this.dialog.open(AnnouncementFormDialogComponent, {
-      width: '500px', // Ancho del diálogo
-      data: { announcement: announcement } // Pasa el objeto anuncio si es para edición
+      width: '500px',
+      data: { announcement: announcement }
     });
 
     dialogRef.afterClosed().subscribe(async (result: Partial<Announcement> | undefined) => {
-      if (result) { // Si el diálogo se cerró con datos (es decir, el usuario "guardó")
-        this.isLoading = true; // Activar barra de progreso en el dashboard
+      if (result) {
+        this.isLoading = true;
         this.errorMessage = null;
         try {
           const user = await this.supabaseService.getCurrentUser();
@@ -149,34 +150,63 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
             throw new Error('No se pudo obtener el usuario actual. Por favor, asegúrese de estar logueado.');
           }
 
-          if (announcement) { // Modo edición: 'announcement' original existe
-            // Llamamos a updateAnnouncement con el ID del anuncio original y los datos del formulario
+          if (announcement) {
             await this.supabaseService.updateAnnouncement(announcement.id, result);
+            this.snackBar.open('Anuncio actualizado con éxito.', 'Cerrar', { duration: 3000, panelClass: ['snackbar-success'] });
             console.log('Anuncio actualizado con éxito:', result);
-          } else { // Modo creación: 'announcement' original es undefined
-            // Creamos un nuevo objeto, añadiendo el author_id
+          } else {
             const newAnnouncement: Omit<Announcement, 'id' | 'created_at' | 'updated_at'> & { author_id: string } = {
-              title: result.title!, // Usamos ! para asegurar que no es null/undefined
+              title: result.title!,
               content: result.content ?? null,
               expiration_date: result.expiration_date ?? null,
               is_published: result.is_published!,
               priority: result.priority!,
-              attachment_url: result.attachment_url ?? null, // Añadir attachment_url, puede ser null si no se usa
-              author_id: user.id // El ID del usuario actual es el autor
+              attachment_url: result.attachment_url ?? null,
+              author_id: user.id
             };
             await this.supabaseService.createAnnouncement(newAnnouncement);
+            this.snackBar.open('Anuncio creado con éxito.', 'Cerrar', { duration: 3000, panelClass: ['snackbar-success'] });
             console.log('Anuncio creado con éxito:', newAnnouncement);
           }
-          await this.loadAnnouncements(); // Recargar la lista de anuncios para mostrar el cambio
+          await this.loadAnnouncements();
         } catch (error: any) {
           console.error('Error al guardar el anuncio:', error);
           this.errorMessage = `Error al guardar el anuncio: ${error.message || error}`;
+          this.snackBar.open(`Error: ${error.message || 'No se pudo guardar el anuncio.'}`, 'Cerrar', { duration: 5000, panelClass: ['snackbar-error'] });
         } finally {
-          this.isLoading = false; // Desactivar barra de progreso
+          this.isLoading = false;
         }
       }
     });
   }
+
+  // <-- NUEVO: Método para abrir el diálogo de creación de residente -->
+  openCreateResidentDialog(): void {
+    const dialogRef = this.dialog.open(CreateResidentFormDialogComponent, {
+      width: '500px', // Ancho deseado para el diálogo
+      disableClose: true, // Opcional: no permite cerrar el diálogo haciendo clic fuera o con Esc
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result && result.success) {
+        this.snackBar.open(result.message, 'Cerrar', {
+          duration: 5000,
+          panelClass: ['snackbar-success']
+        });
+        // Opcional: Podrías querer recargar el contador de residentes o la lista de residentes aquí
+        // this.loadAdminData();
+      } else if (result && result.message) {
+        this.snackBar.open(result.message, 'Cerrar', {
+          duration: 7000,
+          panelClass: ['snackbar-error']
+        });
+      } else if (result === undefined) {
+        this.snackBar.open('Creación de residente cancelada.', 'Cerrar', { duration: 3000 });
+      }
+    });
+  }
+  // <-- FIN NUEVO MÉTODO -->
+
 
   async deleteAnnouncement(announcementId: string): Promise<void> {
     if (confirm('¿Estás seguro de que quieres eliminar este anuncio? Esta acción no se puede deshacer.')) {
@@ -184,27 +214,35 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
       this.errorMessage = null;
       try {
         await this.supabaseService.deleteAnnouncement(announcementId);
+        this.snackBar.open('Anuncio eliminado con éxito.', 'Cerrar', { duration: 3000, panelClass: ['snackbar-success'] });
         console.log('Anuncio eliminado con éxito:', announcementId);
-        await this.loadAnnouncements(); // Recargar la lista después de la eliminación
+        await this.loadAnnouncements();
       } catch (error: any) {
         console.error('Error al eliminar el anuncio:', error);
         this.errorMessage = `Error al eliminar el anuncio: ${error.message || error}`;
+        this.snackBar.open(`Error: ${error.message || 'No se pudo eliminar el anuncio.'}`, 'Cerrar', { duration: 5000, panelClass: ['snackbar-error'] });
       } finally {
         this.isLoading = false;
       }
     }
   }
 
-  // Helper para formatear el snippet del contenido en la tabla
   getContentSnippet(content: string | null): string {
     if (!content) return '';
     return content.length > 50 ? content.substring(0, 47) + '...' : content;
   }
 
-  // Métodos de navegación para las acciones rápidas y funcionalidades completas
+  // Métodos de navegación y nuevas acciones rápidas
   goToRegisterPayment(): void {
     this.router.navigate(['/admin/payments/create']);
   }
+
+  // <-- NUEVO: Método para ir a crear residente (ahora abre el diálogo) -->
+  goToCreateResident(): void {
+    this.openCreateResidentDialog(); // Llama al método que abre el diálogo
+  }
+  // <-- FIN NUEVO MÉTODO -->
+
 
   goToManageResidents(): void {
     this.router.navigate(['/admin/residents']);
@@ -223,8 +261,6 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
   }
 
   goToManageAnnouncements(): void {
-    // Si la gestión de anuncios es en esta misma página, simplemente recargamos
-    // y hacemos scroll si es necesario. Si fuera una página separada, navegaríamos.
     this.loadAnnouncements();
     document.querySelector('.admin-announcements-list-section')?.scrollIntoView({ behavior: 'smooth' });
   }

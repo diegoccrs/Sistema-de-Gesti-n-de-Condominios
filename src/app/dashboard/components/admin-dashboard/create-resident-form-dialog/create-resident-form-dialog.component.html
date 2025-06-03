@@ -1,0 +1,68 @@
+<h2 mat-dialog-title>
+  Crear Nuevo Residente
+  <button mat-icon-button class="close-button" (click)="onNoClick()" aria-label="Cerrar diálogo">
+    <mat-icon>close</mat-icon>
+  </button>
+</h2>
+
+<mat-dialog-content class="mat-typography">
+  <form [formGroup]="createResidentForm" (ngSubmit)="onSubmit()">
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Nombre</mat-label>
+      <input matInput formControlName="firstName" required>
+      <mat-error *ngIf="createResidentForm.get('firstName')?.hasError('required') && createResidentForm.get('firstName')?.touched">
+        El nombre es requerido.
+      </mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Apellido</mat-label>
+      <input matInput formControlName="lastName" required>
+      <mat-error *ngIf="createResidentForm.get('lastName')?.hasError('required') && createResidentForm.get('lastName')?.touched">
+        El apellido es requerido.
+      </mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Correo Electrónico</mat-label>
+      <input matInput formControlName="email" type="email" required>
+      <mat-error *ngIf="createResidentForm.get('email')?.hasError('required') && createResidentForm.get('email')?.touched">
+        El correo es requerido.
+      </mat-error>
+      <mat-error *ngIf="createResidentForm.get('email')?.hasError('email') && createResidentForm.get('email')?.touched">
+        Ingrese un correo válido.
+      </mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Contraseña Temporal</mat-label>
+      <input matInput formControlName="password" type="password" required>
+      <mat-hint>Mínimo 8 caracteres. El residente deberá cambiarla.</mat-hint>
+      <mat-error *ngIf="createResidentForm.get('password')?.hasError('required') && createResidentForm.get('password')?.touched">
+        La contraseña es requerida.
+      </mat-error>
+      <mat-error *ngIf="createResidentForm.get('password')?.hasError('minlength') && createResidentForm.get('password')?.touched">
+        La contraseña debe tener al menos 8 caracteres.
+      </mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Apartamento / Nro. Casa</mat-label>
+      <input matInput formControlName="apartamento">
+    </mat-form-field>
+
+    <div *ngIf="errorMessage" class="alert-message error-message animated-fade-in">
+      <mat-icon>error_outline</mat-icon>
+      {{ errorMessage }}
+    </div>
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="onNoClick()" [disabled]="isLoading">Cancelar</button>
+
+  <button mat-flat-button color="primary" (click)="onSubmit()" [disabled]="createResidentForm.invalid || isLoading">
+    <mat-spinner *ngIf="isLoading" diameter="20" color="accent"></mat-spinner>
+    <span *ngIf="!isLoading">Crear Residente</span>
+  </button>
+</mat-dialog-actions>
