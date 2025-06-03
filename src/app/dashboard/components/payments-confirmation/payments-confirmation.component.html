@@ -1,48 +1,87 @@
-<h2>Pagos Pendientes</h2>
-<table mat-table [dataSource]="pagosPendientes" class="mat-elevation-z8" *ngIf="pagosPendientes.length > 0">
+<div class="payments-confirmation-container">
+  <mat-toolbar color="primary" class="page-toolbar">
+    <button mat-icon-button (click)="goBackToAdminDashboard()" aria-label="Volver al panel de administración">
+      <mat-icon>arrow_back</mat-icon>
+    </button>
+    <span>Confirmación de Pagos</span>
+    </mat-toolbar>
 
-  <!-- Columna Monto -->
-  <ng-container matColumnDef="amount">
-    <th mat-header-cell *matHeaderCellDef>Monto</th>
-    <td mat-cell *matCellDef="let pago">{{ pago.amount }}</td>
-  </ng-container>
+  <div class="content-area">
+    <div *ngIf="isLoading" class="loading-spinner-container">
+      <mat-progress-spinner diameter="50" mode="indeterminate"></mat-progress-spinner>
+      <p>Cargando pagos pendientes...</p>
+    </div>
 
-  <!-- Columna Moneda -->
-  <ng-container matColumnDef="currency">
-    <th mat-header-cell *matHeaderCellDef>Moneda</th>
-    <td mat-cell *matCellDef="let pago">{{ pago.currency }}</td>
-  </ng-container>
-
-  <!-- Columna Fecha -->
-  <ng-container matColumnDef="payment_date">
-    <th mat-header-cell *matHeaderCellDef>Fecha</th>
-    <td mat-cell *matCellDef="let pago">{{ pago.payment_date | date }}</td>
-  </ng-container>
-
-  <!-- Columna Estado -->
-  <ng-container matColumnDef="status">
-    <th mat-header-cell *matHeaderCellDef>Estado</th>
-    <td mat-cell *matCellDef="let pago">{{ pago.status }}</td>
-  </ng-container>
-
-  <!-- Columna Acciones -->
-  <ng-container matColumnDef="acciones">
-    <th mat-header-cell *matHeaderCellDef>Acciones</th>
-    <td mat-cell *matCellDef="let pago">
-      <button mat-flat-button color="primary" (click)="aprobarPago(pago.id)">
-        Aprobar
+    <div *ngIf="!isLoading && errorMessage" class="message-container error-message">
+      <mat-icon>error_outline</mat-icon>
+      <span>{{ errorMessage }}</span>
+      <button mat-icon-button (click)="cargarPagos()" matTooltip="Reintentar carga">
+        <mat-icon>refresh</mat-icon>
       </button>
-      <button mat-flat-button color="warn" (click)="rechazarPago(pago.id)">
-        Rechazar
-      </button>
-    </td>
-  </ng-container>
+    </div>
 
-  <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-  <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-</table>
+    <div *ngIf="!isLoading && !errorMessage && pagosPendientes.length === 0" class="message-container no-payments-message">
+      <mat-icon>check_circle_outline</mat-icon>
+      <span>No hay pagos pendientes de confirmación en este momento.</span>
+    </div>
 
-<div *ngIf="pagosPendientes.length === 0">
-  <p>No hay pagos pendientes.</p>
+    <div *ngIf="!isLoading && !errorMessage && pagosPendientes.length > 0" class="payments-table-wrapper mat-elevation-z4">
+      <table mat-table [dataSource]="pagosPendientes" class="full-width-table">
+
+        <ng-container matColumnDef="resident_name">
+          <th mat-header-cell *matHeaderCellDef> Residente </th>
+          <td mat-cell *matCellDef="let pago"> {{ pago.resident_name || 'N/A' }} <br> <small *ngIf="pago.resident_id?.email">{{pago.resident_id?.email}}</small> </td>
+        </ng-container>
+
+        <ng-container matColumnDef="amount">
+          <th mat-header-cell *matHeaderCellDef class="right-align">Monto</th>
+          <td mat-cell *matCellDef="let pago" class="right-align">{{ pago.amount | currency:pago.currency:'symbol':'1.2-2' }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="currency">
+          <th mat-header-cell *matHeaderCellDef>Moneda</th>
+          <td mat-cell *matCellDef="let pago">{{ pago.currency }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="payment_date">
+          <th mat-header-cell *matHeaderCellDef>Fecha Reporte</th>
+          <td mat-cell *matCellDef="let pago">{{ pago.reported_at | date:'dd/MM/yyyy HH:mm' }}</td>
+        </ng-container>
+        
+        <ng-container matColumnDef="status">
+            <th mat-header-cell *matHeaderCellDef>Estado Actual</th>
+            <td mat-cell *matCellDef="let pago">
+                <span class="status-badge status-{{pago.status | lowercase}}">
+                    {{ pago.status | titlecase }}
+                </span>
+            </td>
+        </ng-container>
+
+        <ng-container matColumnDef="proof_url">
+          <th mat-header-cell *matHeaderCellDef>Comprobante</th>
+          <td mat-cell *matCellDef="let pago">
+            <button *ngIf="pago.proof_url" mat-icon-button color="accent" (click)="openProof(pago.proof_url)" matTooltip="Ver comprobante">
+              <mat-icon>visibility</mat-icon>
+            </button>
+            <span *ngIf="!pago.proof_url">-</span>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="actions">
+          <th mat-header-cell *matHeaderCellDef class="center-align">Acciones</th>
+          <td mat-cell *matCellDef="let pago" class="center-align actions-cell">
+            <button mat-flat-button color="primary" (click)="aprobarPago(pago.id)" class="action-button" matTooltip="Aprobar este pago">
+              <mat-icon>check_circle</mat-icon> Aprobar
+            </button>
+            <button mat-flat-button color="warn" (click)="rechazarPago(pago.id)" class="action-button" matTooltip="Rechazar este pago">
+              <mat-icon>cancel</mat-icon> Rechazar
+            </button>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+      </table>
+    </div>
+  </div>
 </div>
-

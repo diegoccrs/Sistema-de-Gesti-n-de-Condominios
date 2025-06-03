@@ -131,9 +131,13 @@ export class SupabaseService {
     const { data, error } = await this.supabase
       .from('payments')
       .select('*')
-      .order('created_at', { ascending: false });
+      .order('reported_at', { ascending: false }); 
     
-    if (error) throw error;
+    if (error) {
+        
+        console.error('Supabase error in getAllPayments:', error);
+        throw error;
+    }
     return data || [];
   }
 
