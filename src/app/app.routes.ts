@@ -50,11 +50,10 @@ export const routes: Routes = [
     loadComponent: () => import('./dashboard/dashboard.component').then(m => m.DashboardComponent),
     canActivate: [authGuard], // Solo usuarios autenticados pueden acceder al dashboard base
     children: [
-      {
-        path: '', // Ruta por defecto cuando se navega a /dashboard
-        redirectTo: 'admin-home', // Asumimos que el admin es el rol principal para la entrada
-        pathMatch: 'full'
-      },
+      // {
+      //   path: '', // Ruta por defecto cuando se navega a /dashboard
+      //   pathMatch: 'full'
+      // },
       {
         path: 'admin-home', // Ruta específica para el panel del administrador
         title: 'Panel Admin',
