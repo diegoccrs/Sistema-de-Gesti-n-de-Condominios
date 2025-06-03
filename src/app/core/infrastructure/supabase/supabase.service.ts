@@ -97,19 +97,35 @@ export class SupabaseService {
   }
 
   // ==================== PAYMENT METHODS ====================
-  async getPaymentsByResident(residentId: string): Promise<Payment[]> {
-  const { data, error } = await this.supabase
-    .from('payments')
-    .select('*')
-    .eq('resident_id', residentId)
-    .order('payment_date', { ascending: false }); // CHANGED from due_date to payment_date
-  
-  if (error) {
-      console.error('Supabase error in getPaymentsByResident:', error);
-      throw error;
+  async getPaymentsByResident(
+    residentId: string, 
+    startDate?: string, 
+    endDate?: string    
+  ): Promise<Payment[]> {
+    let query = this.supabase
+      .from('payments')
+      .select('*') 
+      .eq('resident_id', residentId);
+
+    if (startDate) {
+      query = query.gte('payment_date', startDate); 
+    }
+    if (endDate) {
+      
+      query = query.lte('payment_date', endDate);   
+    }
+
+    // Order by payment_date (or another relevant date like created_at/reported_at)
+    query = query.order('payment_date', { ascending: false });
+
+    const { data, error } = await query;
+    
+    if (error) {
+        console.error('Supabase error in getPaymentsByResident:', error);
+        throw error;
+    }
+    return data || [];
   }
-  return data || [];
-}
 
   async getAllPayments(): Promise<Payment[]> {
     const { data, error } = await this.supabase
