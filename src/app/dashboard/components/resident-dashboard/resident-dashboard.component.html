@@ -23,8 +23,10 @@
                         <div matListItemTitle class="announcement-title">{{ announcement.title }}</div>
                         <div matListItemLine class="announcement-preview">{{ announcement.content | slice:0:80 }}<span
                                 *ngIf="announcement.content.length > 80">...</span></div>
-                        <div matListItemMeta class="announcement-date">{{ announcement.created_at | date:'mediumDate' }}</div>
-                        <button mat-icon-button class="view-details-button" aria-label="Ver detalles" (click)="openAnnouncementDetails(announcement)">
+                        <div matListItemMeta class="announcement-date">{{ announcement.created_at | date:'mediumDate' }}
+                        </div>
+                        <button mat-icon-button class="view-details-button" aria-label="Ver detalles"
+                            (click)="openAnnouncementDetails(announcement)">
                             <mat-icon>chevron_right</mat-icon>
                         </button>
                     </mat-list-item>
@@ -53,9 +55,12 @@
                     <mat-list-item *ngFor="let payment of pendingPayments" class="list-item-with-hover">
                         <mat-icon matListItemIcon class="list-icon-color">receipt_long</mat-icon>
                         <div matListItemTitle class="payment-concept">{{ payment.concept }}</div>
-                        <div matListItemLine class="payment-due-date">Vence: <span class="due-date-highlight">{{ payment.payment_date | date:'shortDate' }}</span></div>
-                        <div matListItemMeta class="payment-amount">{{ payment.amount | currency:(payment.currency_code || payment.currency) }} ({{ payment.currency_code || payment.currency }})</div>
-                        <button mat-icon-button class="view-details-button" aria-label="Ver detalles de pago" (click)="openPaymentDetails(payment)">
+                        <div matListItemLine class="payment-due-date">Vence: <span class="due-date-highlight">{{
+                                payment.payment_date | date:'shortDate' }}</span></div>
+                        <div matListItemMeta class="payment-amount">{{ payment.amount | currency:(payment.currency_code
+                            || payment.currency) }} ({{ payment.currency_code || payment.currency }})</div>
+                        <button mat-icon-button class="view-details-button" aria-label="Ver detalles de pago"
+                            (click)="openPaymentDetails(payment)">
                             <mat-icon>info</mat-icon>
                         </button>
                     </mat-list-item>
@@ -64,7 +69,8 @@
                     <div class="empty-state animated-fade-in">
                         <mat-icon class="empty-icon">check_circle</mat-icon>
                         <p>¡Felicidades! No tienes pagos pendientes.</p>
-                        <button mat-flat-button color="primary" class="upload-payment-button" (click)="uploadPaymentProof()">
+                        <button mat-flat-button color="primary" class="upload-payment-button"
+                            (click)="uploadPaymentProof()">
                             <mat-icon>cloud_upload</mat-icon> Subir Comprobante
                         </button>
                     </div>
@@ -89,14 +95,16 @@
                 <form [formGroup]="dateFilterForm" (ngSubmit)="applyDateFilter()" class="date-filter-form">
                     <mat-form-field appearance="outline">
                         <mat-label>Desde</mat-label>
-                        <input matInput [matDatepicker]="startDatePicker" formControlName="startDate" placeholder="Fecha de inicio">
+                        <input matInput [matDatepicker]="startDatePicker" formControlName="startDate"
+                            placeholder="Fecha de inicio">
                         <mat-datepicker-toggle matSuffix [for]="startDatePicker"></mat-datepicker-toggle>
                         <mat-datepicker #startDatePicker></mat-datepicker>
                     </mat-form-field>
 
                     <mat-form-field appearance="outline">
                         <mat-label>Hasta</mat-label>
-                        <input matInput [matDatepicker]="endDatePicker" formControlName="endDate" placeholder="Fecha de fin">
+                        <input matInput [matDatepicker]="endDatePicker" formControlName="endDate"
+                            placeholder="Fecha de fin">
                         <mat-datepicker-toggle matSuffix [for]="endDatePicker"></mat-datepicker-toggle>
                         <mat-datepicker #endDatePicker></mat-datepicker>
                     </mat-form-field>
@@ -104,7 +112,8 @@
                     <button mat-flat-button color="primary" type="submit" [disabled]="!dateFilterForm.dirty">
                         <mat-icon>filter_list</mat-icon> Filtrar
                     </button>
-                    <button mat-button type="button" (click)="clearDateFilter()" class="clear-filter-button" *ngIf="dateFilterForm.dirty">
+                    <button mat-button type="button" (click)="clearDateFilter()" class="clear-filter-button"
+                        *ngIf="dateFilterForm.dirty">
                         <mat-icon>clear</mat-icon> Limpiar
                     </button>
                 </form>
@@ -117,7 +126,7 @@
                     <mat-icon class="empty-icon">receipt</mat-icon>
                     <p>No tienes pagos en tu historial para el rango seleccionado o en general.</p>
                 </div>
-                
+
                 <div *ngIf="!isLoadingHistory && paymentHistory.length > 0" class="table-responsive">
                     <table mat-table [dataSource]="paymentHistory" class="payments-history-table">
                         <ng-container matColumnDef="concept">
@@ -132,12 +141,14 @@
 
                         <ng-container matColumnDef="amount">
                             <th mat-header-cell *matHeaderCellDef class="right-align"> Monto </th>
-                            <td mat-cell *matCellDef="let payment" class="right-align"> {{payment.amount | currency:(payment.currency_code || payment.currency):'symbol':'1.2-2'}} </td>
+                            <td mat-cell *matCellDef="let payment" class="right-align"> {{payment.amount |
+                                currency:(payment.currency_code || payment.currency):'symbol':'1.2-2'}} </td>
                         </ng-container>
 
                         <ng-container matColumnDef="currency">
                             <th mat-header-cell *matHeaderCellDef> Moneda </th>
-                            <td mat-cell *matCellDef="let payment"> {{(payment.currency_code || payment.currency)}} </td>
+                            <td mat-cell *matCellDef="let payment"> {{(payment.currency_code || payment.currency)}}
+                            </td>
                         </ng-container>
 
                         <ng-container matColumnDef="status">
@@ -148,11 +159,12 @@
                                 </span>
                             </td>
                         </ng-container>
-                        
+
                         <ng-container matColumnDef="proof_url">
                             <th mat-header-cell *matHeaderCellDef> Comprobante </th>
                             <td mat-cell *matCellDef="let payment">
-                                <a *ngIf="payment.proof_url" [href]="payment.proof_url" target="_blank" mat-icon-button aria-label="Ver comprobante">
+                                <a *ngIf="payment.proof_url" [href]="payment.proof_url" target="_blank" mat-icon-button
+                                    aria-label="Ver comprobante">
                                     <mat-icon color="primary">visibility</mat-icon>
                                 </a>
                                 <span *ngIf="!payment.proof_url">-</span>
@@ -169,12 +181,12 @@
     <section class="quick-actions mat-elevation-z4 animated-fade-in-up delay-3">
         <h2 class="mat-headline-6">Acciones Rápidas</h2>
         <div class="actions-grid">
-           
+
             <button mat-flat-button color="primary" (click)="openPaymentRegisterDialog()" class="action-button">
-                <mat-icon>add_card</mat-icon> 
+                <mat-icon>add_card</mat-icon>
                 <span>Reportar Pago</span>
             </button>
-            
+
 
             <button mat-flat-button color="accent" (click)="reportIssue()" class="action-button">
                 <mat-icon>report_problem</mat-icon>
