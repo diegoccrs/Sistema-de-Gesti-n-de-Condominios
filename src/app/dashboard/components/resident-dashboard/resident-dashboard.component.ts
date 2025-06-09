@@ -18,9 +18,9 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 
 // Imports for Payment Register Dialog
-import { MatDialog, MatDialogModule } from '@angular/material/dialog'; 
-import { PaymentRegisterComponent } from '../payment-register/payment-register.component'; 
-import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar'; 
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { PaymentRegisterComponent } from '../payment-register/payment-register.component';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 
 
 @Component({
@@ -43,25 +43,25 @@ import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
     MatFormFieldModule,
     MatInputModule,
     MatDialogModule,
-    MatSnackBarModule 
+    MatSnackBarModule
   ],
   templateUrl: './resident-dashboard.component.html',
   styleUrls: ['./resident-dashboard.component.css']
 })
 export class ResidentDashboardComponent implements OnInit {
-  
+
   announcements: any[] = [];
   pendingPayments: any[] = [];
   paymentHistory: Payment[] = [];
-  
-  isLoading = true; 
+
+  isLoading = true;
   isLoadingAnnouncements = true;
   isLoadingPayments = true;
   isLoadingHistory = true;
 
   errorMessage: string | null = null;
   residentName: string = 'Residente';
-  
+
   displayedPaymentHistoryColumns: string[] = ['concept', 'payment_date', 'amount', 'currency', 'status', 'proof_url'];
   dateFilterForm: FormGroup;
 
@@ -69,8 +69,8 @@ export class ResidentDashboardComponent implements OnInit {
     private router: Router,
     private supabaseService: SupabaseService,
     private fb: FormBuilder,
-    private dialog: MatDialog, 
-    private snackBar: MatSnackBar 
+    private dialog: MatDialog,
+    private snackBar: MatSnackBar
   ) {
     this.dateFilterForm = this.fb.group({
       startDate: [null],
@@ -95,26 +95,26 @@ export class ResidentDashboardComponent implements OnInit {
       this.isLoading = false;
     }
   }
-  
+
 
 
   openPaymentRegisterDialog(): void {
     const dialogRef = this.dialog.open(PaymentRegisterComponent, {
       width: '500px', // Or your preferred width
-      disableClose: true 
+      disableClose: true
     });
 
     dialogRef.afterClosed().subscribe(result => {
       if (result && result.success) {
         this.snackBar.open('Pago reportado exitosamente.', 'Cerrar', {
           duration: 3000,
-          panelClass: ['snackbar-success'] 
+          panelClass: ['snackbar-success']
         });
         // Refresh payment lists
         this.loadPendingPayments();
         this.loadPaymentHistory(this.dateFilterForm.value.startDate, this.dateFilterForm.value.endDate);
       } else if (result && result.error) {
-         this.snackBar.open(`Error al reportar pago: ${result.error}`, 'Cerrar', {
+        this.snackBar.open(`Error al reportar pago: ${result.error}`, 'Cerrar', {
           duration: 5000,
           panelClass: ['snackbar-error']
         });
@@ -122,9 +122,9 @@ export class ResidentDashboardComponent implements OnInit {
       // If result is undefined (dialog closed without action), do nothing
     });
   }
-  
+
   private async loadUserProfile() {
-    const user = await this.supabaseService.getCurrentUser(); 
+    const user = await this.supabaseService.getCurrentUser();
     if (!user?.id) {
       console.error('Error obteniendo sesión del usuario o ID de usuario no disponible.');
       this.residentName = 'Usuario';
@@ -133,7 +133,7 @@ export class ResidentDashboardComponent implements OnInit {
     const userId = user.id;
 
     try {
-      const profile = await this.supabaseService.getProfile(userId); 
+      const profile = await this.supabaseService.getProfile(userId);
       if (profile && profile.first_name) {
         this.residentName = profile.first_name;
       } else {
@@ -165,7 +165,7 @@ export class ResidentDashboardComponent implements OnInit {
 
   private async loadPendingPayments() {
     this.isLoadingPayments = true;
-    const user = await this.supabaseService.getCurrentUser(); 
+    const user = await this.supabaseService.getCurrentUser();
     if (!user?.id) {
       this.isLoadingPayments = false;
       return;
@@ -173,17 +173,17 @@ export class ResidentDashboardComponent implements OnInit {
     const userId = user.id;
 
     try {
-      const { data, error } = await this.supabaseService.supabase 
+      const { data, error } = await this.supabaseService.supabase
         .from('payments')
-        .select('*') 
+        .select('*')
         .eq('resident_id', userId)
         .eq('status', 'pending')
-        .order('reported_at', { ascending: true }); 
+        .order('reported_at', { ascending: true });
 
       if (error) throw error;
       this.pendingPayments = data?.map(p => ({
-          ...p,
-          currency_code: p.currency 
+        ...p,
+        currency_code: p.currency
       })) || [];
     } catch (error: any) {
       console.error("Error en loadPendingPayments:", error);
@@ -191,9 +191,9 @@ export class ResidentDashboardComponent implements OnInit {
       this.isLoadingPayments = false;
     }
   }
-   private async loadPaymentHistory(startDate?: Date, endDate?: Date) {
+  private async loadPaymentHistory(startDate?: Date, endDate?: Date) {
     this.isLoadingHistory = true;
-    this.errorMessage = null; 
+    this.errorMessage = null;
     const user = await this.supabaseService.getCurrentUser();
     if (!user?.id) {
       console.warn('Usuario no autenticado, no se puede cargar el historial de pagos.');
@@ -206,20 +206,20 @@ export class ResidentDashboardComponent implements OnInit {
       let finalEndDate: string | undefined;
 
       if (startDate) {
-        finalStartDate = startDate.toISOString().split('T')[0]; 
+        finalStartDate = startDate.toISOString().split('T')[0];
       }
       if (endDate) {
         const endOfDay = new Date(endDate);
         endOfDay.setHours(23, 59, 59, 999);
         finalEndDate = endOfDay.toISOString();
       }
-      
+
       this.paymentHistory = await this.supabaseService.getPaymentsByResident(user.id, finalStartDate, finalEndDate);
       this.paymentHistory.sort((a, b) => new Date(b.payment_date).getTime() - new Date(a.payment_date).getTime());
     } catch (error: any) {
       console.error('Error al cargar el historial de pagos:', error);
       this.errorMessage = 'No se pudo cargar el historial de pagos.';
-      this.paymentHistory = []; 
+      this.paymentHistory = [];
     } finally {
       this.isLoadingHistory = false;
     }
@@ -228,18 +228,18 @@ export class ResidentDashboardComponent implements OnInit {
   applyDateFilter() {
     const { startDate, endDate } = this.dateFilterForm.value;
     if (startDate && endDate && endDate < startDate) {
-        this.errorMessage = 'La fecha "Hasta" no puede ser anterior a la fecha "Desde".';
-        return;
+      this.errorMessage = 'La fecha "Hasta" no puede ser anterior a la fecha "Desde".';
+      return;
     }
     this.loadPaymentHistory(startDate, endDate);
   }
 
   clearDateFilter() {
     this.dateFilterForm.reset();
-    this.loadPaymentHistory(); 
-    this.errorMessage = null; 
+    this.loadPaymentHistory();
+    this.errorMessage = null;
   }
-  
+
   openAnnouncementDetails(announcement: any) {
     console.log('Ver detalles del anuncio:', announcement);
     this.errorMessage = 'Visualización de detalles de anuncio en desarrollo.';
@@ -250,10 +250,76 @@ export class ResidentDashboardComponent implements OnInit {
     this.errorMessage = 'Visualización de detalles de pago en desarrollo.';
   }
 
-  uploadPaymentProof() {
-    console.log('Navegar a subir comprobante');
-    this.errorMessage = 'Funcionalidad "Subir Comprobante" en desarrollo.';
+  async uploadPaymentProof() {
+    try {
+      const input = document.createElement('input');
+      input.type = 'file';
+      input.accept = '.pdf,.jpg,.jpeg,.png';
+
+      input.onchange = async () => {
+        const file = input.files?.[0];
+        if (!file) return;
+
+        const user = await this.supabaseService.getCurrentUser();
+        if (!user || !user.id) {
+          this.snackBar.open('No se pudo identificar al usuario.', 'Cerrar', { duration: 3000 });
+          return;
+        }
+
+        if (!this.pendingPayments || this.pendingPayments.length === 0) {
+          this.snackBar.open('No hay pagos pendientes para adjuntar comprobante.', 'Cerrar', { duration: 3000 });
+          return;
+        }
+
+        const payment = this.pendingPayments[0]; // Tomar el primer pago pendiente
+        const fileExt = file.name.split('.').pop();
+        const filePath = `proofs/${user.id}_${payment.id}.${fileExt}`;
+
+        // Subir el archivo al bucket 'pagos-adjuntos'
+        const { error: uploadError } = await this.supabaseService.supabase.storage
+          .from('pagos-adjuntos')
+          .upload(filePath, file, { upsert: true });
+
+        if (uploadError) {
+          console.error('Error al subir archivo:', uploadError);
+          this.snackBar.open('Error al subir el archivo.', 'Cerrar', { duration: 3000 });
+          return;
+        }
+
+        // Obtener la URL pública del archivo
+        const { data: publicUrlData } = this.supabaseService.supabase
+          .storage
+          .from('pagos-adjuntos')
+          .getPublicUrl(filePath);
+
+        const publicUrl = publicUrlData.publicUrl;
+
+        // Actualizar la fila en la tabla payments con el URL del comprobante
+        const { error: updateError } = await this.supabaseService.supabase
+          .from('payments')
+          .update({ proof_url: publicUrl })
+          .eq('id', payment.id);
+
+        if (updateError) {
+          console.error('Error al actualizar la base de datos:', updateError);
+          this.snackBar.open('Comprobante subido, pero no se pudo registrar el enlace.', 'Cerrar', { duration: 3000 });
+          return;
+        }
+
+        this.snackBar.open('¡Comprobante subido exitosamente!', 'Cerrar', { duration: 3000 });
+
+        // Recargar pagos pendientes e historial
+        this.loadPendingPayments();
+        this.loadPaymentHistory(this.dateFilterForm.value.startDate, this.dateFilterForm.value.endDate);
+      };
+
+      input.click();
+    } catch (error) {
+      console.error('Error general en uploadPaymentProof:', error);
+      this.snackBar.open('Ocurrió un error inesperado al subir el comprobante.', 'Cerrar', { duration: 3000 });
+    }
   }
+
 
   reportIssue() {
     console.log('Navegar a reportar problema');
