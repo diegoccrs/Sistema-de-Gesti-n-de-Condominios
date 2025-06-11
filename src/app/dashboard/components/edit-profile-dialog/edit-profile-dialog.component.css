@@ -11,7 +11,7 @@ h2 {
     margin-bottom: 24px;
     font-size: 1.5rem;
     color: #2c3e50;
-    border-bottom: 2px solid #3498db;
+    border-bottom: 2px solid #ff4081;
     padding-bottom: 8px;
 }
 
@@ -32,11 +32,11 @@ button[mat-button] {
 }
 
 button[mat-raised-button] {
-    background-color: #3498db;
+    background-color: #ff4081;
     color: white;
     transition: background-color 0.3s ease;
 }
 
 button[mat-raised-button]:hover {
-    background-color: #2980b9;
+    background-color: #ff4081;
 }
