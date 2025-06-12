@@ -1,15 +1,24 @@
-<h2>Elegir Método de Pago</h2>
-<p>Concepto: <strong>{{ data.concept }}</strong></p>
-<p>Monto: <strong>{{ data.amount | currency:(data.currency_code || data.currency) }}</strong></p>
+<h2 mat-dialog-title>Selecciona un Método de Pago</h2>
 
-<div class="payment-options">
-    <button mat-flat-button color="primary" (click)="selectMethod('paypal')">
-        <mat-icon>account_balance_wallet</mat-icon> Pagar con PayPal
-    </button>
-    <button mat-flat-button color="accent" (click)="selectMethod('stripe')">
-        <mat-icon>credit_card</mat-icon> Pagar con Stripe
-    </button>
-    <button mat-flat-button color="warn" (click)="selectMethod('mercadopago')">
-        <mat-icon>payments</mat-icon> Pagar con MercadoPago
-    </button>
-</div>
+<mat-dialog-content>
+    <div class="payment-details">
+        <p><strong>Concepto:</strong> {{ payment.concept }}</p>
+        <p><strong>Monto:</strong> {{ payment.amount | currency:payment.currency }}</p>
+    </div>
+
+    <div class="payment-methods">
+        <button mat-raised-button color="primary" (click)="selectMethod('paypal')">
+            <img src="/assets/icons/paypal.png" alt="PayPal" class="payment-icon" />
+        </button>
+        <button mat-raised-button color="accent" (click)="selectMethod('stripe')">
+            <img src="/assets/icons/stripe.png" alt="Stripe" class="payment-icon" />
+        </button>
+        <button mat-raised-button color="warn" (click)="selectMethod('mercadopago')">
+            <img src="/assets/icons/mercadopago.png" alt="MercadoPago" class="payment-icon" />
+        </button>
+    </div>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+    <button mat-button (click)="dialogRef.close()">Cancelar</button>
+</mat-dialog-actions>
