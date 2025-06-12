@@ -9,37 +9,91 @@
 }
 
 @keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
 }
 
 @keyframes fadeInUp {
-    from { opacity: 0; transform: translateY(20px); }
-    to { opacity: 1; transform: translateY(0); }
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 @keyframes fadeInDown {
-    from { opacity: 0; transform: translateY(-20px); }
-    to { opacity: 1; transform: translateY(0); }
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 @keyframes slideInLeft {
-    from { opacity: 0; transform: translateX(-50px); }
-    to { opacity: 1; transform: translateX(0); }
+    from {
+        opacity: 0;
+        transform: translateX(-50px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
 }
 
 @keyframes slideInRight {
-    from { opacity: 0; transform: translateX(50px); }
-    to { opacity: 1; transform: translateX(0); }
+    from {
+        opacity: 0;
+        transform: translateX(50px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
 }
 
-.animated-fade-in { animation: fadeIn 0.8s ease-out forwards; opacity: 0; }
-.animated-fade-in-up { animation: fadeInUp 0.8s ease-out forwards; opacity: 0; }
-.animated-fade-in-down { animation: fadeInDown 0.8s ease-out forwards; opacity: 0; }
-.animated-slide-in-left { animation: slideInLeft 0.8s ease-out forwards; opacity: 0; }
-.animated-slide-in-right { animation: slideInRight 0.8s ease-out forwards; opacity: 0; }
+.animated-fade-in {
+    animation: fadeIn 0.8s ease-out forwards;
+    opacity: 0;
+}
 
-.delay-4 { animation-delay: 0.8s; }
+.animated-fade-in-up {
+    animation: fadeInUp 0.8s ease-out forwards;
+    opacity: 0;
+}
+
+.animated-fade-in-down {
+    animation: fadeInDown 0.8s ease-out forwards;
+    opacity: 0;
+}
+
+.animated-slide-in-left {
+    animation: slideInLeft 0.8s ease-out forwards;
+    opacity: 0;
+}
+
+.animated-slide-in-right {
+    animation: slideInRight 0.8s ease-out forwards;
+    opacity: 0;
+}
+
+.delay-4 {
+    animation-delay: 0.8s;
+}
 
 .dashboard-container {
     position: relative;
@@ -163,13 +217,15 @@ mat-list-item:last-child {
     color: #5c6bc0;
 }
 
-.announcement-title, .payment-concept {
+.announcement-title,
+.payment-concept {
     font-weight: 600;
     color: #424242;
     font-size: 1.05rem;
 }
 
-.announcement-preview, .payment-due-date {
+.announcement-preview,
+.payment-due-date {
     color: #757575;
     font-size: 0.9rem;
 }
@@ -194,6 +250,7 @@ mat-list-item:last-child {
     color: #757575;
     transition: color 0.2s ease;
 }
+
 .view-details-button:hover {
     color: #3f51b5;
 }
@@ -226,6 +283,7 @@ mat-card-actions {
     border-radius: 6px;
     transition: transform 0.2s ease;
 }
+
 .upload-payment-button:hover {
     transform: translateY(-2px);
 }
@@ -284,6 +342,7 @@ mat-card-actions {
     padding: 30px;
     color: #7f8c8d;
 }
+
 .loading-state p {
     margin-top: 10px;
     font-size: 0.9rem;
@@ -302,6 +361,7 @@ mat-card-actions {
     align-items: center;
     z-index: 2000;
 }
+
 .global-loading-overlay p {
     margin-top: 15px;
     font-size: 1.1rem;
@@ -336,22 +396,28 @@ mat-card-actions {
     .dashboard-container {
         padding: 20px;
     }
+
     .dashboard-header h1 {
         font-size: 3rem;
     }
+
     .main-content {
         grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
         gap: 25px;
     }
+
     .section-card {
         padding: 20px;
     }
+
     .section-card .mat-headline-6 {
         font-size: 1.4rem;
     }
+
     .quick-actions h2 {
         font-size: 1.6rem;
     }
+
     .actions-grid {
         grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
         gap: 15px;
@@ -362,47 +428,60 @@ mat-card-actions {
     .dashboard-container {
         padding: 15px;
     }
+
     .dashboard-header h1 {
         font-size: 2.5rem;
     }
+
     .dashboard-header .subtitle {
         font-size: 1rem;
     }
+
     .user-profile-widget {
         position: static;
         margin: 0 auto 20px;
         display: block;
         text-align: center;
     }
+
     .main-content {
         grid-template-columns: 1fr;
         gap: 20px;
     }
+
     .section-card {
         padding: 15px;
     }
+
     .section-card .mat-headline-6 {
         font-size: 1.3rem;
     }
+
     .list-item-with-hover {
         padding: 10px 0 !important;
     }
+
     .quick-actions {
         padding: 20px;
     }
+
     .quick-actions h2 {
         font-size: 1.4rem;
     }
+
     .actions-grid {
         grid-template-columns: 1fr;
     }
+
     .action-button {
         padding: 12px 15px;
         font-size: 0.9rem;
     }
+
     .action-button mat-icon {
         font-size: 28px;
     }
+
     .error-message {
         padding: 12px;
         font-size: 0.9em;
@@ -413,21 +492,26 @@ mat-card-actions {
     .dashboard-header h1 {
         font-size: 2rem;
     }
+
     .section-card .mat-card-avatar {
         width: 48px;
         height: 48px;
         font-size: 24px;
     }
+
     .section-card .mat-headline-6 {
         font-size: 1.2rem;
     }
+
     .section-card mat-card-subtitle {
         font-size: 0.85rem;
     }
+
     .list-item-with-hover .announcement-preview,
     .list-item-with-hover .payment-due-date {
         font-size: 0.8rem;
     }
+
     .payment-amount {
         font-size: 0.9rem;
     }
@@ -456,6 +540,7 @@ mat-card-actions {
     background-color: #f9f9f9;
     font-size: 0.95rem;
 }
+
 .right-align {
     text-align: right;
 }
@@ -498,7 +583,7 @@ mat-card-actions {
     padding: 15px;
     background-color: #fcfcfc;
     border-radius: 8px;
-    box-shadow: inset 0 1px 3px rgba(0,0,0,0.05);
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.05);
 }
 
 .date-filter-form mat-form-field {
@@ -525,4 +610,18 @@ app-neighbor-directory {
     display: block;
     width: 100%;
     box-sizing: border-box;
+}
+
+.clickable-payment {
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.clickable-payment:hover {
+    background-color: #f5f5f5;
+}
+
+.amount-right {
+    margin-left: auto;
+    font-weight: 500;
 }

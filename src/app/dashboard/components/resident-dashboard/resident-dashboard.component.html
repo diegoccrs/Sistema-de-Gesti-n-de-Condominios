@@ -51,20 +51,24 @@
                     <mat-spinner diameter="30"></mat-spinner>
                     <p>Cargando pagos...</p>
                 </div>
-                <mat-list *ngIf="!isLoadingPayments && pendingPayments.length > 0; else noPayments">
-                    <mat-list-item *ngFor="let payment of pendingPayments" class="list-item-with-hover">
-                        <mat-icon matListItemIcon class="list-icon-color">receipt_long</mat-icon>
-                        <div matListItemTitle class="payment-concept">{{ payment.concept }}</div>
-                        <div matListItemLine class="payment-due-date">Vence: <span class="due-date-highlight">{{
-                                payment.payment_date | date:'shortDate' }}</span></div>
-                        <div matListItemMeta class="payment-amount">{{ payment.amount | currency:(payment.currency_code
-                            || payment.currency) }} ({{ payment.currency_code || payment.currency }})</div>
-                        <button mat-icon-button class="view-details-button" aria-label="Ver detalles de pago"
-                            (click)="openPaymentDetails(payment)">
-                            <mat-icon>info</mat-icon>
-                        </button>
+                <mat-list>
+                    <mat-list-item *ngFor="let payment of pendingPayments" class="clickable-payment"
+                        (click)="openPaymentMethods(payment)">
+                        <mat-icon matListIcon>event_note</mat-icon>
+                        <div matLine>
+                            <strong>{{ payment.concept }}</strong>
+                        </div>
+                        <div matLine>
+                            Vence: <span style="color: #E67E22; font-weight: 600">{{ payment.payment_date | date:
+                                'shortDate' }}</span>
+                        </div>
+                        <div matLine class="amount-right">
+                            {{ payment.amount | currency:(payment.currency_code || payment.currency) }} ({{
+                            payment.currency_code || payment.currency }})
+                        </div>
                     </mat-list-item>
                 </mat-list>
+
                 <ng-template #noPayments>
                     <div class="empty-state animated-fade-in">
                         <mat-icon class="empty-icon">check_circle</mat-icon>
