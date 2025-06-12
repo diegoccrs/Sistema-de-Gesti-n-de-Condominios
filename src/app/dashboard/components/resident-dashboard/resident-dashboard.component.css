@@ -1,15 +1,13 @@
-/* Importa Google Fonts para una tipografía moderna y consistente */
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&family=Open+Sans:wght@400;600;700&display=swap');
 
 :host {
     display: block;
     overflow-x: hidden;
-    background-color: #f0f2f5; /* Fondo más suave */
+    background-color: #f0f2f5;
     min-height: 100vh;
     font-family: 'Open Sans', sans-serif;
 }
 
-/* --- Animaciones de Entrada --- */
 @keyframes fadeIn {
     from { opacity: 0; }
     to { opacity: 1; }
@@ -41,40 +39,31 @@
 .animated-slide-in-left { animation: slideInLeft 0.8s ease-out forwards; opacity: 0; }
 .animated-slide-in-right { animation: slideInRight 0.8s ease-out forwards; opacity: 0; }
 
-.delay-1 { animation-delay: 0.2s; }
-.delay-2 { animation-delay: 0.4s; }
-.delay-3 { animation-delay: 0.6s; }
-
+.delay-4 { animation-delay: 0.8s; }
 
 .dashboard-container {
     position: relative;
-    padding: 30px; /* Más padding para el contenedor principal */
-    max-width: 1400px; /* Un poco más ancho para pantallas grandes */
+    padding: 30px;
+    max-width: 1400px;
     margin: 0 auto;
 }
 
-/* --- Encabezado del Dashboard --- */
 .dashboard-header {
     text-align: center;
     margin-bottom: 40px;
-    position: relative; /* Para posicionar el user-profile-button */
+    position: relative;
 }
 
 .user-profile-widget {
     position: absolute;
     top: 0;
     right: 0;
-    z-index: 10; /* Asegura que esté encima de otros elementos */
-    /* Para móviles, puedes centrarlo o ajustar */
-    @media (max-width: 768px) {
-        position: static; /* Quita el posicionamiento absoluto */
-        margin-bottom: 20px; /* Añade espacio */
-    }
+    z-index: 10;
 }
 
 .dashboard-header h1 {
     font-family: 'Montserrat', sans-serif;
-    font-size: 3.5rem; /* Título más grande y amigable */
+    font-size: 3.5rem;
     font-weight: 800;
     color: #2c3e50;
     margin-bottom: 10px;
@@ -87,20 +76,21 @@
     color: #616161;
 }
 
-/* --- Contenido Principal (Tarjetas de Sección) --- */
 .main-content {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(380px, 1fr)); /* Tarjetas más grandes y responsivas */
-    gap: 30px; /* Más espacio entre tarjetas */
+    grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+    gap: 30px;
     margin-bottom: 40px;
 }
 
 .section-card {
     background-color: white;
     border-radius: 12px;
-    padding: 25px; /* Más padding interno */
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1); /* Sombra más definida */
+    padding: 25px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
     transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+    display: flex;
+    flex-direction: column;
 }
 
 .section-card:hover {
@@ -115,8 +105,8 @@
 }
 
 .section-card mat-card-avatar {
-    background-color: #e3f2fd; /* Fondo claro para el avatar */
-    color: #3f51b5; /* Color primario para iconos */
+    background-color: #e3f2fd;
+    color: #3f51b5;
     width: 55px;
     height: 55px;
     font-size: 30px;
@@ -148,12 +138,16 @@
     margin-left: 15px;
 }
 
-/* Listas (Anuncios y Pagos) */
+.section-card mat-card-content {
+    flex-grow: 1;
+    padding: 0;
+}
+
 mat-list-item {
     border-bottom: 1px solid #eee;
-    padding: 15px 0 !important; /* Asegura el padding vertical */
+    padding: 15px 0 !important;
     transition: background-color 0.2s ease;
-    cursor: pointer; /* Indicar que los elementos son clickeables */
+    cursor: pointer;
 }
 
 mat-list-item:last-child {
@@ -166,7 +160,7 @@ mat-list-item:last-child {
 }
 
 .list-icon-color {
-    color: #5c6bc0; /* Color consistente para los iconos de lista */
+    color: #5c6bc0;
 }
 
 .announcement-title, .payment-concept {
@@ -188,12 +182,12 @@ mat-list-item:last-child {
 .payment-amount {
     font-size: 1rem;
     font-weight: 700;
-    color: #2ecc71; /* Verde para montos positivos */
+    color: #2ecc71;
 }
 
 .due-date-highlight {
     font-weight: 600;
-    color: #e67e22; /* Naranja para fechas de vencimiento */
+    color: #e67e22;
 }
 
 .view-details-button {
@@ -204,7 +198,6 @@ mat-list-item:last-child {
     color: #3f51b5;
 }
 
-/* Estados vacíos */
 .empty-state {
     text-align: center;
     padding: 30px 20px;
@@ -218,13 +211,12 @@ mat-list-item:last-child {
     margin-bottom: 15px;
 }
 
-/* Botones de acción en tarjetas */
 mat-card-actions {
     padding: 15px 25px 0;
     border-top: 1px solid #eee;
     margin-top: 20px;
     display: flex;
-    justify-content: flex-end; /* Alinea el botón a la derecha */
+    justify-content: flex-end;
 }
 
 .upload-payment-button {
@@ -238,7 +230,6 @@ mat-card-actions {
     transform: translateY(-2px);
 }
 
-/* --- Sección de Acciones Rápidas --- */
 .quick-actions {
     background-color: white;
     border-radius: 12px;
@@ -269,7 +260,7 @@ mat-card-actions {
     font-weight: 600;
     border-radius: 8px;
     display: flex;
-    flex-direction: column; /* Icono arriba, texto abajo */
+    flex-direction: column;
     align-items: center;
     gap: 8px;
     transition: transform 0.2s ease, box-shadow 0.2s ease;
@@ -277,7 +268,7 @@ mat-card-actions {
 
 .action-button mat-icon {
     font-size: 32px;
-    margin-bottom: 5px; /* Espacio entre icono y texto */
+    margin-bottom: 5px;
 }
 
 .action-button:hover {
@@ -285,7 +276,6 @@ mat-card-actions {
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
 }
 
-/* --- Mensajes de Estado (Carga y Error) --- */
 .loading-state {
     display: flex;
     flex-direction: column;
@@ -299,7 +289,7 @@ mat-card-actions {
     font-size: 0.9rem;
 }
 
-.global-loading-overlay { /* Si decides usar un spinner global */
+.global-loading-overlay {
     position: fixed;
     top: 0;
     left: 0;
@@ -342,7 +332,6 @@ mat-card-actions {
     color: #f44336;
 }
 
-/* --- Media Queries para Responsividad --- */
 @media (max-width: 1024px) {
     .dashboard-container {
         padding: 20px;
@@ -382,11 +371,11 @@ mat-card-actions {
     .user-profile-widget {
         position: static;
         margin: 0 auto 20px;
-        display: block; /* Para centrar si es un div */
-        text-align: center; /* Si es un componente, que su contenido se centre */
+        display: block;
+        text-align: center;
     }
     .main-content {
-        grid-template-columns: 1fr; /* Una columna en móviles */
+        grid-template-columns: 1fr;
         gap: 20px;
     }
     .section-card {
@@ -405,7 +394,7 @@ mat-card-actions {
         font-size: 1.4rem;
     }
     .actions-grid {
-        grid-template-columns: 1fr; /* Una columna en móviles */
+        grid-template-columns: 1fr;
     }
     .action-button {
         padding: 12px 15px;
@@ -444,144 +433,96 @@ mat-card-actions {
     }
 }
 
-/* Payment History Section  */
-.payment-history-section {
-    margin-top: 40px; 
-    background-color: white;
-    border-radius: 12px;
-    padding: 25px;
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
-}
-
-.payment-history-section .mat-card-header {
-    margin-bottom: 20px;
-}
-
-.payment-history-section .mat-headline-6 {
-    font-family: 'Montserrat', sans-serif;
-    font-size: 1.5rem;
-    font-weight: 700;
-    color: #333;
-    margin-left: 15px;
-    margin-bottom: 5px;
-}
-
-.payment-history-section mat-card-subtitle {
-    font-family: 'Open Sans', sans-serif;
-    font-size: 0.95rem;
-    color: #757575;
-    margin-left: 15px;
-}
-
 .table-responsive {
-  overflow-x: auto; /* Allows table to scroll horizontally on small screens */
+    overflow-x: auto;
 }
 
 .payments-history-table {
-  width: 100%;
-  margin-top: 20px;
+    width: 100%;
+    margin-top: 20px;
+    border-collapse: collapse;
 }
 
 .payments-history-table th.mat-header-cell,
 .payments-history-table td.mat-cell {
-  padding: 8px 16px;
-  border-bottom: 1px solid #eee;
+    padding: 12px 16px;
+    border-bottom: 1px solid #eee;
+    text-align: left;
 }
 
 .payments-history-table th.mat-header-cell {
-  font-weight: 600;
-  color: #555;
-  background-color: #f9f9f9;
+    font-weight: 600;
+    color: #555;
+    background-color: #f9f9f9;
+    font-size: 0.95rem;
 }
 .right-align {
     text-align: right;
 }
 
-/* Status Badges */
 .status-badge {
-  padding: 4px 8px;
-  border-radius: 12px;
-  font-size: 0.85em;
-  font-weight: 500;
-  color: white;
-  text-transform: capitalize;
+    padding: 6px 10px;
+    border-radius: 16px;
+    font-size: 0.8em;
+    font-weight: 600;
+    color: white;
+    text-transform: capitalize;
+    display: inline-block;
+    min-width: 70px;
+    text-align: center;
 }
 
 .status-pending {
-  background-color: #ffc107; /* Amber */
-  color: #333;
+    background-color: #ffc107;
+    color: #333;
 }
 
 .status-confirmed {
-  background-color: #4caf50; /* Green */
+    background-color: #4caf50;
 }
 
 .status-rejected {
-  background-color: #f44336; /* Red */
+    background-color: #f44336;
 }
 
-.status-approved { 
-  background-color: #2196f3; /* Blue */
-}
-
-
-/* Ensure the new section cards also have hover effects if desired */
-.payment-history-section .section-card:hover {
-    transform: translateY(-8px);
-    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
-}
-
-/* Adjustments for empty state in history table */
-.payment-history-section .empty-state {
-    text-align: center;
-    padding: 30px 20px;
-    color: #7f8c8d;
-    font-size: 1rem;
-}
-
-.payment-history-section .empty-state .empty-icon {
-    font-size: 48px;
-    color: #ccc;
-    margin-bottom: 15px;
-}
-
-/* Adjust loading state for history */
-.payment-history-section .loading-state {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 30px;
-    color: #7f8c8d;
-}
-.payment-history-section .loading-state p {
-    margin-top: 10px;
-    font-size: 0.9rem;
+.status-approved {
+    background-color: #2196f3;
 }
 
 .date-filter-form {
-  display: flex;
-  flex-wrap: wrap; 
-  align-items: center;
-  gap: 16px; 
-  margin-bottom: 20px; 
-  padding: 10px;
-  background-color: #f9f9f9; 
-  border-radius: 8px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 20px;
+    padding: 15px;
+    background-color: #fcfcfc;
+    border-radius: 8px;
+    box-shadow: inset 0 1px 3px rgba(0,0,0,0.05);
 }
 
 .date-filter-form mat-form-field {
-  flex-grow: 1; 
-  min-width: 200px;
+    flex-grow: 1;
+    min-width: 200px;
+    margin-bottom: 0;
 }
 
 .date-filter-form button {
-  height: 50px;
+    height: 50px;
+    min-width: 120px;
+    font-weight: 600;
 }
 
-.date-filter-form .clear-filter-button mat-icon {
-  margin-right: 4px; 
-}
 .date-filter-form button mat-icon {
     margin-right: 8px;
+}
+
+.section-card mat-card-content app-neighbor-directory {
+    padding: 0;
+}
+
+app-neighbor-directory {
+    display: block;
+    width: 100%;
+    box-sizing: border-box;
 }

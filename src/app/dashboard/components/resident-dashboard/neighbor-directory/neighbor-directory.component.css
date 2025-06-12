@@ -1,0 +1,112 @@
+/* src/app/features/resident/neighbor-directory/neighbor-directory.component.css */
+
+.directory-container {
+  max-width: 900px;
+  margin: 20px auto;
+  padding: 20px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.directory-container h2 {
+  font-size: 2em;
+  color: #333;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+/* Estilos para la barra de búsqueda */
+.search-bar {
+  margin-bottom: 20px;
+}
+
+.search-input {
+  width: 100%;
+  padding: 10px 15px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  font-size: 1em;
+  box-sizing: border-box; /* Incluye padding y borde en el ancho total */
+}
+
+.search-input:focus {
+  outline: none;
+  border-color: #007bff; /* Color de enfoque azul */
+  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25);
+}
+
+/* Estilos para la tabla */
+.table-responsive {
+  overflow-x: auto; /* Permite desplazamiento horizontal en pantallas pequeñas */
+  margin-top: 20px;
+  border-radius: 8px;
+  overflow: hidden; /* Para que los bordes redondeados se apliquen a la tabla */
+}
+
+.neighbors-table {
+  width: 100%;
+  border-collapse: collapse; /* Elimina el espacio entre las celdas */
+  min-width: 600px; /* Asegura que la tabla no sea demasiado estrecha en pantallas pequeñas */
+  background-color: #fff;
+}
+
+.neighbors-table thead {
+  background-color: #e9ecef;
+}
+
+.neighbors-table th {
+  padding: 12px 15px;
+  text-align: left;
+  font-size: 0.9em;
+  color: #555;
+  text-transform: uppercase;
+  border-bottom: 1px solid #ddd;
+}
+
+.neighbors-table tbody tr {
+  border-bottom: 1px solid #eee;
+}
+
+.neighbors-table tbody tr:last-child {
+  border-bottom: none; /* No hay borde en la última fila */
+}
+
+.neighbors-table tbody tr:hover {
+  background-color: #f2f2f2; /* Efecto hover en las filas */
+}
+
+.neighbors-table td {
+  padding: 10px 15px;
+  font-size: 1em;
+  color: #333;
+  vertical-align: top; /* Alinea el contenido de la celda en la parte superior */
+}
+
+/* Estilos para los mensajes de estado */
+.status-message {
+  padding: 15px;
+  margin-bottom: 20px;
+  border-radius: 5px;
+  text-align: center;
+  font-size: 1.1em;
+}
+
+.loading-message {
+  background-color: #e0f7fa;
+  color: #007bff;
+  border: 1px solid #b2ebf2;
+}
+
+.no-results-message,
+.info-message {
+  background-color: #fff3cd;
+  color: #856404;
+  border: 1px solid #ffeeba;
+}
+
+.error-message {
+  background-color: #f8d7da;
+  color: #721c24;
+  border: 1px solid #f5c6cb;
+}
