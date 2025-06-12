@@ -1,0 +1,14 @@
+h2 {
+    margin-bottom: 10px;
+}
+
+.payment-options {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 20px;
+}
+
+button mat-icon {
+    margin-right: 8px;
+}

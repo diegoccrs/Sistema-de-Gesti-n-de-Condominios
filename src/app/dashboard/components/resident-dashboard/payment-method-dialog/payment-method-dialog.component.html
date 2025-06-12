@@ -1,0 +1,15 @@
+<h2>Elegir Método de Pago</h2>
+<p>Concepto: <strong>{{ data.concept }}</strong></p>
+<p>Monto: <strong>{{ data.amount | currency:(data.currency_code || data.currency) }}</strong></p>
+
+<div class="payment-options">
+    <button mat-flat-button color="primary" (click)="selectMethod('paypal')">
+        <mat-icon>account_balance_wallet</mat-icon> Pagar con PayPal
+    </button>
+    <button mat-flat-button color="accent" (click)="selectMethod('stripe')">
+        <mat-icon>credit_card</mat-icon> Pagar con Stripe
+    </button>
+    <button mat-flat-button color="warn" (click)="selectMethod('mercadopago')">
+        <mat-icon>payments</mat-icon> Pagar con MercadoPago
+    </button>
+</div>
