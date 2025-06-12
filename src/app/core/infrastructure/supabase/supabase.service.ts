@@ -77,7 +77,7 @@ export class SupabaseService {
       .eq('id', id)
       .single(); 
     
-    if (error && error.code !== 'PGRST116') { // PGRST116 es "no rows found"
+    if (error && error.code !== 'PGRST116') { 
       console.error('Error al obtener el perfil (no PGRST116):', error);
       throw error;
     }
@@ -96,11 +96,41 @@ export class SupabaseService {
     return data;
   }
 
+  // ==================== INICIO: MÉTODOS PARA HU-08 (BÚSQUEDA DE VECINOS) ====================
+  /**
+   * Busca perfiles de usuarios por nombre (nombre o apellido) o número de apartamento.
+   * Selecciona solo los campos públicos relevantes para la búsqueda de vecinos.
+   * @param searchTerm El término de búsqueda (nombre, apellido o apartamento).
+   * @returns Un Promise con la lista de perfiles encontrados o null en caso de error.
+   */
+  async searchProfiles(searchTerm: string): Promise<Profile[] | null> {
+    try {
+      // Seleccionamos específicamente las columnas que son necesarias y públicas.
+      // Esto es crucial para la seguridad junto con la política RLS.
+      const { data, error } = await this.supabase
+        .from('profiles')
+        .select('id, first_name, last_name, apartment') // ✅ Columnas a seleccionar
+        // Usamos 'or' para buscar en cualquiera de las columnas (nombre, apellido, apartamento)
+        // 'ilike' permite la búsqueda parcial e insensible a mayúsculas/minúsculas
+        .or(`first_name.ilike.%${searchTerm}%,last_name.ilike.%${searchTerm}%,apartment.ilike.%${searchTerm}%`); // ✅ Condición de búsqueda
+
+      if (error) {
+        throw error;
+      }
+      return data as Profile[];
+    } catch (error) {
+      console.error('Error al buscar perfiles de vecinos:', error); // Mensaje de error más específico
+      return null;
+    }
+  }
+  // ==================== FIN: MÉTODOS PARA HU-08 (BÚSQUEDA DE VECINOS) ====================
+
+
   // ==================== PAYMENT METHODS ====================
   async getPaymentsByResident(
     residentId: string, 
     startDate?: string, 
-    endDate?: string    
+    endDate?: string     
   ): Promise<Payment[]> {
     let query = this.supabase
       .from('payments')
@@ -233,9 +263,6 @@ export class SupabaseService {
   }
 
   // ==================== REAL-TIME SUBSCRIPTIONS ====================
-  // Considera usar un método para suscribirse a un canal específico para mayor control
-  // y para desuscribirse cuando no sea necesario.
-  // Este método subscribeToPayments ya es genérico.
 
   subscribeToPayments(callback: (payload: any) => void) {
     return this.supabase
@@ -276,8 +303,6 @@ export class SupabaseService {
     return data || [];
   }
 
-  // El `author_id` lo vamos a recibir como parte del objeto 'announcement'
-  // El componente padre (AdminDashboardComponent) será responsable de obtener el ID del usuario actual.
   async createAnnouncement(announcement: Omit<Announcement, 'id' | 'created_at' | 'updated_at'> & { author_id: string }): Promise<Announcement> {
     const { data, error } = await this.supabase
       .from('announcements')
@@ -293,8 +318,6 @@ export class SupabaseService {
   }
 
   async updateAnnouncement(id: string, updates: Partial<Announcement>): Promise<Announcement> {
-    // Supabase puede manejar 'updated_at' automáticamente con un trigger/default value.
-    // Si no tienes un trigger, puedes añadir `updated_at: new Date().toISOString()` a `updates` aquí.
     const { data, error } = await this.supabase
       .from('announcements')
       .update(updates)

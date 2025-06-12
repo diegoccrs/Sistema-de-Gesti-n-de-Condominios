@@ -1,0 +1,45 @@
+<div class="directory-container">
+  <h2>Directorio de Vecinos</h2>
+
+  <div class="search-bar">
+    <input
+      type="text"
+      placeholder="Buscar por nombre, apellido o apartamento..."
+      class="search-input"
+      [(ngModel)]="searchTerm"
+      (input)="onSearchChange()"
+    >
+  </div>
+
+  <div *ngIf="isLoading" class="status-message loading-message">
+    <p>Cargando vecinos...</p>
+    </div>
+
+  <div *ngIf="!isLoading && neighbors.length === 0 && searchTerm !== ''" class="status-message no-results-message">
+    <p>No se encontraron vecinos que coincidan con la búsqueda "{{ searchTerm }}".</p>
+  </div>
+  <div *ngIf="!isLoading && neighbors.length === 0 && searchTerm === '' && !isLoading" class="status-message info-message">
+    <p>Ingresa un término de búsqueda para encontrar vecinos.</p>
+  </div>
+
+  <div *ngIf="!isLoading && neighbors.length > 0" class="table-responsive">
+    <table class="neighbors-table">
+      <thead>
+        <tr>
+          <th>Nombre</th>
+          <th>Apartamento</th>
+          </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let neighbor of neighbors">
+          <td>{{ neighbor.first_name }} {{ neighbor.last_name }}</td>
+          <td>{{ neighbor.apartment }}</td>
+          </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div *ngIf="errorMessage" class="status-message error-message">
+    {{ errorMessage }}
+  </div>
+</div>
