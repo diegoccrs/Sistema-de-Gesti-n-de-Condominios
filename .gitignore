@@ -40,3 +40,13 @@ testem.log
 # System files
 .DS_Store
 Thumbs.db
+
+# Ignora node_modules del backend también
+/backend/node_modules/
+
+
+# Otros ignorados comunes
+dist/
+.tmp/
+.env
+.DS_Store
