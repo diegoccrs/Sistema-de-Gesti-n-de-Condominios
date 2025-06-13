@@ -61,7 +61,7 @@ body {
     border-radius: 12px;
     margin-bottom: 40px;
     color: white;
-    background-image: url('../../../assets/condo.jpg');
+    background-image: url('/assets/condo.jpg');
 
     background-size: cover;
     background-position: center;
