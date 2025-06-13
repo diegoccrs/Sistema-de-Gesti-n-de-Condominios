@@ -54,7 +54,7 @@ export class CreateResidentFormDialogComponent implements OnInit {
 
   constructor(
     public dialogRef: MatDialogRef<CreateResidentFormDialogComponent>,
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.createResidentForm = this.fb.group({
@@ -65,7 +65,7 @@ export class CreateResidentFormDialogComponent implements OnInit {
       // ✅ Nuevos campos para selección de edificios y apartamentos
       selectedBuildingIds: [[], Validators.required],
       selectedApartmentIds: [[], Validators.required],
-    
+
     });
 
     this.loadBuildings();
@@ -80,12 +80,22 @@ export class CreateResidentFormDialogComponent implements OnInit {
   }
 
   // ✅ Método para cargar edificios
-  async loadBuildings(): Promise<void> {
+  async loadBuildings() {
+    this.isLoading = true;
     try {
-      this.buildings = await this.supabaseService.getBuildings();
+      const data = await this.supabaseService.getBuildings(); // getBuildings() devuelve Building[] | null
+      if (data) { // ✅ Verifica si 'data' no es null ANTES de asignarlo
+        this.buildings = data;
+      } else {
+        // Manejar el caso donde 'data' es null si lo deseas, por ejemplo:
+        this.errorMessage = 'No se pudieron cargar los edificios. La lista está vacía.';
+        console.warn('El servicio getBuildings() devolvió null o un array vacío.');
+      }
     } catch (error: any) {
-      console.error('Error al cargar edificios:', error.message);
-      this.errorMessage = 'Error al cargar edificios. Intente de nuevo más tarde.';
+      console.error('Error loading buildings:', error);
+      this.errorMessage = `Error al cargar edificios: ${error.message}`;
+    } finally {
+      this.isLoading = false;
     }
   }
 
@@ -150,7 +160,7 @@ export class CreateResidentFormDialogComponent implements OnInit {
       const relationshipsToInsert: Omit<ProfileApartment, 'created_at'>[] = selectedApartmentIds.map((apartmentId: string) => ({
         profile_id: userId,
         apartment_id: apartmentId,
-        
+
       }));
 
       await this.supabaseService.createProfileApartments(relationshipsToInsert); //
