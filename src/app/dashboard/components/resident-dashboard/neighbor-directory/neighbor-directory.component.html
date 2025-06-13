@@ -1,45 +1,51 @@
+<mat-toolbar color="primary">
+  <mat-toolbar-row class="toolbar-content">
+    <mat-icon>people</mat-icon>
+    <span>Directorio de Vecinos</span>
+  </mat-toolbar-row>
+</mat-toolbar>
+
 <div class="directory-container">
-  <h2>Directorio de Vecinos</h2>
+  <mat-card class="search-card">
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Buscar vecino</mat-label>
+      <input matInput type="text" [(ngModel)]="searchTerm" (input)="onSearchChange(searchTerm)"
+        placeholder="Nombre, apellido, apto, o edificio">
+      <mat-icon matSuffix>search</mat-icon>
+    </mat-form-field>
+  </mat-card>
 
-  <div class="search-bar">
-    <input
-      type="text"
-      placeholder="Buscar por nombre, apellido o apartamento..."
-      class="search-input"
-      [(ngModel)]="searchTerm"
-      (input)="onSearchChange()"
-    >
-  </div>
 
-  <div *ngIf="isLoading" class="status-message loading-message">
-    <p>Cargando vecinos...</p>
-    </div>
-
-  <div *ngIf="!isLoading && neighbors.length === 0 && searchTerm !== ''" class="status-message no-results-message">
-    <p>No se encontraron vecinos que coincidan con la búsqueda "{{ searchTerm }}".</p>
-  </div>
-  <div *ngIf="!isLoading && neighbors.length === 0 && searchTerm === '' && !isLoading" class="status-message info-message">
-    <p>Ingresa un término de búsqueda para encontrar vecinos.</p>
-  </div>
-
-  <div *ngIf="!isLoading && neighbors.length > 0" class="table-responsive">
-    <table class="neighbors-table">
-      <thead>
-        <tr>
-          <th>Nombre</th>
-          <th>Apartamento</th>
-          </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let neighbor of neighbors">
-          <td>{{ neighbor.first_name }} {{ neighbor.last_name }}</td>
-          <td>{{ neighbor.apartment }}</td>
-          </tr>
-      </tbody>
-    </table>
-  </div>
-
-  <div *ngIf="errorMessage" class="status-message error-message">
+  <div *ngIf="errorMessage" class="error-message">
+    <mat-icon>error_outline</mat-icon>
     {{ errorMessage }}
   </div>
+
+  <mat-card *ngIf="!isLoading && !errorMessage" class="neighbors-list-card">
+    <mat-list>
+      <ng-container *ngIf="neighbors.length > 0; else noNeighbors">
+        <mat-list-item *ngFor="let neighbor of neighbors; let last = last">
+          <mat-icon matListItemIcon>person</mat-icon>
+          <div matListItemTitle>
+            {{ neighbor.first_name }} {{ neighbor.last_name }}
+            <ng-container *ngIf="neighbor.apartment_info as aptInfo">
+              <span class="apartment-info">
+                ({{ aptInfo.apartment_number }}
+                <ng-container *ngIf="aptInfo.building_name">
+                  - {{ aptInfo.building_name }}
+                </ng-container>)
+              </span>
+            </ng-container>
+          </div>
+          <div matListItemLine>{{ neighbor.email }}</div>
+          <mat-divider *ngIf="!last"></mat-divider>
+        </mat-list-item>
+      </ng-container>
+      <ng-template #noNeighbors>
+        <mat-list-item>
+          <div matListItemTitle>No se encontraron vecinos.</div>
+        </mat-list-item>
+      </ng-template>
+    </mat-list>
+  </mat-card>
 </div>

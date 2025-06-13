@@ -7,11 +7,23 @@ import { BehaviorSubject, Observable } from 'rxjs'; // Añadir Observable para c
 // Importaciones de modelos
 import { Payment } from '../../domain/models/payment.model';
 import { Profile } from '../../domain/models/profile.model';
+import { Apartment } from '../../domain/models/apartment.model';
+import { Building } from '../../domain/models/building.model';
+import { ProfileApartment } from '../../domain/models/profile-apartment.model';
 import { Announcement } from '../../domain/models/announcement.model'; // ✅ Importación corregida y consistente con el modelo
 
+
+export interface ProfileWithApartmentInfo extends Profile {
+  apartment_info?: { // Puede ser null si no tiene apartamento asignado en profile_apartments
+    apartment_number: string;
+    floor?: string;
+    building_name?: string; // Nombre del edificio
+  };
+}
+
 @Injectable({
-  providedIn: 'root'
-})
+    providedIn: 'root'
+  })
 export class SupabaseService {
   public supabase: SupabaseClient; // ✅ Hacer público para que otros componentes puedan acceder al cliente si es necesario (ej. para realtime)
   private currentUserSubject = new BehaviorSubject<User | null>(null);
@@ -75,10 +87,10 @@ export class SupabaseService {
       .from('profiles')
       .select('*')
       .eq('id', id)
-      .single(); 
-    
-    if (error && error.code !== 'PGRST116') { 
-      console.error('Error al obtener el perfil (no PGRST116):', error);
+      .single();
+
+    if (error) {
+      console.error('Error :', error);
       throw error;
     }
     return data;
@@ -91,7 +103,7 @@ export class SupabaseService {
       .eq('id', id)
       .select()
       .single();
-    
+
     if (error) throw error;
     return data;
   }
@@ -103,56 +115,203 @@ export class SupabaseService {
    * @param searchTerm El término de búsqueda (nombre, apellido o apartamento).
    * @returns Un Promise con la lista de perfiles encontrados o null en caso de error.
    */
-  async searchProfiles(searchTerm: string): Promise<Profile[] | null> {
-    try {
-      // Seleccionamos específicamente las columnas que son necesarias y públicas.
-      // Esto es crucial para la seguridad junto con la política RLS.
-      const { data, error } = await this.supabase
-        .from('profiles')
-        .select('id, first_name, last_name, apartment') // ✅ Columnas a seleccionar
-        // Usamos 'or' para buscar en cualquiera de las columnas (nombre, apellido, apartamento)
-        // 'ilike' permite la búsqueda parcial e insensible a mayúsculas/minúsculas
-        .or(`first_name.ilike.%${searchTerm}%,last_name.ilike.%${searchTerm}%,apartment.ilike.%${searchTerm}%`); // ✅ Condición de búsqueda
+  // Cambiado el tipo de retorno
+     async searchProfiles(searchTerm: string = ''): Promise<ProfileWithApartmentInfo[]> {
+    let profiles: ProfileWithApartmentInfo[] = [];
+    let error: any = null;
 
-      if (error) {
-        throw error;
+    if (searchTerm) {
+      // Si hay un término de búsqueda, llamamos a la función RPC
+      const { data, error: rpcError } = await this.supabase
+        .rpc('search_profiles_with_apartment_info', { search_term: searchTerm });
+
+      if (rpcError) {
+        console.error('Error calling search_profiles_with_apartment_info RPC:', rpcError.message);
+        throw rpcError;
       }
-      return data as Profile[];
-    } catch (error) {
-      console.error('Error al buscar perfiles de vecinos:', error); // Mensaje de error más específico
-      return null;
+
+      // Mapear los resultados de la función RPC a tu interfaz ProfileWithApartmentInfo
+      // La función RPC ya hace los JOINs y devuelve las columnas que necesitamos.
+      profiles = (data as any[]).map(row => ({
+        id: row.id,
+        first_name: row.first_name,
+        last_name: row.last_name,
+        email: row.email,
+        role: row.role,
+        apartment_info: row.apartment_number ? { // Comprueba si hay número de apartamento
+          apartment_number: row.apartment_number,
+          floor: row.floor,
+          building_name: row.building_name
+        } : undefined
+      }));
+
+    } else {
+      // Si no hay término de búsqueda, cargamos todos los perfiles con la consulta original (sin filtros)
+      const { data, error: selectError } = await this.supabase
+        .from('profiles')
+        .select(`
+          *,
+          profile_apartments!left(
+            apartment_id,
+            apartments!left(
+              apartment_number,
+              floor,
+              building_id,
+              buildings!left(
+                name
+              )
+            )
+          )
+        `)
+        .order('first_name', { ascending: true });
+
+      if (selectError) {
+        console.error('Error fetching all profiles:', selectError.message);
+        throw selectError;
+      }
+
+      // Mapear los datos de la consulta select normal
+      profiles = (data as any[]).map((profile: any) => {
+        const rawApartmentInfo = profile.profile_apartments?.[0]?.apartments;
+        return {
+          ...profile,
+          apartment_info: rawApartmentInfo ? {
+            apartment_number: rawApartmentInfo.apartment_number,
+            floor: rawApartmentInfo.floor,
+            building_name: rawApartmentInfo.buildings?.name
+          } : undefined
+        } as ProfileWithApartmentInfo;
+      });
     }
+
+    console.log('Final profiles from searchProfiles:', JSON.stringify(profiles, null, 2));
+    return profiles;
   }
+
   // ==================== FIN: MÉTODOS PARA HU-08 (BÚSQUEDA DE VECINOS) ====================
 
+  // ==================== BUILDING METHODS (AÑADIDO PARA CREAR RESIDENTES) ====================
+  /**
+   * Obtiene todos los edificios disponibles.
+   * Necesario para que el formulario de creación de residente pueda seleccionar edificios.
+   * @returns Un array de objetos Building.
+   */
+  async getBuildings(): Promise<Building[] | null> {
+    const { data, error } = await this.supabase
+      .from('buildings')
+      .select('*')
+      .order('name', { ascending: true });
+    if (error) {
+      console.error('Error fetching buildings:', error.message);
+      return null;
+    }
+    return data;
+  }
+
+  async getApartmentsByBuildingId(buildingId: string): Promise<Apartment[] | null> {
+    const { data, error } = await this.supabase
+      .from('apartments')
+      .select('*')
+      .eq('building_id', buildingId)
+      .order('apartment_number', { ascending: true });
+    if (error) {
+      console.error('Error fetching apartments:', error.message);
+      return null;
+    }
+    return data;
+  }
+
+  // ==================== APARTMENT METHODS (AÑADIDO PARA CREAR RESIDENTES) ====================
+  /**
+   * Obtiene apartamentos, opcionalmente filtrados por `buildingId`.
+   * Por defecto, solo trae apartamentos `is_occupied: false` para asignación de nuevos residentes.
+   * @param buildingId Opcional: El ID del edificio para filtrar apartamentos.
+   * @returns Un array de objetos Apartment.
+   */
+  async getApartments(buildingId?: string): Promise<Apartment[]> {
+    let query = this.supabase
+      .from('apartments')
+      .select('*')
+      .eq('is_occupied', false); // Solo trae apartamentos NO ocupados por defecto
+
+    if (buildingId) {
+      query = query.eq('building_id', buildingId);
+    }
+
+    const { data, error } = await query;
+
+    if (error) {
+      console.error('Error fetching apartments:', error);
+      throw error;
+    }
+    return data as Apartment[];
+  }
+
+  /**
+   * Actualiza el estado `is_occupied` para una lista de apartamentos.
+   * Se usa cuando un apartamento es asignado a un residente para marcarlo como ocupado,
+   * o para desocuparlo si un residente se va.
+   * @param apartmentIds Array de IDs de apartamentos a actualizar.
+   * @param isOccupied El nuevo estado de ocupación (true/false).
+   */
+  async updateApartmentOccupancy(apartmentIds: string[], isOccupied: boolean): Promise<void> {
+    const { error } = await this.supabase
+      .from('apartments')
+      .update({ is_occupied: isOccupied })
+      .in('id', apartmentIds); // Permite actualizar múltiples apartamentos
+
+    if (error) {
+      console.error('Error updating apartment occupancy:', error);
+      throw error;
+    }
+  }
+
+  // ==================== PROFILE APARTMENT METHODS (AÑADIDO PARA CREAR RESIDENTES) ====================
+  /**
+   * Crea múltiples registros en la tabla de unión `profile_apartments`.
+   * Esta tabla relaciona un perfil con uno o más apartamentos y define el tipo de relación.
+   * @param profileApartments Un array de objetos ProfileApartment (sin 'created_at' ya que Supabase lo añade).
+   * @returns Un array de los objetos ProfileApartment insertados.
+   */
+  async createProfileApartments(profileApartments: Omit<ProfileApartment, 'created_at'>[]): Promise<ProfileApartment[]> {
+    const { data, error } = await this.supabase
+      .from('profile_apartments')
+      .insert(profileApartments)
+      .select(); // Importante para devolver los datos insertados, incluyendo el 'created_at'
+
+    if (error) {
+      console.error('Error creating profile apartments:', error);
+      throw error;
+    }
+    return data as ProfileApartment[];
+  }
 
   // ==================== PAYMENT METHODS ====================
   async getPaymentsByResident(
-    residentId: string, 
-    startDate?: string, 
-    endDate?: string     
+    residentId: string,
+    startDate?: string,
+    endDate?: string
   ): Promise<Payment[]> {
     let query = this.supabase
       .from('payments')
-      .select('*') 
+      .select('*')
       .eq('resident_id', residentId);
 
     if (startDate) {
-      query = query.gte('payment_date', startDate); 
+      query = query.gte('payment_date', startDate);
     }
     if (endDate) {
-      
-      query = query.lte('payment_date', endDate);   
+      query = query.lte('payment_date', endDate);
     }
 
     // Order by payment_date (or another relevant date like created_at/reported_at)
     query = query.order('payment_date', { ascending: false });
 
     const { data, error } = await query;
-    
+
     if (error) {
-        console.error('Supabase error in getPaymentsByResident:', error);
-        throw error;
+      console.error('Supabase error in getPaymentsByResident:', error);
+      throw error;
     }
     return data || [];
   }
@@ -161,12 +320,11 @@ export class SupabaseService {
     const { data, error } = await this.supabase
       .from('payments')
       .select('*')
-      .order('reported_at', { ascending: false }); 
-    
+      .order('reported_at', { ascending: false });
+
     if (error) {
-        
-        console.error('Supabase error in getAllPayments:', error);
-        throw error;
+      console.error('Supabase error in getAllPayments:', error);
+      throw error;
     }
     return data || [];
   }
@@ -177,7 +335,7 @@ export class SupabaseService {
       .select('*')
       .eq('id', id)
       .single();
-    
+
     if (error) throw error;
     return data;
   }
@@ -188,20 +346,20 @@ export class SupabaseService {
       .insert(payment)
       .select()
       .single();
-    
+
     if (error) throw error;
     return data;
   }
 
   async updatePaymentStatus(
-    id: string, 
-    status: Payment['status'], 
+    id: string,
+    status: Payment['status'],
     paymentDate?: string,
     receiptUrl?: string,
     verifiedBy?: string
   ): Promise<Payment> {
     const updates: any = { status };
-    
+
     if (paymentDate) updates.payment_date = paymentDate;
     if (receiptUrl) updates.receipt_url = receiptUrl;
     if (verifiedBy) updates.verified_by = verifiedBy;
@@ -212,7 +370,7 @@ export class SupabaseService {
       .eq('id', id)
       .select()
       .single();
-    
+
     if (error) throw error;
     return data;
   }
@@ -223,21 +381,21 @@ export class SupabaseService {
       .select('*')
       .eq('status', 'pending')
       .order('due_date', { ascending: true });
-    
+
     if (error) throw error;
     return data || [];
   }
 
   async getOverduePayments(): Promise<Payment[]> {
     const today = new Date().toISOString().split('T')[0];
-    
+
     const { data, error } = await this.supabase
       .from('payments')
       .select('*')
       .eq('status', 'pending')
       .lt('due_date', today)
       .order('due_date', { ascending: true });
-    
+
     if (error) throw error;
     return data || [];
   }
@@ -248,17 +406,17 @@ export class SupabaseService {
     const { data, error } = await this.supabase.storage
       .from('comprobantes')
       .upload(filePath, file);
-    
+
     if (error) throw error;
     // data.path contiene el path del archivo subido dentro del bucket
-    return this.getPublicUrl('comprobantes', data.path); 
+    return this.getPublicUrl('comprobantes', data.path);
   }
 
   getPublicUrl(bucket: string, filePath: string): string {
     const { data: { publicUrl } } = this.supabase.storage
       .from(bucket)
       .getPublicUrl(filePath);
-    
+
     return publicUrl;
   }
 
@@ -267,8 +425,8 @@ export class SupabaseService {
   subscribeToPayments(callback: (payload: any) => void) {
     return this.supabase
       .channel('payments_changes') // Nombre de canal único
-      .on('postgres_changes', 
-        { event: '*', schema: 'public', table: 'payments' }, 
+      .on('postgres_changes',
+        { event: '*', schema: 'public', table: 'payments' },
         callback
       )
       .subscribe();
@@ -277,13 +435,13 @@ export class SupabaseService {
   subscribeToUserPayments(residentId: string, callback: (payload: any) => void) {
     return this.supabase
       .channel(`payments:resident_id=eq.${residentId}`)
-      .on('postgres_changes', 
-        { 
-          event: '*', 
-          schema: 'public', 
+      .on('postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
           table: 'payments',
           filter: `resident_id=eq.${residentId}`
-        }, 
+        },
         callback
       )
       .subscribe();
