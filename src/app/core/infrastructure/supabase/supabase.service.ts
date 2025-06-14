@@ -532,4 +532,24 @@ export class SupabaseService {
     if (diffTime <= 0) return 0; // No está vencido o es hoy
     return Math.floor(diffTime / (1000 * 60 * 60 * 24)); // Usar floor para días completos
   }
+
+  async insertPayment(payment: {
+    resident_id: string;
+    concept: string;
+    amount: number;
+    status: string;
+    currency: string;
+    payment_date: string;
+    proof_url: string | null;
+    reported_at: string | null;
+  }): Promise<any> {
+    const { data, error } = await this.supabase
+      .from('payments')
+      .insert([payment]);
+    if (error) {
+      throw error;
+    }
+    return data;
+  }
+  
 }

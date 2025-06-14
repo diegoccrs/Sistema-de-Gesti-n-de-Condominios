@@ -25,6 +25,7 @@ import { PaymentRegisterComponent } from '../payment-register/payment-register.c
 
 import { CreateResidentFormDialogComponent } from './create-resident-form-dialog/create-resident-form-dialog.component';
 
+import { AssignDebtDialogComponent } from './assign-debt-dialog/assign-debt-dialog.component';
 @Component({
   selector: 'app-admin-dashboard',
   standalone: true,
@@ -285,4 +286,51 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
   goToUserManagement(): void {
     this.router.navigate(['/admin/users']); // Actualiza esta ruta si la tienes
   }
+
+  async openAssignDebtDialog(): Promise<void> {
+  const user = await this.supabaseService.getCurrentUser();
+  if (!user) {
+    this.snackBar.open('Error: no se encontró usuario logueado.', 'Cerrar', { duration: 3000 });
+    return;
+  }
+
+  const profile = await this.supabaseService.getProfile(user.id);
+  if (!profile) {
+    this.snackBar.open('No se encontró perfil de administrador.', 'Cerrar', { duration: 3000 });
+    return;
+  }
+
+  // ⚠️ Aquí podrías usar un selector de residentes. Por simplicidad, vamos a usar un ID fijo por ahora:
+  const residentId = prompt("Introduce el ID del residente al que deseas asignar la deuda:");
+
+  if (!residentId) return;
+
+  const dialogRef = this.dialog.open(AssignDebtDialogComponent, {
+    width: '500px',
+    data: { residentId }
+  });
+
+  dialogRef.afterClosed().subscribe(async result => {
+    if (result) {
+      try {
+        await this.supabaseService.insertPayment({
+          resident_id: result.resident_id,
+          concept: result.concept,
+          amount: result.amount,
+          status: 'pending',
+          currency: result.currency,
+          payment_date: result.payment_date,
+          proof_url: null,
+          reported_at: null
+        });
+
+        this.snackBar.open('Deuda asignada con éxito.', 'Cerrar', { duration: 3000, panelClass: ['snackbar-success'] });
+      } catch (error: any) {
+        console.error('Error al asignar deuda:', error);
+        this.snackBar.open('Error al asignar deuda.', 'Cerrar', { duration: 5000, panelClass: ['snackbar-error'] });
+      }
+    }
+  });
+}
+
 }
