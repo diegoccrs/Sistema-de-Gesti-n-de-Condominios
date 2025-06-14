@@ -73,18 +73,18 @@
                     <div class="empty-state animated-fade-in">
                         <mat-icon class="empty-icon">check_circle</mat-icon>
                         <p>¡Felicidades! No tienes pagos pendientes.</p>
-                        <button mat-flat-button color="primary" class="upload-payment-button"
+                        <!-- <button mat-flat-button color="primary" class="upload-payment-button"
                             (click)="uploadPaymentProof()">
                             <mat-icon>cloud_upload</mat-icon> Subir Comprobante
-                        </button>
+                        </button> -->
                     </div>
                 </ng-template>
             </mat-card-content>
-            <mat-card-actions *ngIf="!isLoadingPayments && pendingPayments.length > 0">
+            <!-- <mat-card-actions *ngIf="!isLoadingPayments && pendingPayments.length > 0">
                 <button mat-flat-button color="primary" class="upload-payment-button" (click)="uploadPaymentProof()">
                     <mat-icon>cloud_upload</mat-icon> Subir Comprobante
                 </button>
-            </mat-card-actions>
+            </mat-card-actions> -->
         </mat-card>
     </section>
 
