@@ -314,4 +314,33 @@ td.mat-cell .mat-icon-button mat-icon {
   display: flex;
   justify-content: center; /* Centra el botón si es necesario */
   padding-top: 10px; /* Espacio entre el texto y el botón */
+}.search-section {
+  margin-bottom: 30px;
+}
+
+.search-field {
+  width: 100%;
+  margin-bottom: 20px;
+}
+
+.search-results-container {
+  border-radius: 8px;
+  padding: 20px;
+  background-color: #ffffff;
+  margin-bottom: 30px;
+}
+
+.search-results-container h4 {
+  margin-top: 0;
+  margin-bottom: 15px;
+  color: #5a287d;
+  font-weight: 500;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 10px;
+}
+
+/* Añade esto temporalmente para debug */
+.cdk-overlay-container {
+  z-index: 10000 !important;
+  position: fixed !important;
 }

@@ -1,31 +1,26 @@
 // src/app/services/supabase.service.ts
 import { Injectable } from '@angular/core';
 import { createClient, SupabaseClient, User } from '@supabase/supabase-js';
-import { environment } from '../../../../environments/environment'; // ✅ RUTA ABSOLUTA CRÍTICA para environments
-import { BehaviorSubject, Observable } from 'rxjs'; // Añadir Observable para consistencia
-
-// Importaciones de modelos
+import { environment } from '../../../../environments/environment';
+import { BehaviorSubject } from 'rxjs';
 import { Payment } from '../../domain/models/payment.model';
 import { Profile } from '../../domain/models/profile.model';
 import { Apartment } from '../../domain/models/apartment.model';
 import { Building } from '../../domain/models/building.model';
 import { ProfileApartment } from '../../domain/models/profile-apartment.model';
-import { Announcement } from '../../domain/models/announcement.model'; // ✅ Importación corregida y consistente con el modelo
-
+import { Announcement } from '../../domain/models/announcement.model';
 
 export interface ProfileWithApartmentInfo extends Profile {
-  apartment_info?: { // Puede ser null si no tiene apartamento asignado en profile_apartments
+  apartment_info?: {
     apartment_number: string;
     floor?: string;
-    building_name?: string; // Nombre del edificio
+    building_name?: string;
   };
 }
 
-@Injectable({
-    providedIn: 'root'
-  })
+@Injectable({ providedIn: 'root' })
 export class SupabaseService {
-  public supabase: SupabaseClient; // ✅ Hacer público para que otros componentes puedan acceder al cliente si es necesario (ej. para realtime)
+  public supabase: SupabaseClient;
   private currentUserSubject = new BehaviorSubject<User | null>(null);
   public currentUser$ = this.currentUserSubject.asObservable();
 
@@ -35,7 +30,6 @@ export class SupabaseService {
     this.setupAuthListener();
   }
 
-  // ==================== AUTHENTICATION METHODS ====================
   private async loadUser() {
     const { data: { user } } = await this.supabase.auth.getUser();
     this.currentUserSubject.next(user);
@@ -48,10 +42,7 @@ export class SupabaseService {
   }
 
   async signIn(email: string, password: string) {
-    const { data, error } = await this.supabase.auth.signInWithPassword({
-      email,
-      password
-    });
+    const { data, error } = await this.supabase.auth.signInWithPassword({ email, password });
     if (error) throw error;
     return data;
   }
@@ -81,7 +72,6 @@ export class SupabaseService {
     return session;
   }
 
-  // ==================== PROFILE METHODS ====================
   async getProfile(id: string): Promise<Profile | null> {
     const { data, error } = await this.supabase
       .from('profiles')
@@ -89,10 +79,7 @@ export class SupabaseService {
       .eq('id', id)
       .single();
 
-    if (error) {
-      console.error('Error :', error);
-      throw error;
-    }
+    if (error) throw error;
     return data;
   }
 
@@ -108,46 +95,26 @@ export class SupabaseService {
     return data;
   }
 
-  // ==================== INICIO: MÉTODOS PARA HU-08 (BÚSQUEDA DE VECINOS) ====================
-  /**
-   * Busca perfiles de usuarios por nombre (nombre o apellido) o número de apartamento.
-   * Selecciona solo los campos públicos relevantes para la búsqueda de vecinos.
-   * @param searchTerm El término de búsqueda (nombre, apellido o apartamento).
-   * @returns Un Promise con la lista de perfiles encontrados o null en caso de error.
-   */
-  // Cambiado el tipo de retorno
-     async searchProfiles(searchTerm: string = ''): Promise<ProfileWithApartmentInfo[]> {
-    let profiles: ProfileWithApartmentInfo[] = [];
-    let error: any = null;
-
+  async searchProfiles(searchTerm: string = ''): Promise<ProfileWithApartmentInfo[]> {
     if (searchTerm) {
-      // Si hay un término de búsqueda, llamamos a la función RPC
-      const { data, error: rpcError } = await this.supabase
+      const { data, error } = await this.supabase
         .rpc('search_profiles_with_apartment_info', { search_term: searchTerm });
 
-      if (rpcError) {
-        console.error('Error calling search_profiles_with_apartment_info RPC:', rpcError.message);
-        throw rpcError;
-      }
-
-      // Mapear los resultados de la función RPC a tu interfaz ProfileWithApartmentInfo
-      // La función RPC ya hace los JOINs y devuelve las columnas que necesitamos.
-      profiles = (data as any[]).map(row => ({
+      if (error) throw error;
+      return data.map((row: any) => ({
         id: row.id,
         first_name: row.first_name,
         last_name: row.last_name,
         email: row.email,
         role: row.role,
-        apartment_info: row.apartment_number ? { // Comprueba si hay número de apartamento
+        apartment_info: row.apartment_number ? {
           apartment_number: row.apartment_number,
           floor: row.floor,
           building_name: row.building_name
         } : undefined
       }));
-
     } else {
-      // Si no hay término de búsqueda, cargamos todos los perfiles con la consulta original (sin filtros)
-      const { data, error: selectError } = await this.supabase
+      const { data, error } = await this.supabase
         .from('profiles')
         .select(`
           *,
@@ -157,21 +124,14 @@ export class SupabaseService {
               apartment_number,
               floor,
               building_id,
-              buildings!left(
-                name
-              )
+              buildings!left(name)
             )
           )
         `)
         .order('first_name', { ascending: true });
 
-      if (selectError) {
-        console.error('Error fetching all profiles:', selectError.message);
-        throw selectError;
-      }
-
-      // Mapear los datos de la consulta select normal
-      profiles = (data as any[]).map((profile: any) => {
+      if (error) throw error;
+      return data.map(profile => {
         const rawApartmentInfo = profile.profile_apartments?.[0]?.apartments;
         return {
           ...profile,
@@ -180,31 +140,26 @@ export class SupabaseService {
             floor: rawApartmentInfo.floor,
             building_name: rawApartmentInfo.buildings?.name
           } : undefined
-        } as ProfileWithApartmentInfo;
+        };
       });
     }
-
-    console.log('Final profiles from searchProfiles:', JSON.stringify(profiles, null, 2));
-    return profiles;
   }
 
-  // ==================== FIN: MÉTODOS PARA HU-08 (BÚSQUEDA DE VECINOS) ====================
+  async deleteProfile(id: string): Promise<void> {
+    const { error } = await this.supabase
+      .from('profiles')
+      .delete()
+      .eq('id', id);
 
-  // ==================== BUILDING METHODS (AÑADIDO PARA CREAR RESIDENTES) ====================
-  /**
-   * Obtiene todos los edificios disponibles.
-   * Necesario para que el formulario de creación de residente pueda seleccionar edificios.
-   * @returns Un array de objetos Building.
-   */
+    if (error) throw error;
+  }
+
   async getBuildings(): Promise<Building[] | null> {
     const { data, error } = await this.supabase
       .from('buildings')
       .select('*')
       .order('name', { ascending: true });
-    if (error) {
-      console.error('Error fetching buildings:', error.message);
-      return null;
-    }
+    if (error) return null;
     return data;
   }
 
@@ -214,105 +169,84 @@ export class SupabaseService {
       .select('*')
       .eq('building_id', buildingId)
       .order('apartment_number', { ascending: true });
-    if (error) {
-      console.error('Error fetching apartments:', error.message);
-      return null;
-    }
+    if (error) return null;
     return data;
   }
 
-  // ==================== APARTMENT METHODS (AÑADIDO PARA CREAR RESIDENTES) ====================
-  /**
-   * Obtiene apartamentos, opcionalmente filtrados por `buildingId`.
-   * Por defecto, solo trae apartamentos `is_occupied: false` para asignación de nuevos residentes.
-   * @param buildingId Opcional: El ID del edificio para filtrar apartamentos.
-   * @returns Un array de objetos Apartment.
-   */
+  async getProfileApartments(profileId: string): Promise<Apartment[] | null> {
+    const { data, error } = await this.supabase
+      .from('profile_apartments')
+      .select('apartments(*)')
+      .eq('profile_id', profileId);
+
+    if (error) return null;
+    return data.map((item: any) => item.apartments);
+  }
+
+  async updateProfileApartments(
+    profileId: string,
+    apartmentIds: string[]
+  ): Promise<void> {
+    // Eliminar relaciones existentes
+    await this.supabase
+      .from('profile_apartments')
+      .delete()
+      .eq('profile_id', profileId);
+
+    // Crear nuevas relaciones
+    const relations = apartmentIds.map(apartmentId => ({
+      profile_id: profileId,
+      apartment_id: apartmentId
+    }));
+
+    const { error } = await this.supabase
+      .from('profile_apartments')
+      .insert(relations);
+
+    if (error) throw error;
+  }
+
   async getApartments(buildingId?: string): Promise<Apartment[]> {
     let query = this.supabase
       .from('apartments')
       .select('*')
-      .eq('is_occupied', false); // Solo trae apartamentos NO ocupados por defecto
+      .eq('is_occupied', false);
 
-    if (buildingId) {
-      query = query.eq('building_id', buildingId);
-    }
-
+    if (buildingId) query = query.eq('building_id', buildingId);
     const { data, error } = await query;
-
-    if (error) {
-      console.error('Error fetching apartments:', error);
-      throw error;
-    }
+    if (error) throw error;
     return data as Apartment[];
   }
 
-  /**
-   * Actualiza el estado `is_occupied` para una lista de apartamentos.
-   * Se usa cuando un apartamento es asignado a un residente para marcarlo como ocupado,
-   * o para desocuparlo si un residente se va.
-   * @param apartmentIds Array de IDs de apartamentos a actualizar.
-   * @param isOccupied El nuevo estado de ocupación (true/false).
-   */
   async updateApartmentOccupancy(apartmentIds: string[], isOccupied: boolean): Promise<void> {
     const { error } = await this.supabase
       .from('apartments')
       .update({ is_occupied: isOccupied })
-      .in('id', apartmentIds); // Permite actualizar múltiples apartamentos
-
-    if (error) {
-      console.error('Error updating apartment occupancy:', error);
-      throw error;
-    }
+      .in('id', apartmentIds);
+    if (error) throw error;
   }
 
-  // ==================== PROFILE APARTMENT METHODS (AÑADIDO PARA CREAR RESIDENTES) ====================
-  /**
-   * Crea múltiples registros en la tabla de unión `profile_apartments`.
-   * Esta tabla relaciona un perfil con uno o más apartamentos y define el tipo de relación.
-   * @param profileApartments Un array de objetos ProfileApartment (sin 'created_at' ya que Supabase lo añade).
-   * @returns Un array de los objetos ProfileApartment insertados.
-   */
   async createProfileApartments(profileApartments: Omit<ProfileApartment, 'created_at'>[]): Promise<ProfileApartment[]> {
     const { data, error } = await this.supabase
       .from('profile_apartments')
       .insert(profileApartments)
-      .select(); // Importante para devolver los datos insertados, incluyendo el 'created_at'
-
-    if (error) {
-      console.error('Error creating profile apartments:', error);
-      throw error;
-    }
+      .select();
+    if (error) throw error;
     return data as ProfileApartment[];
   }
 
-  // ==================== PAYMENT METHODS ====================
-  async getPaymentsByResident(
-    residentId: string,
-    startDate?: string,
-    endDate?: string
-  ): Promise<Payment[]> {
+  async getPaymentsByResident(residentId: string, startDate?: string, endDate?: string): Promise<Payment[]> {
     let query = this.supabase
       .from('payments')
       .select('*')
-      .eq('resident_id', residentId);
+      .eq('resident_id', residentId)
+      .order('payment_date', { ascending: false });
 
-    if (startDate) {
-      query = query.gte('payment_date', startDate);
-    }
-    if (endDate) {
-      query = query.lte('payment_date', endDate);
-    }
-
-    // Order by payment_date (or another relevant date like created_at/reported_at)
-    query = query.order('payment_date', { ascending: false });
+    if (startDate) query = query.gte('payment_date', startDate);
+    if (endDate) query = query.lte('payment_date', endDate);
 
     const { data, error } = await query;
-
-    if (error) {
-      console.error('Supabase error in getPaymentsByResident:', error);
-      throw error;
-    }
+    if (error) throw error;
     return data || [];
   }
 
@@ -321,11 +255,7 @@ export class SupabaseService {
       .from('payments')
       .select('*')
       .order('reported_at', { ascending: false });
-
-    if (error) {
-      console.error('Supabase error in getAllPayments:', error);
-      throw error;
-    }
+    if (error) throw error;
     return data || [];
   }
 
@@ -335,7 +265,6 @@ export class SupabaseService {
       .select('*')
       .eq('id', id)
       .single();
-
     if (error) throw error;
     return data;
   }
@@ -346,7 +275,6 @@ export class SupabaseService {
       .insert(payment)
       .select()
       .single();
-
     if (error) throw error;
     return data;
   }
@@ -359,7 +287,6 @@ export class SupabaseService {
     verifiedBy?: string
   ): Promise<Payment> {
     const updates: any = { status };
-
     if (paymentDate) updates.payment_date = paymentDate;
     if (receiptUrl) updates.receipt_url = receiptUrl;
     if (verifiedBy) updates.verified_by = verifiedBy;
@@ -381,34 +308,28 @@ export class SupabaseService {
       .select('*')
       .eq('status', 'pending')
       .order('due_date', { ascending: true });
-
     if (error) throw error;
     return data || [];
   }
 
   async getOverduePayments(): Promise<Payment[]> {
     const today = new Date().toISOString().split('T')[0];
-
     const { data, error } = await this.supabase
       .from('payments')
       .select('*')
       .eq('status', 'pending')
       .lt('due_date', today)
       .order('due_date', { ascending: true });
-
     if (error) throw error;
     return data || [];
   }
 
-  // ==================== FILE UPLOAD METHODS ====================
   async uploadReceipt(paymentId: string, file: File): Promise<string> {
     const filePath = `receipts/${paymentId}/${Date.now()}_${file.name}`;
     const { data, error } = await this.supabase.storage
       .from('comprobantes')
       .upload(filePath, file);
-
     if (error) throw error;
-    // data.path contiene el path del archivo subido dentro del bucket
     return this.getPublicUrl('comprobantes', data.path);
   }
 
@@ -416,15 +337,12 @@ export class SupabaseService {
     const { data: { publicUrl } } = this.supabase.storage
       .from(bucket)
       .getPublicUrl(filePath);
-
     return publicUrl;
   }
 
-  // ==================== REAL-TIME SUBSCRIPTIONS ====================
-
   subscribeToPayments(callback: (payload: any) => void) {
     return this.supabase
-      .channel('payments_changes') // Nombre de canal único
+      .channel('payments_changes')
       .on('postgres_changes',
         { event: '*', schema: 'public', table: 'payments' },
         callback
@@ -447,17 +365,12 @@ export class SupabaseService {
       .subscribe();
   }
 
-  // ==================== ANNOUNCEMENT METHODS ====================
   async getAnnouncements(): Promise<Announcement[]> {
     const { data, error } = await this.supabase
       .from('announcements')
       .select('*')
       .order('created_at', { ascending: false });
-
-    if (error) {
-      console.error('Error fetching announcements:', error);
-      throw error;
-    }
+    if (error) throw error;
     return data || [];
   }
 
@@ -467,11 +380,7 @@ export class SupabaseService {
       .insert(announcement)
       .select()
       .single();
-
-    if (error) {
-      console.error('Error creating announcement:', error);
-      throw error;
-    }
+    if (error) throw error;
     return data;
   }
 
@@ -482,11 +391,7 @@ export class SupabaseService {
       .eq('id', id)
       .select()
       .single();
-
-    if (error) {
-      console.error('Error updating announcement:', error);
-      throw error;
-    }
+    if (error) throw error;
     return data;
   }
 
@@ -495,16 +400,10 @@ export class SupabaseService {
       .from('announcements')
       .delete()
       .eq('id', id);
-
-    if (error) {
-      console.error('Error deleting announcement:', error);
-      throw error;
-    }
+    if (error) throw error;
   }
 
-  // ==================== UTILITY METHODS ====================
   formatCurrency(amount: number, currency: string = 'VES'): string {
-    // Puedes extender esto para manejar USD, EUR, etc.
     return new Intl.NumberFormat('es-VE', {
       style: 'currency',
       currency: currency,
@@ -515,7 +414,6 @@ export class SupabaseService {
   isPaymentOverdue(dueDate: string): boolean {
     const today = new Date();
     const due = new Date(dueDate);
-    // Comparar solo las fechas, ignorando la hora
     today.setHours(0, 0, 0, 0);
     due.setHours(0, 0, 0, 0);
     return due < today;
@@ -524,12 +422,10 @@ export class SupabaseService {
   getDaysPastDue(dueDate: string): number {
     const today = new Date();
     const due = new Date(dueDate);
-    // Asegurarse de que las fechas sean solo fechas para el cálculo de días exactos
     today.setHours(0, 0, 0, 0);
     due.setHours(0, 0, 0, 0);
-
     const diffTime = today.getTime() - due.getTime();
-    if (diffTime <= 0) return 0; // No está vencido o es hoy
-    return Math.floor(diffTime / (1000 * 60 * 60 * 24)); // Usar floor para días completos
+    if (diffTime <= 0) return 0;
+    return Math.floor(diffTime / (1000 * 60 * 60 * 24));
   }
 }
