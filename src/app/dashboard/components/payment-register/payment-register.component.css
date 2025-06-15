@@ -1,7 +1,8 @@
 .payment-register-form {
   display: flex;
   flex-direction: column;
-  gap: 10px; 
+  gap: 16px;
+  padding-top: 8px;
 }
 
 .full-width {
@@ -10,19 +11,92 @@
 
 .form-row {
   display: flex;
-  gap: 16px; 
+  gap: 16px;
 }
 
 .form-field-half {
-  flex: 1; 
+  flex: 1;
+}
+
+/* Asegurar que los campos ocupen el 50% del ancho */
+.form-row > * {
+  width: 50%;
+  box-sizing: border-box;
 }
 
 mat-dialog-actions {
-  padding: 8px 24px 16px;
+  padding: 16px 24px;
+  border-top: 1px solid rgba(0, 0, 0, 0.12);
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
 }
 
-
 button[mat-flat-button] mat-spinner {
-    display: inline-block;
-    vertical-align: middle;
+  display: inline-block;
+  vertical-align: middle;
+}
+
+/* Estilos para la sección de archivos */
+.file-upload-label {
+  display: block;
+  font-size: 12px;
+  color: rgba(0, 0, 0, 0.6);
+  margin-bottom: 4px;
+}
+
+.file-upload-container {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.file-select-button {
+  align-self: flex-start;
+}
+
+.file-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #f5f5f5;
+  border-radius: 4px;
+  padding: 8px 12px;
+  border: 1px solid #e0e0e0;
+}
+
+.file-name {
+  flex: 1;
+  font-size: 14px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.file-remove-button {
+  margin-left: auto;
+}
+
+.file-hint {
+  font-size: 12px;
+  color: rgba(0, 0, 0, 0.54);
+  margin-top: 4px;
+}
+
+/* Mejora de espaciado para elementos de formulario */
+mat-form-field {
+  margin-bottom: 8px;
+}
+
+/* Ajustar el tamaño de los campos de fecha y moneda */
+.mat-datepicker-toggle {
+  position: absolute;
+  right: 0;
+}
+
+/* Asegurar que los campos en la misma fila tengan el mismo alto */
+.form-row mat-form-field {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
 }
