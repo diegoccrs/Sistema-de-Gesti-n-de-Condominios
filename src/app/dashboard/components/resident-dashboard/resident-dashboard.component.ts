@@ -58,7 +58,6 @@ import { PaymentMethodDialogComponent } from './payment-method-dialog/payment-me
     MatDialogModule,
     MatSnackBarModule,
     NeighborDirectoryComponent,
-   PaymentMethodDialogComponent,
     ConectarTelegramComponent
 
   ],
