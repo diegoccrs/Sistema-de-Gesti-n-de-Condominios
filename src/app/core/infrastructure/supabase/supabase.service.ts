@@ -450,5 +450,15 @@ export class SupabaseService {
     }
     return data;
   }
+
+  async getAllResidents() {
+  const { data, error } = await this.supabase
+    .from('profiles')
+    .select('id, first_name, last_name')
+    .eq('role', 'resident');
+
+  if (error) throw error;
+  return data;
+}
   
 }
