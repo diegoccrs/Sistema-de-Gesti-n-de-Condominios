@@ -1,84 +1,136 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { createClient } from '@supabase/supabase-js';
+import { createClient, SupabaseClient } from '@supabase/supabase-js';
 import { MatTableModule } from '@angular/material/table';
 import { MatButtonModule } from '@angular/material/button';
+import { Router } from '@angular/router';
+import { MatIconModule } from '@angular/material/icon';
+import { MatToolbarModule } from '@angular/material/toolbar';
+import { environment } from '../../../../environments/environment';
 
-const supabaseUrl = 'https://rimuwztixsaxiaznzfdg.supabase.co'; // <-- Tu URL de Supabase
-const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJpbXV3enRpeHNheGlhem56ZmRnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDc3NjE5MjgsImV4cCI6MjA2MzMzNzkyOH0.JCFytgjghRds9zzSVYDFIelcZVPFc-elKgx1Ic5V4Rc';         // <-- Tu PUBLIC ANON KEY
-const supabase = createClient(supabaseUrl, supabaseKey);
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner'; 
+
+const supabase: SupabaseClient = createClient(environment.supabaseUrl, environment.supabaseKey);
 
 @Component({
   selector: 'app-payments-confirmation',
   standalone: true,
-  imports: [CommonModule, MatTableModule, MatButtonModule],
-  templateUrl: './payments-confirmation.component.html'
+  imports: [
+    CommonModule,
+    MatTableModule,
+    MatButtonModule,
+    MatIconModule,
+    MatToolbarModule,
+    MatProgressSpinnerModule 
+  ],
+  templateUrl: './payments-confirmation.component.html',
+  styleUrls: ['./payments-confirmation.component.css']
 })
 export class PaymentsConfirmationComponent implements OnInit {
   pagosPendientes: any[] = [];
-  displayedColumns: string[] = ['amount', 'currency', 'payment_date', 'status', 'acciones'];
+  // Ensure your displayedColumns match what you intend to show
+  displayedColumns: string[] = ['resident_name', 'amount', 'currency', 'payment_date', 'status', 'proof_url', 'actions'];
+  isLoading = true;
+  errorMessage: string | null = null;
+
+  constructor(private router: Router) {}
 
   async ngOnInit() {
     await this.cargarPagos();
   }
 
   async cargarPagos() {
-    const { data, error } = await supabase
-      .from('payments')
-      .select('*')
-      .eq('status', 'pending');
-    if (!error) {
-      this.pagosPendientes = data ?? [];
-    } else {
-      alert('Error al cargar pagos pendientes: ' + error?.message);
+    this.isLoading = true;
+    this.errorMessage = null;
+    try {
+      const { data, error } = await supabase
+        .from('payments')
+        .select('*, resident_id(email, first_name, last_name)') 
+        .eq('status', 'pending_confirmation') 
+        .order('reported_at', { ascending: true });
+
+      if (error) {
+        throw error;
+      }
+      this.pagosPendientes = data?.map(p => ({
+        ...p,
+        resident_name: p.resident_id ? `${(p.resident_id as any).first_name || ''} ${(p.resident_id as any).last_name || ''}`.trim() || (p.resident_id as any).email : 'N/A',
+      })) || [];
+
+    } catch (error: any) {
+      console.error('Error al cargar pagos pendientes de confirmación:', error);
+      this.errorMessage = 'Error al cargar pagos pendientes: ' + error?.message;
       this.pagosPendientes = [];
-      console.error(error);
+    } finally {
+      this.isLoading = false;
     }
   }
 
   async aprobarPago(id: string) {
+    this.isLoading = true;
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) {
-      alert('Usuario no autenticado.');
+      this.errorMessage = 'Usuario no autenticado.';
+      this.isLoading = false;
       return;
     }
 
-    const { error } = await supabase
-      .from('payments')
-      .update({
-        status: 'approved',
-        confirmed_by: user.id,
-        confirmation_date: new Date().toISOString()
-      })
-      .eq('id', id);
+    try {
+      const { error } = await supabase
+        .from('payments')
+        .update({
+          status: 'confirmed', 
+          confirmed_by: user.id,
+          confirmation_date: new Date().toISOString()
+        })
+        .eq('id', id);
 
-    if (!error) {
-      this.pagosPendientes = this.pagosPendientes.filter(p => p.id !== id);
-    } else {
-      alert('Error al aprobar el pago');
+      if (error) throw error;
+      await this.cargarPagos(); 
+    } catch (error: any) {
+      this.errorMessage = 'Error al aprobar el pago: ' + error?.message;
+    } finally {
+      this.isLoading = false;
     }
   }
 
   async rechazarPago(id: string) {
+    this.isLoading = true;
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) {
-      alert('Usuario no autenticado.');
+      this.errorMessage = 'Usuario no autenticado.';
+      this.isLoading = false;
       return;
     }
+    
+    try {
+      const { error } = await supabase
+        .from('payments')
+        .update({
+          status: 'rejected',
+          confirmed_by: user.id,
+          confirmation_date: new Date().toISOString()
+        })
+        .eq('id', id);
 
-    const { error } = await supabase
-      .from('payments')
-      .update({
-        status: 'rejected',
-        confirmed_by: user.id,
-        confirmation_date: new Date().toISOString()
-      })
-      .eq('id', id);
+      if (error) throw error;
+      await this.cargarPagos();
+    } catch (error: any) {
+       this.errorMessage = 'Error al rechazar el pago: ' + error?.message;
+    } finally {
+      this.isLoading = false;
+    }
+  }
 
-    if (!error) {
-      this.pagosPendientes = this.pagosPendientes.filter(p => p.id !== id);
+  goBackToAdminDashboard(): void {
+    this.router.navigate(['/dashboard/admin-home']);
+  }
+
+  openProof(proofUrl: string | null): void {
+    if (proofUrl) {
+      window.open(proofUrl, '_blank');
     } else {
-      alert('Error al rechazar el pago');
+      console.warn('No proof URL available for this payment.');
     }
   }
 }
