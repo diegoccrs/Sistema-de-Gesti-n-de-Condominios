@@ -6,7 +6,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatDialog } from '@angular/material/dialog'; 
 import { MatSnackBar } from '@angular/material/snack-bar'; 
 
-import { CreateResidentFormDialogComponent } from '../create-resident-form-dialog/create-resident-form-dialog.component'; // Importar el nuevo componente de diálogo
+import { CreateResidentFormDialogComponent } from '../manage-resident-form-dialog/create-resident-form-dialog/create-resident-form-dialog.component'; // Importar el nuevo componente de diálogo
 
 @Component({
   selector: 'app-admin-create-resident', 

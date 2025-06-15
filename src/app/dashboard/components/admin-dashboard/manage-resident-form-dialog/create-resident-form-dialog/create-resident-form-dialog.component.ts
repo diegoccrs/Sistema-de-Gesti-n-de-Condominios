@@ -12,12 +12,12 @@ import { MatSelectModule } from '@angular/material/select'; // <-- Importar MatS
 import { MatOptionModule } from '@angular/material/core'; // <-- Importar MatOptionModule
 
 // Importar el SupabaseService (asumiendo que está en 'src/app/services/supabase.service.ts')
-import { SupabaseService } from '../../../../core/infrastructure/supabase/supabase.service'; // ✅ RUTA CORREGIDA según tu estructura
+import { SupabaseService } from '../../../../../core/infrastructure/supabase/supabase.service'; // ✅ RUTA CORREGIDA según tu estructura
 
 // Importar los modelos necesarios (asegúrate de que las rutas sean correctas para ti)
-import { Building } from '../../../../core/domain/models/building.model';
-import { Apartment } from '../../../../core/domain/models/apartment.model';
-import { ProfileApartment } from '../../../../core/domain/models/profile-apartment.model';
+import { Building } from '../../../../../core/domain/models/building.model';
+import { Apartment } from '../../../../../core/domain/models/apartment.model';
+import { ProfileApartment } from '../../../../../core/domain/models/profile-apartment.model';
 import { User } from '@supabase/supabase-js'; // Para tipar el usuario de Supabase Auth
 
 @Component({
