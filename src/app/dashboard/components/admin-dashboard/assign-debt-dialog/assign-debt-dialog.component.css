@@ -1,7 +1,7 @@
 /* Contenedor del formulario compacto */
 .form-inner-container {
   width: 100%;
-  max-width: 450px; /* Más compacto que antes */
+  max-width: 439px; /* Más compacto que antes */
   background: white;
   border-radius: 12px;
   padding: 30px;
