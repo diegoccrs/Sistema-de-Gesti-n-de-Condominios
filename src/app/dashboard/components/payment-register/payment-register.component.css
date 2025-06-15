@@ -1,9 +1,28 @@
+.payment-register-form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px; 
+}
+
 .full-width {
   width: 100%;
-  margin-bottom: 16px;
 }
-.button-row {
+
+.form-row {
   display: flex;
-  justify-content: flex-end;
-  gap: 8px;
+  gap: 16px; 
+}
+
+.form-field-half {
+  flex: 1; 
+}
+
+mat-dialog-actions {
+  padding: 8px 24px 16px;
+}
+
+
+button[mat-flat-button] mat-spinner {
+    display: inline-block;
+    vertical-align: middle;
 }
