@@ -19,7 +19,7 @@
       <div class="metrics-grid">
         <mat-card class="metric-card mat-elevation-z2">
           <mat-icon color="primary">attach_money</mat-icon>
-          <h3>Pagos Pendientes</h3>
+          <h3>Deudas</h3>
           <p>{{ pendingPaymentsCount }}</p>
           <mat-card-actions class="card-actions-bottom">
             <button mat-button color="primary" (click)="goToReviewProofs()">
@@ -67,9 +67,9 @@
           <mat-icon>campaign</mat-icon>
           Publicar Anuncio
         </button>
-        <button mat-flat-button color="accent" class="action-button" (click)="goToRegisterPayment()">
+        <button mat-flat-button color="accent" class="action-button" (click)="openAssignDebtDialog()">
           <mat-icon>payment</mat-icon>
-          Registrar Pago
+          Asignar Deudas
         </button>
         <button mat-flat-button color="primary" class="action-button" (click)="openCreateResidentDialog()">
           <mat-icon>person_add</mat-icon>
@@ -79,6 +79,115 @@
           <mat-icon>receipt_long</mat-icon>
           Revisar Comprobantes
         </button>
+      </div>
+
+      <!-- Agregar encima de la sección de Residentes Recientes -->
+      <mat-divider></mat-divider>
+      <div class="search-section">
+        <h3 class="section-title">Buscar Residentes</h3>
+        <mat-form-field appearance="outline" class="search-field">
+          <mat-label>Buscar por nombre, email o apartamento</mat-label>
+          <input matInput [(ngModel)]="searchQuery" (keyup.enter)="searchResidents()">
+          <button mat-icon-button matSuffix (click)="searchResidents()">
+            <mat-icon>search</mat-icon>
+          </button>
+        </mat-form-field>
+      </div>
+
+      <!-- Resultados de búsqueda -->
+      <div *ngIf="searchResults.length > 0" class="search-results-container mat-elevation-z2">
+        <h4>Resultados de Búsqueda ({{searchResults.length}})</h4>
+
+        <table mat-table [dataSource]="searchResults" class="full-width-table">
+          <!-- Mismas columnas que Residentes Recientes -->
+          <ng-container matColumnDef="name">
+            <th mat-header-cell *matHeaderCellDef>Nombre</th>
+            <td mat-cell *matCellDef="let resident">
+              {{ resident.first_name }} {{ resident.last_name }}
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="email">
+            <th mat-header-cell *matHeaderCellDef>Email</th>
+            <td mat-cell *matCellDef="let resident">{{ resident.email }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="apartment">
+            <th mat-header-cell *matHeaderCellDef>Apartamento</th>
+            <td mat-cell *matCellDef="let resident">
+              <span *ngIf="resident.apartment_info">
+                {{ resident.apartment_info.apartment_number }}
+                ({{ resident.apartment_info.building_name }})
+              </span>
+              <span *ngIf="!resident.apartment_info">Sin asignar</span>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="actions">
+            <th mat-header-cell *matHeaderCellDef>Acciones</th>
+            <td mat-cell *matCellDef="let resident">
+              <button mat-icon-button (click)="openEditResidentDialog(resident)" matTooltip="Editar residente">
+                <mat-icon color="accent">edit</mat-icon>
+              </button>
+            </td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="recentResidentsColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: recentResidentsColumns;"></tr>
+        </table>
+      </div>
+
+
+      <mat-divider></mat-divider>
+      <h3 class="section-title">Residentes Recientes</h3>
+      <div class="table-container mat-elevation-z2">
+        <table mat-table [dataSource]="recentResidents" class="full-width-table">
+          <!-- Columna de Nombre -->
+          <ng-container matColumnDef="name">
+            <th mat-header-cell *matHeaderCellDef>Nombre</th>
+            <td mat-cell *matCellDef="let resident">
+              {{ resident.first_name }} {{ resident.last_name }}
+            </td>
+          </ng-container>
+
+          <!-- Columna de Email -->
+          <ng-container matColumnDef="email">
+            <th mat-header-cell *matHeaderCellDef>Email</th>
+            <td mat-cell *matCellDef="let resident">{{ resident.email }}</td>
+          </ng-container>
+
+          <!-- Columna de Apartamento -->
+          <ng-container matColumnDef="apartment">
+            <th mat-header-cell *matHeaderCellDef>Apartamento</th>
+            <td mat-cell *matCellDef="let resident">
+              <span *ngIf="resident.apartment_info">
+                {{ resident.apartment_info.apartment_number }}
+                ({{ resident.apartment_info.building_name }})
+              </span>
+              <span *ngIf="!resident.apartment_info">Sin asignar</span>
+            </td>
+          </ng-container>
+
+          <!-- Columna de Acciones -->
+          <ng-container matColumnDef="actions">
+            <th mat-header-cell *matHeaderCellDef>Acciones</th>
+            <td mat-cell *matCellDef="let resident">
+              <button mat-icon-button (click)="openEditResidentDialog(resident)" matTooltip="Editar residente">
+                <mat-icon color="accent">edit</mat-icon>
+              </button>
+            </td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="recentResidentsColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: recentResidentsColumns;"></tr>
+        </table>
+
+        <div *ngIf="recentResidents.length === 0 && !isLoadingResidents" class="no-data-message">
+          No hay residentes registrados
+        </div>
+
+        <mat-progress-bar *ngIf="isLoadingResidents" mode="indeterminate" color="primary">
+        </mat-progress-bar>
       </div>
 
       <mat-divider></mat-divider>

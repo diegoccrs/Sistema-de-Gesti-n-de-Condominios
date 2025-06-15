@@ -1,0 +1,27 @@
+<h2 mat-dialog-title>Selecciona un Método de Pago</h2>
+
+<mat-dialog-content>
+    <div class="payment-details">
+        <p><strong>Concepto:</strong> {{ payment.concept }}</p>
+        <p><strong>Monto:</strong> {{ payment.amount | currency:payment.currency }}</p>
+    </div>
+
+    <div class="payment-methods">
+        <button mat-raised-button color="primary" (click)="selectMethod('paypal')">
+            <img src="/assets/icons/paypal.png" alt="PayPal" class="payment-icon" />
+            Paypal
+        </button>
+        <button mat-raised-button color="accent" (click)="selectMethod('stripe')">
+            <img src="/assets/icons/stripe.png" alt="Stripe" class="payment-icon" />
+            Stripe
+        </button>
+        <button mat-raised-button color="warn" (click)="selectMethod('mercadopago')">
+            <img src="/assets/icons/mercadopago.png" alt="MercadoPago" class="payment-icon" />
+            MercadoPago
+        </button>
+    </div>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+    <button mat-button (click)="dialogRef.close()">Cancelar</button>
+</mat-dialog-actions>

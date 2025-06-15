@@ -1,149 +1,133 @@
-/* Contenedor principal de la vista */
 .payments-confirmation-container {
-  padding: 24px;
-  max-width: 1200px; /* Limita el ancho para pantallas grandes */
-  margin: 0 auto; /* Centra el contenedor */
-  background-color: #f9f9f9;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  height: 100%; 
 }
 
-h2 {
-  color: #3f51b5; /* Color primario de Material */
-  margin-bottom: 20px;
-  font-weight: 500;
-  text-align: center;
+.page-toolbar {
+  flex-shrink: 0; 
+  margin-bottom: 16px; 
 }
 
-mat-divider {
-  margin-bottom: 24px;
-  border-top-color: rgba(0, 0, 0, 0.1);
+.toolbar-spacer {
+  flex: 1 1 auto;
 }
 
-/* Estilos para el spinner de carga */
+.content-area {
+  padding: 0 24px 24px; 
+  flex-grow: 1;
+  overflow-y: auto; 
+}
+
 .loading-spinner-container {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  min-height: 200px; /* Asegura un espacio mínimo */
-  color: #607d8b;
+  padding: 40px;
+  color: #757575;
 }
 
-.loading-spinner-container mat-spinner {
+.loading-spinner-container mat-progress-spinner {
   margin-bottom: 16px;
 }
 
-/* Estilos para mensajes (error, no pagos) */
 .message-container {
   display: flex;
   align-items: center;
   padding: 16px;
   border-radius: 4px;
-  margin-bottom: 20px;
+  margin: 20px auto; 
   font-size: 1.1em;
+  max-width: 800px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
 .message-container mat-icon {
   margin-right: 12px;
   font-size: 28px;
-  width: 28px;
-  height: 28px;
 }
 
 .error-message {
-  background-color: #ffebee; /* Rojo claro de Material */
-  color: #d32f2f; /* Rojo oscuro de Material */
-  border: 1px solid #d32f2f;
-  justify-content: space-between; /* Para alinear el botón de recarga */
+  background-color: #ffebee; 
+  color: #c62828; 
+  border: 1px solid #ef9a9a;
+  justify-content: space-between;
 }
 
 .no-payments-message {
-  background-color: #e8f5e9; /* Verde claro de Material */
-  color: #2e7d32; /* Verde oscuro de Material */
-  border: 1px solid #2e7d32;
+  background-color: #e8f5e9; 
+  color: #2e7d32; 
+  border: 1px solid #a5d6a7;
   justify-content: center;
-  flex-direction: column;
   text-align: center;
-  padding: 30px;
 }
 
-.no-payments-message mat-icon {
-  color: #2e7d32;
-  margin-bottom: 15px;
-  font-size: 48px;
-  width: 48px;
-  height: 48px;
-}
-
-.no-payments-message span {
-  margin-bottom: 15px;
-}
-
-/* Estilos de la tabla */
 .payments-table-wrapper {
-  overflow-x: auto; /* Permite scroll horizontal en pantallas pequeñas */
-  border-radius: 4px;
+  overflow-x: auto;
+  border-radius: 8px;
+  margin-top: 16px;
 }
 
 .full-width-table {
   width: 100%;
-  min-width: 600px; /* Asegura un ancho mínimo para la tabla */
+  min-width: 800px; 
 }
 
-.mat-column-resident {
-  width: 20%;
-  padding-left: 16px;
+.full-width-table th.mat-header-cell,
+.full-width-table td.mat-cell {
+  padding: 10px 16px;
+  border-bottom-width: 1px;
+  border-bottom-style: solid;
+  border-bottom-color: rgba(0,0,0,.12);
 }
 
-.mat-column-amount {
-  width: 15%;
-  text-align: right; /* Alinea el monto a la derecha */
+.full-width-table th.mat-header-cell {
+  font-weight: 600;
+  background-color: #f5f5f5;
 }
 
-.mat-column-currency {
-  width: 10%;
+.right-align {
+  text-align: right;
 }
-
-.mat-column-paymentDate,
-.mat-column-reportedAt {
-  width: 15%;
-}
-
-.mat-column-proof {
-  width: 10%;
+.center-align {
   text-align: center;
 }
 
-.mat-column-actions {
-  width: 20%;
-  text-align: center;
-  white-space: nowrap; /* Evita que los botones se rompan en varias líneas */
+.actions-cell {
+  white-space: nowrap; 
 }
 
-.small-text {
-  font-size: 0.85em;
-  color: #757575; /* Gris suave */
-}
-
-/* Estilos para los botones de acción en la tabla */
 .action-button {
-  margin: 0 4px; /* Espacio entre botones */
-  min-width: 120px; /* Asegura un ancho mínimo para los botones */
+  margin: 0 4px;
+  min-width: 110px; 
+}
+.action-button mat-icon {
+    margin-right: 6px;
 }
 
-/* Estilos personalizados para el MatSnackBar (opcional, si quieres un estilo diferente al por defecto) */
-.success-snackbar {
-  background-color: #43a047; /* Verde oscuro */
+
+.status-badge {
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 0.8em;
+  font-weight: 500;
   color: white;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
-.error-snackbar {
-  background-color: #d32f2f; /* Rojo oscuro */
-  color: white;
+.status-pending, 
+.status-pending_confirmation { 
+  background-color: #ffc107; 
+  color: #212121; 
 }
 
-.warn-snackbar {
-  background-color: #ffb300; /* Amarillo oscuro */
-  color: white;
+.status-confirmed,
+.status-approved { 
+  background-color: #4caf50; 
+}
+
+.status-rejected {
+  background-color: #f44336; 
 }

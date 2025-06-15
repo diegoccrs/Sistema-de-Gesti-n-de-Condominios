@@ -1,19 +1,26 @@
 // src/app/services/supabase.service.ts
 import { Injectable } from '@angular/core';
 import { createClient, SupabaseClient, User } from '@supabase/supabase-js';
-import { environment } from '../../../../environments/environment'; // ✅ RUTA ABSOLUTA CRÍTICA para environments
-import { BehaviorSubject, Observable } from 'rxjs'; // Añadir Observable para consistencia
-
-// Importaciones de modelos
+import { environment } from '../../../../environments/environment';
+import { BehaviorSubject } from 'rxjs';
 import { Payment } from '../../domain/models/payment.model';
 import { Profile } from '../../domain/models/profile.model';
-import { Announcement } from '../../domain/models/announcement.model'; // ✅ Importación corregida y consistente con el modelo
+import { Apartment } from '../../domain/models/apartment.model';
+import { Building } from '../../domain/models/building.model';
+import { ProfileApartment } from '../../domain/models/profile-apartment.model';
+import { Announcement } from '../../domain/models/announcement.model';
 
-@Injectable({
-  providedIn: 'root'
-})
+export interface ProfileWithApartmentInfo extends Profile {
+  apartment_info?: {
+    apartment_number: string;
+    floor?: string;
+    building_name?: string;
+  };
+}
+
+@Injectable({ providedIn: 'root' })
 export class SupabaseService {
-  public supabase: SupabaseClient; // ✅ Hacer público para que otros componentes puedan acceder al cliente si es necesario (ej. para realtime)
+  public supabase: SupabaseClient;
   private currentUserSubject = new BehaviorSubject<User | null>(null);
   public currentUser$ = this.currentUserSubject.asObservable();
 
@@ -23,7 +30,6 @@ export class SupabaseService {
     this.setupAuthListener();
   }
 
-  // ==================== AUTHENTICATION METHODS ====================
   private async loadUser() {
     const { data: { user } } = await this.supabase.auth.getUser();
     this.currentUserSubject.next(user);
@@ -36,10 +42,7 @@ export class SupabaseService {
   }
 
   async signIn(email: string, password: string) {
-    const { data, error } = await this.supabase.auth.signInWithPassword({
-      email,
-      password
-    });
+    const { data, error } = await this.supabase.auth.signInWithPassword({ email, password });
     if (error) throw error;
     return data;
   }
@@ -69,18 +72,14 @@ export class SupabaseService {
     return session;
   }
 
-  // ==================== PROFILE METHODS ====================
   async getProfile(id: string): Promise<Profile | null> {
     const { data, error } = await this.supabase
       .from('profiles')
       .select('*')
       .eq('id', id)
-      .single(); 
-    
-    if (error && error.code !== 'PGRST116') { // PGRST116 es "no rows found"
-      console.error('Error al obtener el perfil (no PGRST116):', error);
-      throw error;
-    }
+      .single();
+
+    if (error) throw error;
     return data;
   }
 
@@ -91,19 +90,165 @@ export class SupabaseService {
       .eq('id', id)
       .select()
       .single();
-    
+
     if (error) throw error;
     return data;
   }
 
-  // ==================== PAYMENT METHODS ====================
-  async getPaymentsByResident(residentId: string): Promise<Payment[]> {
+  async searchProfiles(searchTerm: string = ''): Promise<ProfileWithApartmentInfo[]> {
+    if (searchTerm) {
+      const { data, error } = await this.supabase
+        .rpc('search_profiles_with_apartment_info', { search_term: searchTerm });
+
+      if (error) throw error;
+      return data
+        .filter((row: any) => row.role === 'resident')
+        .map((row: any) => ({
+          id: row.id,
+          first_name: row.first_name,
+          last_name: row.last_name,
+          email: row.email,
+          role: row.role,
+          apartment_info: row.apartment_number ? {
+            apartment_number: row.apartment_number,
+            floor: row.floor,
+            building_name: row.building_name
+          } : undefined
+        }));
+    } else {
+      const { data, error } = await this.supabase
+        .from('profiles')
+        .select(`
+          *,
+          profile_apartments!left(
+            apartment_id,
+            apartments!left(
+              apartment_number,
+              floor,
+              building_id,
+              buildings!left(name)
+            )
+          )
+        `)
+        .eq('role', 'resident')
+        .order('first_name', { ascending: true });
+
+      if (error) throw error;
+      return data.map(profile => {
+        const rawApartmentInfo = profile.profile_apartments?.[0]?.apartments;
+        return {
+          ...profile,
+          apartment_info: rawApartmentInfo ? {
+            apartment_number: rawApartmentInfo.apartment_number,
+            floor: rawApartmentInfo.floor,
+            building_name: rawApartmentInfo.buildings?.name
+          } : undefined
+        };
+      });
+    }
+  }
+
+  async deleteProfile(id: string): Promise<void> {
+    const { error } = await this.supabase
+      .from('profiles')
+      .delete()
+      .eq('id', id);
+
+    if (error) throw error;
+  }
+
+  async getBuildings(): Promise<Building[] | null> {
     const { data, error } = await this.supabase
+      .from('buildings')
+      .select('*')
+      .order('name', { ascending: true });
+    if (error) return null;
+    return data;
+  }
+
+  async getApartmentsByBuildingId(buildingId: string): Promise<Apartment[] | null> {
+    const { data, error } = await this.supabase
+      .from('apartments')
+      .select('*')
+      .eq('building_id', buildingId)
+      .order('apartment_number', { ascending: true });
+    if (error) return null;
+    return data;
+  }
+
+  async getProfileApartments(profileId: string): Promise<Apartment[] | null> {
+    const { data, error } = await this.supabase
+      .from('profile_apartments')
+      .select('apartments(*)')
+      .eq('profile_id', profileId);
+
+    if (error) return null;
+    return data.map((item: any) => item.apartments);
+  }
+
+  async updateProfileApartments(
+    profileId: string,
+    apartmentIds: string[]
+  ): Promise<void> {
+    // Eliminar relaciones existentes
+    await this.supabase
+      .from('profile_apartments')
+      .delete()
+      .eq('profile_id', profileId);
+
+    // Crear nuevas relaciones
+    const relations = apartmentIds.map(apartmentId => ({
+      profile_id: profileId,
+      apartment_id: apartmentId
+    }));
+
+    const { error } = await this.supabase
+      .from('profile_apartments')
+      .insert(relations);
+
+    if (error) throw error;
+  }
+
+  async getApartments(buildingId?: string): Promise<Apartment[]> {
+    let query = this.supabase
+      .from('apartments')
+      .select('*')
+      .eq('is_occupied', false);
+
+    if (buildingId) query = query.eq('building_id', buildingId);
+    const { data, error } = await query;
+    if (error) throw error;
+    return data as Apartment[];
+  }
+
+  async updateApartmentOccupancy(apartmentIds: string[], isOccupied: boolean): Promise<void> {
+    const { error } = await this.supabase
+      .from('apartments')
+      .update({ is_occupied: isOccupied })
+      .in('id', apartmentIds);
+    if (error) throw error;
+  }
+
+  async createProfileApartments(profileApartments: Omit<ProfileApartment, 'created_at'>[]): Promise<ProfileApartment[]> {
+    const { data, error } = await this.supabase
+      .from('profile_apartments')
+      .insert(profileApartments)
+      .select();
+    if (error) throw error;
+    return data as ProfileApartment[];
+  }
+
+  async getPaymentsByResident(residentId: string, startDate?: string, endDate?: string): Promise<Payment[]> {
+    let query = this.supabase
       .from('payments')
       .select('*')
       .eq('resident_id', residentId)
-      .order('due_date', { ascending: false });
-    
+      .order('payment_date', { ascending: false });
+
+    if (startDate) query = query.gte('payment_date', startDate);
+    if (endDate) query = query.lte('payment_date', endDate);
+
+    const { data, error } = await query;
     if (error) throw error;
     return data || [];
   }
@@ -112,8 +257,7 @@ export class SupabaseService {
     const { data, error } = await this.supabase
       .from('payments')
       .select('*')
-      .order('created_at', { ascending: false });
-    
+      .order('reported_at', { ascending: false });
     if (error) throw error;
     return data || [];
   }
@@ -124,7 +268,6 @@ export class SupabaseService {
       .select('*')
       .eq('id', id)
       .single();
-    
     if (error) throw error;
     return data;
   }
@@ -135,20 +278,18 @@ export class SupabaseService {
       .insert(payment)
       .select()
       .single();
-    
     if (error) throw error;
     return data;
   }
 
   async updatePaymentStatus(
-    id: string, 
-    status: Payment['status'], 
+    id: string,
+    status: Payment['status'],
     paymentDate?: string,
     receiptUrl?: string,
     verifiedBy?: string
   ): Promise<Payment> {
     const updates: any = { status };
-    
     if (paymentDate) updates.payment_date = paymentDate;
     if (receiptUrl) updates.receipt_url = receiptUrl;
     if (verifiedBy) updates.verified_by = verifiedBy;
@@ -159,7 +300,7 @@ export class SupabaseService {
       .eq('id', id)
       .select()
       .single();
-    
+
     if (error) throw error;
     return data;
   }
@@ -170,55 +311,43 @@ export class SupabaseService {
       .select('*')
       .eq('status', 'pending')
       .order('due_date', { ascending: true });
-    
     if (error) throw error;
     return data || [];
   }
 
   async getOverduePayments(): Promise<Payment[]> {
     const today = new Date().toISOString().split('T')[0];
-    
     const { data, error } = await this.supabase
       .from('payments')
       .select('*')
       .eq('status', 'pending')
       .lt('due_date', today)
       .order('due_date', { ascending: true });
-    
     if (error) throw error;
     return data || [];
   }
 
-  // ==================== FILE UPLOAD METHODS ====================
   async uploadReceipt(paymentId: string, file: File): Promise<string> {
     const filePath = `receipts/${paymentId}/${Date.now()}_${file.name}`;
     const { data, error } = await this.supabase.storage
       .from('comprobantes')
       .upload(filePath, file);
-    
     if (error) throw error;
-    // data.path contiene el path del archivo subido dentro del bucket
-    return this.getPublicUrl('comprobantes', data.path); 
+    return this.getPublicUrl('comprobantes', data.path);
   }
 
   getPublicUrl(bucket: string, filePath: string): string {
     const { data: { publicUrl } } = this.supabase.storage
       .from(bucket)
       .getPublicUrl(filePath);
-    
     return publicUrl;
   }
 
-  // ==================== REAL-TIME SUBSCRIPTIONS ====================
-  // Considera usar un método para suscribirse a un canal específico para mayor control
-  // y para desuscribirse cuando no sea necesario.
-  // Este método subscribeToPayments ya es genérico.
-
   subscribeToPayments(callback: (payload: any) => void) {
     return this.supabase
-      .channel('payments_changes') // Nombre de canal único
-      .on('postgres_changes', 
-        { event: '*', schema: 'public', table: 'payments' }, 
+      .channel('payments_changes')
+      .on('postgres_changes',
+        { event: '*', schema: 'public', table: 'payments' },
         callback
       )
       .subscribe();
@@ -227,62 +356,45 @@ export class SupabaseService {
   subscribeToUserPayments(residentId: string, callback: (payload: any) => void) {
     return this.supabase
       .channel(`payments:resident_id=eq.${residentId}`)
-      .on('postgres_changes', 
-        { 
-          event: '*', 
-          schema: 'public', 
+      .on('postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
           table: 'payments',
           filter: `resident_id=eq.${residentId}`
-        }, 
+        },
         callback
       )
       .subscribe();
   }
 
-  // ==================== ANNOUNCEMENT METHODS ====================
   async getAnnouncements(): Promise<Announcement[]> {
     const { data, error } = await this.supabase
       .from('announcements')
       .select('*')
       .order('created_at', { ascending: false });
-
-    if (error) {
-      console.error('Error fetching announcements:', error);
-      throw error;
-    }
+    if (error) throw error;
     return data || [];
   }
 
-  // El `author_id` lo vamos a recibir como parte del objeto 'announcement'
-  // El componente padre (AdminDashboardComponent) será responsable de obtener el ID del usuario actual.
   async createAnnouncement(announcement: Omit<Announcement, 'id' | 'created_at' | 'updated_at'> & { author_id: string }): Promise<Announcement> {
     const { data, error } = await this.supabase
       .from('announcements')
       .insert(announcement)
       .select()
       .single();
-
-    if (error) {
-      console.error('Error creating announcement:', error);
-      throw error;
-    }
+    if (error) throw error;
     return data;
   }
 
   async updateAnnouncement(id: string, updates: Partial<Announcement>): Promise<Announcement> {
-    // Supabase puede manejar 'updated_at' automáticamente con un trigger/default value.
-    // Si no tienes un trigger, puedes añadir `updated_at: new Date().toISOString()` a `updates` aquí.
     const { data, error } = await this.supabase
       .from('announcements')
       .update(updates)
       .eq('id', id)
       .select()
       .single();
-
-    if (error) {
-      console.error('Error updating announcement:', error);
-      throw error;
-    }
+    if (error) throw error;
     return data;
   }
 
@@ -291,16 +403,10 @@ export class SupabaseService {
       .from('announcements')
       .delete()
       .eq('id', id);
-
-    if (error) {
-      console.error('Error deleting announcement:', error);
-      throw error;
-    }
+    if (error) throw error;
   }
 
-  // ==================== UTILITY METHODS ====================
   formatCurrency(amount: number, currency: string = 'VES'): string {
-    // Puedes extender esto para manejar USD, EUR, etc.
     return new Intl.NumberFormat('es-VE', {
       style: 'currency',
       currency: currency,
@@ -311,7 +417,6 @@ export class SupabaseService {
   isPaymentOverdue(dueDate: string): boolean {
     const today = new Date();
     const due = new Date(dueDate);
-    // Comparar solo las fechas, ignorando la hora
     today.setHours(0, 0, 0, 0);
     due.setHours(0, 0, 0, 0);
     return due < today;
@@ -320,12 +425,30 @@ export class SupabaseService {
   getDaysPastDue(dueDate: string): number {
     const today = new Date();
     const due = new Date(dueDate);
-    // Asegurarse de que las fechas sean solo fechas para el cálculo de días exactos
     today.setHours(0, 0, 0, 0);
     due.setHours(0, 0, 0, 0);
-
     const diffTime = today.getTime() - due.getTime();
-    if (diffTime <= 0) return 0; // No está vencido o es hoy
-    return Math.floor(diffTime / (1000 * 60 * 60 * 24)); // Usar floor para días completos
+    if (diffTime <= 0) return 0;
+    return Math.floor(diffTime / (1000 * 60 * 60 * 24));
   }
+
+  async insertPayment(payment: {
+    resident_id: string;
+    concept: string;
+    amount: number;
+    status: string;
+    currency: string;
+    payment_date: string;
+    proof_url: string | null;
+    reported_at: string | null;
+  }): Promise<any> {
+    const { data, error } = await this.supabase
+      .from('payments')
+      .insert([payment]);
+    if (error) {
+      throw error;
+    }
+    return data;
+  }
+  
 }

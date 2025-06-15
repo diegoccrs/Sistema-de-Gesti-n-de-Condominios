@@ -1,0 +1,51 @@
+<mat-toolbar color="primary">
+  <mat-toolbar-row class="toolbar-content">
+    <mat-icon>people</mat-icon>
+    <span>Directorio de Vecinos</span>
+  </mat-toolbar-row>
+</mat-toolbar>
+
+<div class="directory-container">
+  <mat-card class="search-card">
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Buscar vecino</mat-label>
+      <input matInput type="text" [(ngModel)]="searchTerm" (input)="onSearchChange(searchTerm)"
+        placeholder="Nombre, apellido, apto, o edificio">
+      <mat-icon matSuffix>search</mat-icon>
+    </mat-form-field>
+  </mat-card>
+
+
+  <div *ngIf="errorMessage" class="error-message">
+    <mat-icon>error_outline</mat-icon>
+    {{ errorMessage }}
+  </div>
+
+  <mat-card *ngIf="!isLoading && !errorMessage" class="neighbors-list-card">
+    <mat-list>
+      <ng-container *ngIf="neighbors.length > 0; else noNeighbors">
+        <mat-list-item *ngFor="let neighbor of neighbors; let last = last">
+          <mat-icon matListItemIcon>person</mat-icon>
+          <div matListItemTitle>
+            {{ neighbor.first_name }} {{ neighbor.last_name }}
+            <ng-container *ngIf="neighbor.apartment_info as aptInfo">
+              <span class="apartment-info">
+                ({{ aptInfo.apartment_number }}
+                <ng-container *ngIf="aptInfo.building_name">
+                  - {{ aptInfo.building_name }}
+                </ng-container>)
+              </span>
+            </ng-container>
+          </div>
+          <div matListItemLine>{{ neighbor.email }}</div>
+          <mat-divider *ngIf="!last"></mat-divider>
+        </mat-list-item>
+      </ng-container>
+      <ng-template #noNeighbors>
+        <mat-list-item>
+          <div matListItemTitle>No se encontraron vecinos.</div>
+        </mat-list-item>
+      </ng-template>
+    </mat-list>
+  </mat-card>
+</div>
