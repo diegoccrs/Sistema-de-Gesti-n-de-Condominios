@@ -8,8 +8,32 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner'; /
 import { SupabaseClient, createClient } from '@supabase/supabase-js';
 import { environment } from '../../../../environments/environment';
 import { UserProfileButtonComponent } from '../user-profile-button/user-profile-button.component';
+<<<<<<< Updated upstream
 import { DatePipe, CurrencyPipe } from '@angular/common'; // Importar Pipes
 import { Router } from '@angular/router'; // Importar Router para redirecciones en las acciones
+=======
+import { Router } from '@angular/router';
+import { Payment } from '../../../core/domain/models/payment.model';
+import { SupabaseService } from '../../../core/infrastructure/supabase/supabase.service';
+import { ReactiveFormsModule, FormBuilder, FormGroup, FormsModule } from '@angular/forms';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatNativeDateModule } from '@angular/material/core';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+
+// Imports for Payment Register Dialog
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { PaymentRegisterComponent } from '../payment-register/payment-register.component';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+
+// 🚨 ¡IMPORTA AQUI EL NEIGHBOR DIRECTORY COMPONENT!
+import { NeighborDirectoryComponent } from './neighbor-directory/neighbor-directory.component';
+import { PaymentMethodDialogComponent } from './payment-method-dialog/payment-method-dialog.component';
+
+//importa conexion con Telegram
+ import { ConectarTelegramComponent } from '../conectar-telegram/conectar-telegram.component';
+
+>>>>>>> Stashed changes
 
 const supabase: SupabaseClient = createClient(
   environment.supabaseUrl,
@@ -27,8 +51,25 @@ const supabase: SupabaseClient = createClient(
     MatIconModule,
     MatProgressSpinnerModule,
     UserProfileButtonComponent,
+<<<<<<< Updated upstream
     DatePipe, // Añadido para los pipes de fecha
     CurrencyPipe // Añadido para el pipe de moneda
+=======
+    DatePipe,
+    CurrencyPipe,
+    MatTableModule,
+    ReactiveFormsModule,
+    FormsModule,
+    MatDatepickerModule,
+    MatNativeDateModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatDialogModule,
+    MatSnackBarModule,
+    NeighborDirectoryComponent,
+    PaymentMethodDialogComponent,
+    ConectarTelegramComponent
+>>>>>>> Stashed changes
   ],
   templateUrl: './resident-dashboard.component.html',
   styleUrls: ['./resident-dashboard.component.css']
