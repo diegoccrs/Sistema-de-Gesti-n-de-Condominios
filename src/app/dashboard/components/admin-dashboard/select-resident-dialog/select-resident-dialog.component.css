@@ -1,16 +1,17 @@
 /* Estilos mejorados */
 .dialog-container {
-  font-family: 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
-  max-width: 500px;
-  margin: 0 auto;
+  max-width: 600px;
+  margin: 0.5rem auto;
+  padding: 0; /* Eliminamos el padding del contenedor principal */
   background: white;
   border-radius: 12px;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-  overflow: hidden;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+  overflow: hidden; /* Añadido para contener elementos hijos */
 }
 
 .dialog-header {
   padding: 20px 25px;
+  text-align: center;
   background: linear-gradient(135deg, #520a42, #f71da4);
   color: white;
 }
@@ -20,6 +21,7 @@
   font-size: 1.5rem;
   display: flex;
   align-items: center;
+  justify-content: center; /* Añadido para centrar el título */
   gap: 10px;
 }
 
@@ -30,25 +32,28 @@
 }
 
 .search-container {
+  padding: 15px 25px; /* Mismo padding que el header */
   position: relative;
-  padding: 15px 25px;
-  border-bottom: 1px solid #f0f0f0;
+  background: white; /* Fondo blanco para coincidir */
 }
 
 .search-icon {
   position: absolute;
-  left: 40px;
-  top: 30px;
+  left: 35px; /* Ajuste fino de posición */
+  top: 50%;
+  transform: translateY(-50%);
   color: #aaa;
+  pointer-events: none; /* Permite hacer clic a través del icono */
 }
 
 .search-input {
-  width: 100%;
+  width: calc(100% - 40px); /* Ajuste para el icono */
   padding: 12px 20px 12px 40px;
+  margin: 0; /* Eliminar márgenes por defecto */
   border: 1px solid #e0e0e0;
   border-radius: 8px;
   font-size: 0.95rem;
-  transition: all 0.3s;
+  box-sizing: border-box; /* Incluye padding en el ancho */
 }
 
 .search-input:focus {
@@ -166,7 +171,7 @@
 }
 
 .resident-list-container::-webkit-scrollbar-thumb {
-  background: #c1c1c1;
+  background: #f1f1f1;
   border-radius: 4px;
 }
 
