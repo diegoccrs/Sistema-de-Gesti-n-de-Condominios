@@ -101,18 +101,20 @@ export class SupabaseService {
         .rpc('search_profiles_with_apartment_info', { search_term: searchTerm });
 
       if (error) throw error;
-      return data.map((row: any) => ({
-        id: row.id,
-        first_name: row.first_name,
-        last_name: row.last_name,
-        email: row.email,
-        role: row.role,
-        apartment_info: row.apartment_number ? {
-          apartment_number: row.apartment_number,
-          floor: row.floor,
-          building_name: row.building_name
-        } : undefined
-      }));
+      return data
+        .filter((row: any) => row.role === 'resident')
+        .map((row: any) => ({
+          id: row.id,
+          first_name: row.first_name,
+          last_name: row.last_name,
+          email: row.email,
+          role: row.role,
+          apartment_info: row.apartment_number ? {
+            apartment_number: row.apartment_number,
+            floor: row.floor,
+            building_name: row.building_name
+          } : undefined
+        }));
     } else {
       const { data, error } = await this.supabase
         .from('profiles')
@@ -128,6 +130,7 @@ export class SupabaseService {
             )
           )
         `)
+        .eq('role', 'resident')
         .order('first_name', { ascending: true });
 
       if (error) throw error;
