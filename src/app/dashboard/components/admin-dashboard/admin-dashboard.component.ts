@@ -30,6 +30,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 
 import { AssignDebtDialogComponent } from './assign-debt-dialog/assign-debt-dialog.component';
+import { SelectResidentDialogComponent } from './select-resident-dialog/select-resident-dialog.component';
 @Component({
   selector: 'app-admin-dashboard',
   standalone: true,
@@ -378,36 +379,40 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
     return;
   }
 
-  // ⚠️ Aquí podrías usar un selector de residentes. Por simplicidad, vamos a usar un ID fijo por ahora:
-  const residentId = prompt("Introduce el ID del residente al que deseas asignar la deuda:");
-
-  if (!residentId) return;
-
-  const dialogRef = this.dialog.open(AssignDebtDialogComponent, {
-    width: '500px',
-    data: { residentId }
+  // Abre diálogo para buscar residente
+  const selectDialogRef = this.dialog.open(SelectResidentDialogComponent, {
+    width: '500px'
   });
 
-  dialogRef.afterClosed().subscribe(async result => {
-    if (result) {
-      try {
-        await this.supabaseService.insertPayment({
-          resident_id: result.resident_id,
-          concept: result.concept,
-          amount: result.amount,
-          status: 'pending',
-          currency: result.currency,
-          payment_date: result.payment_date,
-          proof_url: null,
-          reported_at: null
-        });
+  selectDialogRef.afterClosed().subscribe(resident => {
+    if (!resident) return;
 
-        this.snackBar.open('Deuda asignada con éxito.', 'Cerrar', { duration: 3000, panelClass: ['snackbar-success'] });
-      } catch (error: any) {
-        console.error('Error al asignar deuda:', error);
-        this.snackBar.open('Error al asignar deuda.', 'Cerrar', { duration: 5000, panelClass: ['snackbar-error'] });
+    const dialogRef = this.dialog.open(AssignDebtDialogComponent, {
+      width: '500px',
+      data: { residentId: resident.id, residentName: `${resident.first_name} ${resident.last_name}` }
+    });
+
+    dialogRef.afterClosed().subscribe(async result => {
+      if (result) {
+        try {
+          await this.supabaseService.insertPayment({
+            resident_id: result.resident_id,
+            concept: result.concept,
+            amount: result.amount,
+            status: 'pending',
+            currency: result.currency,
+            payment_date: result.payment_date,
+            proof_url: null,
+            reported_at: null
+          });
+
+          this.snackBar.open('Deuda asignada con éxito.', 'Cerrar', { duration: 3000, panelClass: ['snackbar-success'] });
+        } catch (error: any) {
+          console.error('Error al asignar deuda:', error);
+          this.snackBar.open('Error al asignar deuda.', 'Cerrar', { duration: 5000, panelClass: ['snackbar-error'] });
+        }
       }
-    }
+    });
   });
 }
 
