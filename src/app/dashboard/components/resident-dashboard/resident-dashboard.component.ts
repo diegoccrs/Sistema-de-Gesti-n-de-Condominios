@@ -34,6 +34,11 @@ import { PaymentMethodDialogComponent } from './payment-method-dialog/payment-me
 //importa conexion con Telegram
  import { ConectarTelegramComponent } from '../conectar-telegram/conectar-telegram.component';
 
+// Imports proveedores de pago
+
+import { PaymentService } from '../../../core/services/payment.service'; // Import the new service
+
+
 
 @Component({
   selector: 'app-resident-dashboard',
@@ -86,7 +91,8 @@ export class ResidentDashboardComponent implements OnInit {
     private supabaseService: SupabaseService,
     private fb: FormBuilder,
     private dialog: MatDialog,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    private paymentService: PaymentService
   ) {
     this.dateFilterForm = this.fb.group({
       startDate: [null],
@@ -376,16 +382,17 @@ export class ResidentDashboardComponent implements OnInit {
       data: payment
     });
 
-    dialogRef.afterClosed().subscribe(method => {
-      if (method) {
-        this.snackBar.open(`Seleccionaste ${method} para el pago: ${payment.concept}`, 'Cerrar', {
+    dialogRef.afterClosed().subscribe(result => {
+      if (result && result.selectedMethod) {
+        this.snackBar.open(`Iniciando pago con ${result.selectedMethod} para: ${payment.concept}`, 'Cerrar', {
           duration: 3000
         });
-        // Aquí puedes luego agregar la lógica de redirección o integración con la pasarela
+        
+        // Use the PaymentService to process the payment
+        this.paymentService.processPayment(payment, result.selectedMethod);
       }
     });
   }
-
 }
 
 
