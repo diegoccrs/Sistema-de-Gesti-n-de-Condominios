@@ -377,22 +377,32 @@ export class ResidentDashboardComponent implements OnInit {
   }
 
   openPaymentMethods(payment: any): void {
-    const dialogRef = this.dialog.open(PaymentMethodDialogComponent, {
-      width: '400px',
-      data: payment
-    });
-
-    dialogRef.afterClosed().subscribe(result => {
-      if (result && result.selectedMethod) {
-        this.snackBar.open(`Iniciando pago con ${result.selectedMethod} para: ${payment.concept}`, 'Cerrar', {
-          duration: 3000
+        const dialogRef = this.dialog.open(PaymentMethodDialogComponent, {
+          width: '400px',
+          data: payment
         });
-        
-        // Use the PaymentService to process the payment
-        this.paymentService.processPayment(payment, result.selectedMethod);
+    
+        dialogRef.afterClosed().subscribe(result => {
+          if (result && result.selectedMethod) {
+            // Handle successful PayPal payment
+            if (result.selectedMethod === 'paypal' && result.details) {
+              this.snackBar.open(`Pago con PayPal exitoso para: ${payment.concept}`, 'Cerrar', {
+                duration: 5000
+              });
+              // Here, you can add logic to save the transaction to your database
+              console.log('PayPal payment details:', result.details);
+            } else {
+              // Handle other payment methods
+              this.snackBar.open(`Iniciando pago con ${result.selectedMethod} para: ${payment.concept}`, 'Cerrar', {
+                duration: 3000
+              });
+              
+              this.paymentService.processPayment(payment, result.selectedMethod);
+            }
+          }
+        });
       }
-    });
-  }
+
 }
 
 
