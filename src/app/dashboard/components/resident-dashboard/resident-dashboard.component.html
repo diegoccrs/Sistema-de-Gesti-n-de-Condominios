@@ -33,6 +33,12 @@
         </div>
     </section>
 
+
+    <div *ngIf="errorMessage && !isLoading" class="error-message mat-elevation-z2 animated-fade-in">
+        <mat-icon class="error-icon">error_outline</mat-icon>
+        <p>{{ errorMessage }}</p>
+    </div>
+
     <section class="main-content">
         <mat-card class="section-card mat-elevation-z4 animated-slide-in-left delay-1">
             <mat-card-header>
@@ -225,10 +231,6 @@
 
 
 
-    <div *ngIf="errorMessage && !isLoading" class="error-message mat-elevation-z2 animated-fade-in">
-        <mat-icon class="error-icon">error_outline</mat-icon>
-        <p>{{ errorMessage }}</p>
-    </div>
 
     <div *ngIf="isLoading && !errorMessage" class="global-loading-overlay">
         <mat-spinner diameter="60"></mat-spinner>
