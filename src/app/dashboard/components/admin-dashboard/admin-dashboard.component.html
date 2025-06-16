@@ -73,14 +73,18 @@
         </button>
         <button mat-flat-button color="primary" class="action-button" (click)="openCreateResidentDialog()">
           <mat-icon>person_add</mat-icon>
-          Crear Nuevo Residente
+          Crear Residente
         </button>
         <button mat-flat-button color="warn" class="action-button" (click)="goToReviewProofs()">
           <mat-icon>receipt_long</mat-icon>
-          Revisar Comprobantes
+          Ver Comprobantes
+        </button>
+        <button mat-flat-button color="success" class="action-button" (click)="openReminderConfigDialog()">
+          <mat-icon>alarm</mat-icon>
+          Enviar Recordatorio
         </button>
       </div>
- 
+
       <!-- Agregar encima de la sección de Residentes Recientes -->
       <mat-divider></mat-divider>
       <div class="search-section">
