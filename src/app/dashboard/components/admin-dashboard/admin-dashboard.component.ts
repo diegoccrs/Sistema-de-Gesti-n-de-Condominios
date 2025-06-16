@@ -42,16 +42,14 @@ import { SelectResidentDialogComponent } from './select-resident-dialog/select-r
     MatDividerModule,
     MatTableModule,
     MatTooltipModule,
-    RouterModule, // <-- Asegúrate de que RouterModule esté aquí
+    RouterModule,
     UserProfileButtonComponent,
     MatProgressBarModule,
     MatProgressSpinnerModule,
-    MatToolbarModule, // Añadir MatToolbarModule a los imports
-    CreateResidentFormDialogComponent,
+    MatToolbarModule,
     FormsModule,
     MatFormFieldModule,
     MatInputModule,
-    EditResidentFormDialogComponent
 
   ],
   templateUrl: './admin-dashboard.component.html',
@@ -175,19 +173,12 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
         if (profile) {
           this.adminName = profile.first_name || 'Administrador';
 
-          const allPayments = await this.supabaseService.getAllPayments(); // Asegúrate de que esta función exista y obtenga los pagos
+          const allPayments = await this.supabaseService.getAllPayments();
           this.pendingPaymentsCount = allPayments.filter(p => p.status === 'pending').length;
-          // Asegúrate de que 'proof_url' exista en el modelo Payment, si no, usa la propiedad correcta
           this.pendingProofCount = allPayments.filter(p => p.status === 'pending' && (p as any).proof_url).length;
+          const allProfiles = await this.supabaseService.searchProfiles('');
+          this.activeResidentsCount = allProfiles.filter(p => p.role === 'resident').length;
 
-
-          // Aquí deberías cargar los conteos reales para estos:
-          // this.activeResidentsCount = await this.supabaseService.getResidentsCount();
-          // this.activeAnnouncementsCount = await this.supabaseService.getActiveAnnouncementsCount();
-
-          // Placeholder para otros contadores
-          this.activeResidentsCount = 0; // Implementar lógica para obtener esto
-          // this.pendingProofCount = 0; // Implementar lógica para obtener esto (ya lo hice con proof_url)
         }
       }
     } catch (error: any) {
@@ -367,58 +358,58 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
   }
 
   async openAssignDebtDialog(): Promise<void> {
-  const user = await this.supabaseService.getCurrentUser();
-  if (!user) {
-    this.snackBar.open('Error: no se encontró usuario logueado.', 'Cerrar', { duration: 3000 });
-    return;
-  }
+    const user = await this.supabaseService.getCurrentUser();
+    if (!user) {
+      this.snackBar.open('Error: no se encontró usuario logueado.', 'Cerrar', { duration: 3000 });
+      return;
+    }
 
-  const profile = await this.supabaseService.getProfile(user.id);
-  if (!profile) {
-    this.snackBar.open('No se encontró perfil de administrador.', 'Cerrar', { duration: 3000 });
-    return;
-  }
+    const profile = await this.supabaseService.getProfile(user.id);
+    if (!profile) {
+      this.snackBar.open('No se encontró perfil de administrador.', 'Cerrar', { duration: 3000 });
+      return;
+    }
 
-  const selectDialogRef = this.dialog.open(SelectResidentDialogComponent, {
-    width: '500px'
-  });
-
-  selectDialogRef.afterClosed().subscribe(resident => {
-    if (!resident) return;
-
-    const dialogRef = this.dialog.open(AssignDebtDialogComponent, {
-      width: '500px',
-      data: { residentId: resident.id }
+    const selectDialogRef = this.dialog.open(SelectResidentDialogComponent, {
+      width: '500px'
     });
 
-    dialogRef.afterClosed().subscribe(async result => {
-      if (result) {
-        try {
-          await this.supabaseService.insertPayment({
-            resident_id: result.resident_id,
-            concept: result.concept,
-            amount: result.amount,
-            status: 'pending',
-            currency: result.currency,
-            payment_date: result.payment_date, // Ya viene en formato timestamptz
-            proof_url: null,
-            reported_at: null
-          });
+    selectDialogRef.afterClosed().subscribe(resident => {
+      if (!resident) return;
 
-          this.snackBar.open('Deuda asignada con éxito.', 'Cerrar', { 
-            duration: 3000, 
-            panelClass: ['snackbar-success'] 
-          });
-        } catch (error: any) {
-          console.error('Error al asignar deuda:', error);
-          this.snackBar.open(`Error: ${error.message}`, 'Cerrar', {
-            duration: 5000,
-            panelClass: ['snackbar-error']
-          });
+      const dialogRef = this.dialog.open(AssignDebtDialogComponent, {
+        width: '500px',
+        data: { residentId: resident.id }
+      });
+
+      dialogRef.afterClosed().subscribe(async result => {
+        if (result) {
+          try {
+            await this.supabaseService.insertPayment({
+              resident_id: result.resident_id,
+              concept: result.concept,
+              amount: result.amount,
+              status: 'pending',
+              currency: result.currency,
+              payment_date: result.payment_date, // Ya viene en formato timestamptz
+              proof_url: null,
+              reported_at: null
+            });
+
+            this.snackBar.open('Deuda asignada con éxito.', 'Cerrar', {
+              duration: 3000,
+              panelClass: ['snackbar-success']
+            });
+          } catch (error: any) {
+            console.error('Error al asignar deuda:', error);
+            this.snackBar.open(`Error: ${error.message}`, 'Cerrar', {
+              duration: 5000,
+              panelClass: ['snackbar-error']
+            });
+          }
         }
-      }
+      });
     });
-  });
-}
+  }
 
 }
