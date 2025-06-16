@@ -367,3 +367,30 @@ td.mat-cell .mat-icon-button mat-icon {
     font-size: 1.5em;
   }
 }
+
+/* Agregar dentro de la sección .metrics-grid */
+
+.metric-card mat-icon[color="primary"] {
+  color: var(--primary-color);
+}
+
+.metric-card mat-icon[color="accent"] {
+  color: var(--accent-color);
+}
+
+.metric-card mat-icon[color="warn"] {
+  color: var(--danger-color);
+}
+
+.metric-card mat-icon[color="success"] {
+  color: var(--success-color);
+}
+
+/* Modificar la regla existente (eliminar la propiedad color) */
+.metric-card mat-icon {
+  font-size: 3rem;
+  width: 3rem;
+  height: 3rem;
+  margin-bottom: 0.625rem;
+  /* Se quita el color fijo: color: var(--primary-light); */
+}
