@@ -9,6 +9,9 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatTableModule } from '@angular/material/table';
 import { UserProfileButtonComponent } from '../user-profile-button/user-profile-button.component';
+
+
+
 import { Router } from '@angular/router';
 import { Payment } from '../../../core/domain/models/payment.model';
 import { SupabaseService } from '../../../core/infrastructure/supabase/supabase.service';
@@ -27,6 +30,9 @@ import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { NeighborDirectoryComponent } from './neighbor-directory/neighbor-directory.component';
 import { PaymentMethodDialogComponent } from './payment-method-dialog/payment-method-dialog.component';
 
+
+//importa conexion con Telegram
+ import { ConectarTelegramComponent } from '../conectar-telegram/conectar-telegram.component';
 
 
 @Component({
@@ -52,6 +58,7 @@ import { PaymentMethodDialogComponent } from './payment-method-dialog/payment-me
     MatDialogModule,
     MatSnackBarModule,
     NeighborDirectoryComponent,
+    ConectarTelegramComponent,
     PaymentMethodDialogComponent
   ],
   templateUrl: './resident-dashboard.component.html',

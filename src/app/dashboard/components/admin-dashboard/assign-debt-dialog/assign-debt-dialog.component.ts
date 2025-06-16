@@ -1,4 +1,3 @@
-// src/app/dashboard/components/admin-dashboard/assign-debt-dialog/assign-debt-dialog.component.ts
 import { Component, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
@@ -13,7 +12,7 @@ import { CommonModule } from '@angular/common';
   standalone: true,
   imports: [
     CommonModule,
-    ReactiveFormsModule,
+    ReactiveFormsModule, // <-- Añade esto
     MatFormFieldModule,
     MatInputModule,
     MatSelectModule,
@@ -34,13 +33,29 @@ export class AssignDebtDialogComponent {
       concept: ['', Validators.required],
       amount: [0, [Validators.required, Validators.min(0.01)]],
       currency: ['VES', Validators.required],
-      payment_date: [new Date(), Validators.required]
+      payment_date: [this.getCurrentDateFormatted(), Validators.required]
     });
+  }
+
+  private getCurrentDateFormatted(): string {
+    const today = new Date();
+    return today.toISOString().split('T')[0];
+  }
+
+  private convertToTimestampTz(dateString: string): string {
+    const date = new Date(dateString);
+    date.setUTCHours(12, 0, 0, 0);
+    return date.toISOString();
   }
 
   submit(): void {
     if (this.form.valid) {
-      this.dialogRef.close({ ...this.form.value, resident_id: this.data.residentId });
+      const formValue = {
+        ...this.form.value,
+        resident_id: this.data.residentId,
+        payment_date: this.convertToTimestampTz(this.form.value.payment_date)
+      };
+      this.dialogRef.close(formValue);
     }
   }
 
