@@ -379,7 +379,6 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
     return;
   }
 
-  // Abre diálogo para buscar residente
   const selectDialogRef = this.dialog.open(SelectResidentDialogComponent, {
     width: '500px'
   });
@@ -389,7 +388,7 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
 
     const dialogRef = this.dialog.open(AssignDebtDialogComponent, {
       width: '500px',
-      data: { residentId: resident.id, residentName: `${resident.first_name} ${resident.last_name}` }
+      data: { residentId: resident.id }
     });
 
     dialogRef.afterClosed().subscribe(async result => {
@@ -401,15 +400,21 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
             amount: result.amount,
             status: 'pending',
             currency: result.currency,
-            payment_date: result.payment_date,
+            payment_date: result.payment_date, // Ya viene en formato timestamptz
             proof_url: null,
             reported_at: null
           });
 
-          this.snackBar.open('Deuda asignada con éxito.', 'Cerrar', { duration: 3000, panelClass: ['snackbar-success'] });
+          this.snackBar.open('Deuda asignada con éxito.', 'Cerrar', { 
+            duration: 3000, 
+            panelClass: ['snackbar-success'] 
+          });
         } catch (error: any) {
           console.error('Error al asignar deuda:', error);
-          this.snackBar.open('Error al asignar deuda.', 'Cerrar', { duration: 5000, panelClass: ['snackbar-error'] });
+          this.snackBar.open(`Error: ${error.message}`, 'Cerrar', {
+            duration: 5000,
+            panelClass: ['snackbar-error']
+          });
         }
       }
     });
