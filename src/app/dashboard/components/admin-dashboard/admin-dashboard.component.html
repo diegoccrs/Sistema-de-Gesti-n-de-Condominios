@@ -21,6 +21,7 @@
           <mat-icon color="primary">attach_money</mat-icon>
           <h3>Deudas</h3>
           <p>{{ pendingPaymentsCount }}</p>
+
         </mat-card>
         <mat-card class="metric-card mat-elevation-z2">
           <mat-icon color="accent">group</mat-icon>
@@ -31,9 +32,10 @@
           <mat-icon color="warn">pending_actions</mat-icon>
           <h3>Comprobantes Pendientes</h3>
           <p>{{ pendingProofCount }}</p>
+
         </mat-card>
         <mat-card class="metric-card mat-elevation-z2">
-          <mat-icon color="success">announcement</mat-icon>
+          <mat-icon color="primary">campaign</mat-icon>
           <h3>Anuncios Activos</h3>
           <p>{{ activeAnnouncementsCount }}</p>
         </mat-card>
@@ -47,7 +49,7 @@
           <mat-icon>campaign</mat-icon>
           Publicar Anuncio
         </button>
-        <button mat-flat-button color="accent" class="action-button" (click)="openAssignDebtDialog()">
+        <button mat-flat-button color="primary" class="action-button" (click)="openAssignDebtDialog()">
           <mat-icon>payment</mat-icon>
           Asignar Deudas
         </button>
@@ -55,14 +57,21 @@
           <mat-icon>person_add</mat-icon>
           Crear Residente
         </button>
-        <button mat-flat-button color="warn" class="action-button" (click)="goToReviewProofs()">
+        <button mat-flat-button color="primary" class="action-button" (click)="goToReviewProofs('comprobantes')">
           <mat-icon>receipt_long</mat-icon>
           Ver Comprobantes
         </button>
-        <button mat-flat-button color="success" class="action-button" (click)="openReminderConfigDialog()">
+
+        <button mat-flat-button color="primary" class="action-button" (click)="openReminderConfigDialog()">
           <mat-icon>alarm</mat-icon>
           Enviar Recordatorio
         </button>
+
+        <button mat-flat-button color="primary" class="action-button" (click)="goToReviewProofs('deudas')">
+          <mat-icon>receipt_long</mat-icon>
+          Ver Deudas
+        </button>
+
       </div>
 
       <!-- Agregar encima de la sección de Residentes Recientes -->
@@ -261,10 +270,10 @@
         </button>
       </div>
 -->
-  </mat-card-content>
-  <mat-divider></mat-divider>
-  <div class="copyright-section" style="text-align:center; margin-top: 16px; color: #888;">
-    © {{ currentYear }} Condominio Digital. Todos los derechos reservados.
-  </div>
+    </mat-card-content>
+    <mat-divider></mat-divider>
+    <div class="copyright-section" style="text-align:center; margin-top: 16px; color: #888;">
+      © {{ currentYear }} Condominio Digital. Todos los derechos reservados.
+    </div>
   </mat-card>
 </div>
