@@ -22,9 +22,9 @@
           <h3>Deudas</h3>
           <p>{{ pendingPaymentsCount }}</p>
           <mat-card-actions class="card-actions-bottom">
-            <button mat-button color="primary" (click)="goToReviewProofs()">
-              <mat-icon>visibility</mat-icon> Revisar
-            </button>
+           <button mat-button color="primary" (click)="goToReviewProofs('deudas')">
+  <mat-icon>visibility</mat-icon> Revisar
+</button>
           </mat-card-actions>
         </mat-card>
         <mat-card class="metric-card mat-elevation-z2">
@@ -42,9 +42,9 @@
           <h3>Comprobantes Pendientes</h3>
           <p>{{ pendingProofCount }}</p>
           <mat-card-actions class="card-actions-bottom">
-            <button mat-button color="warn" (click)="goToReviewProofs()">
-              <mat-icon>receipt_long</mat-icon> Revisar
-            </button>
+            <button mat-button color="warn" (click)="goToReviewProofs('comprobantes')">
+  <mat-icon>receipt_long</mat-icon> Revisar
+</button>
           </mat-card-actions>
         </mat-card>
         <mat-card class="metric-card mat-elevation-z2">
@@ -75,10 +75,9 @@
           <mat-icon>person_add</mat-icon>
           Crear Nuevo Residente
         </button>
-        <button mat-flat-button color="warn" class="action-button" (click)="goToReviewProofs()">
-          <mat-icon>receipt_long</mat-icon>
-          Revisar Comprobantes
-        </button>
+        <button mat-button color="warn" (click)="goToReviewProofs('comprobantes')">
+  <mat-icon>receipt_long</mat-icon> Revisar
+</button>
       </div>
  
       <!-- Agregar encima de la sección de Residentes Recientes -->

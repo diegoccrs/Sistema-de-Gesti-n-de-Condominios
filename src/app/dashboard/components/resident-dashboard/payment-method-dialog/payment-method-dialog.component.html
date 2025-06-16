@@ -7,10 +7,8 @@
     </div>
 
     <div class="payment-methods">
-        <button mat-raised-button color="primary" (click)="selectMethod('paypal')">
-            <img src="/assets/icons/paypal.png" alt="PayPal" class="payment-icon" />
-            Paypal
-        </button>
+        <div id="paypal-button-container"></div>
+
         <button mat-raised-button color="accent" (click)="selectMethod('stripe')">
             <img src="/assets/icons/stripe.png" alt="Stripe" class="payment-icon" />
             Stripe
