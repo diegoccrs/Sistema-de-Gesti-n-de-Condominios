@@ -314,10 +314,12 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
     this.router.navigate(['/dashboard/residents-management']); 
   }
 
-  goToReviewProofs(): void {
+ goToReviewProofs(tipo: 'deudas' | 'comprobantes'): void {
+  this.router.navigate(['/dashboard/payments-confirmation'], {
+    queryParams: { tipo }
+  });
+}
 
-    this.router.navigate(['/dashboard/payments-confirmation']);
-  }
 
   goToGenerateReports(): void {
     this.router.navigate(['/admin/reports']); 
