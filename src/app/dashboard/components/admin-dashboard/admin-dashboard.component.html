@@ -21,41 +21,22 @@
           <mat-icon color="primary">attach_money</mat-icon>
           <h3>Deudas</h3>
           <p>{{ pendingPaymentsCount }}</p>
-          <mat-card-actions class="card-actions-bottom">
-            <button mat-button color="primary" (click)="goToReviewProofs()">
-              <mat-icon>visibility</mat-icon> Revisar
-            </button>
-          </mat-card-actions>
         </mat-card>
         <mat-card class="metric-card mat-elevation-z2">
           <mat-icon color="accent">group</mat-icon>
           <h3>Residentes Activos</h3>
           <p>{{ activeResidentsCount }}</p>
-          <mat-card-actions class="card-actions-bottom">
-            <button mat-button color="accent" (click)="goToManageResidents()">
-              <mat-icon>settings</mat-icon> Administrar
-            </button>
-          </mat-card-actions>
         </mat-card>
         <mat-card class="metric-card mat-elevation-z2">
           <mat-icon color="warn">pending_actions</mat-icon>
           <h3>Comprobantes Pendientes</h3>
           <p>{{ pendingProofCount }}</p>
-          <mat-card-actions class="card-actions-bottom">
-            <button mat-button color="warn" (click)="goToReviewProofs()">
-              <mat-icon>receipt_long</mat-icon> Revisar
-            </button>
-          </mat-card-actions>
+         
         </mat-card>
         <mat-card class="metric-card mat-elevation-z2">
           <mat-icon color="success">announcement</mat-icon>
           <h3>Anuncios Activos</h3>
           <p>{{ activeAnnouncementsCount }}</p>
-          <mat-card-actions class="card-actions-bottom">
-            <button mat-button color="success" (click)="goToManageAnnouncements()">
-              <mat-icon>edit</mat-icon> Gestionar
-            </button>
-          </mat-card-actions>
         </mat-card>
       </div>
 
@@ -80,7 +61,7 @@
           Revisar Comprobantes
         </button>
       </div>
- 
+
       <!-- Agregar encima de la sección de Residentes Recientes -->
       <mat-divider></mat-divider>
       <div class="search-section">
