@@ -1,0 +1,15 @@
+#stripe-card-element {
+    padding: 12px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    margin-bottom: 12px;
+  }
+  
+  button {
+    width: 100%;
+  }
+  
+  .payment-error {
+    color: #fa755a;
+    margin-top: 8px;
+  }

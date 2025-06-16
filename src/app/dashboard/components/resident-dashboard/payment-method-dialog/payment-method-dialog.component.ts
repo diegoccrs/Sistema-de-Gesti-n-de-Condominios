@@ -5,6 +5,7 @@ import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialogModule } from '@angular/material/dialog';
+import { StripePaymentComponent } from '../stripe-payment/stripe-payment.component';
 
 declare var paypal: any;
 
@@ -17,12 +18,14 @@ declare var paypal: any;
     CommonModule,
     MatIconModule,
     MatButtonModule,
-    MatDialogModule
+    MatDialogModule,
+    StripePaymentComponent
   ],
 })
 export class PaymentMethodDialogComponent implements AfterViewInit {
   payment: any;
   isPayPalSupported: boolean = true; // Flag to check if PayPal is supported
+  showStripeForm = false;
 
   constructor(
     public dialogRef: MatDialogRef<PaymentMethodDialogComponent>,
@@ -73,6 +76,14 @@ export class PaymentMethodDialogComponent implements AfterViewInit {
   }
 
   selectMethod(method: string) {
-    this.dialogRef.close({ selectedMethod: method });
+    if (method === 'stripe') {
+      this.showStripeForm = true;
+    } else {
+      this.dialogRef.close({ selectedMethod: method });
+    }
+  }
+
+  handleStripePaymentResult(result: any) {
+    this.dialogRef.close({ selectedMethod: 'stripe', details: result });
   }
 }
