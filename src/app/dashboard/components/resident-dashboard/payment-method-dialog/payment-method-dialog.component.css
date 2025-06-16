@@ -31,4 +31,21 @@
         height: 20px;
         object-fit: contain;
     }
+
+    
+    .not-supported-message {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px;
+    background-color: #fff3e0; /* A light orange background */
+    border: 1px solid #ffc107; /* An orange border */
+    border-radius: 4px;
+    color: #c56000; /* A dark orange text color */
+    margin-bottom: 16px;
+    }
+
+    .not-supported-message mat-icon {
+    margin-right: 8px;
+    }
 }

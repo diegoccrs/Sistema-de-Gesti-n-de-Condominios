@@ -7,14 +7,22 @@
     </div>
 
     <div class="payment-methods">
-        <div id="paypal-button-container"></div>
+        <div *ngIf="isPayPalSupported; else notSupported">
+            <div id="paypal-button-container"></div>
+        </div>
+        <ng-template #notSupported>
+            <div class="not-supported-message">
+                <mat-icon>warning</mat-icon>
+                <span>This payment method is not available for the currency {{ payment.currency }}.</span>
+            </div>
+        </ng-template>
 
         <button mat-raised-button color="accent" (click)="selectMethod('stripe')">
             <img src="/assets/icons/stripe.png" alt="Stripe" class="payment-icon" />
             Stripe
         </button>
         <button mat-raised-button color="warn" (click)="selectMethod('mercadopago')">
-            <img src="/assets/icons/mercadopago.png" alt="MercadoPago" class="payment-icon" />
+            <img src="/assets/icons/mercadopago.png" alt="MercadoPago" class.payment-icon />
             MercadoPago
         </button>
     </div>
