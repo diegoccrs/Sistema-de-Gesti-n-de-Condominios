@@ -1,4 +1,4 @@
-/* src/app/dashboard/components/admin-dashboard/admin-dashboard.component.css */
+
 
 /* ====================
    VARIABLES Y SETTINGS
@@ -29,7 +29,7 @@
   padding: 1.25rem;
   max-width: 75rem;
   margin: 1.25rem auto;
-  font-family: 'Roboto', sans-serif;
+  font-family: 'Raleway', sans-serif;
   color: var(--text-primary);
 }
 

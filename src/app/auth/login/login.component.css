@@ -1,10 +1,26 @@
-/* Importa Google Fonts para una tipografía moderna y consistente */
-@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&family=Open+Sans:wght@400;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Raleway:ital,wght@0,100..900;1,100..900&display=swap');
 
 :host {
     display: block;
     overflow-x: hidden;
-    font-family: 'Open Sans', sans-serif;
+    font-family: 'Raleway', sans-serif;
+}
+
+/* --- Paleta de colores profesional --- */
+:root {
+    --primary-color: #4a1d6d;
+    --primary-light: #7c2d8e;
+    --accent-color: #e91e63;
+    --light-bg: #f8f9fa;
+    --card-bg: #ffffff;
+    --text-primary: #2d3748;
+    --text-secondary: #718096;
+    --border-color: rgba(0, 0, 0, 0.06);
+    --shadow-light: 0 3px 10px rgba(0, 0, 0, 0.04);
+    --shadow-medium: 0 6px 15px rgba(0, 0, 0, 0.07);
+    --radius-sm: 6px;
+    --radius-md: 10px;
+    --transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /* --- Animaciones de Entrada --- */
@@ -34,151 +50,243 @@
 .delay-5 { animation-delay: 1.0s; }
 .delay-6 { animation-delay: 1.2s; }
 
-
 .login-container {
     display: flex;
     justify-content: center;
     align-items: center;
     min-height: 100vh;
-    background: linear-gradient(135deg, #e0f7fa 0%, #c2e5f0 50%, #b3e0ed 100%); /* Degradado de fondo suave */
+    background: linear-gradient(135deg, 
+        rgba(122, 45, 142, 0.08) 0%, 
+        rgba(122, 45, 142, 0.05) 50%, 
+        rgba(122, 45, 142, 0.03) 100%);
     padding: 20px;
     box-sizing: border-box;
 }
 
 .login-card {
     width: 100%;
-    max-width: 450px; /* Ligeramente más ancho */
-    padding: 40px; /* Más padding interno */
-    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2); /* Sombra más pronunciada */
-    border-radius: 15px; /* Bordes más redondeados */
-    background-color: #ffffff;
-    opacity: 0; /* Oculto para la animación inicial */
+    max-width: 450px;
+    padding: 40px;
+    box-shadow: var(--shadow-medium);
+    border-radius: var(--radius-md);
+    background-color: var(--card-bg);
+    opacity: 0;
     animation: fadeIn 1s ease-out forwards;
+    border-top: 4px solid var(--primary-color);
+    position: relative;
+    overflow: hidden;
+}
+
+.login-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 5px;
+    background: linear-gradient(90deg, var(--primary-color), var(--primary-light));
+    z-index: 1;
 }
 
 .login-card-header {
     text-align: center;
-    margin-bottom: 30px; /* Más espacio inferior */
+    margin-bottom: 30px;
     display: block;
+    position: relative;
+    z-index: 2;
 }
 
 .login-logo {
-    width: 80px; /* Tamaño del logo */
+    width: 90px;
     height: auto;
     margin-bottom: 20px;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
 }
 
-.login-card-header .mat-headline-5 { /* Usamos la clase de tipografía de Angular Material */
-    font-family: 'Montserrat', sans-serif;
-    font-size: 2.2rem; /* Más grande para impacto */
+.login-card-header .mat-headline-5 {
+    font-family: 'Raleway', sans-serif;
+    font-size: 2.2rem;
     font-weight: 700;
-    color: #3f51b5;
+    color: var(--primary-color);
     margin-bottom: 8px;
+    letter-spacing: -0.01em;
 }
 
 mat-card-subtitle {
-    font-family: 'Open Sans', sans-serif;
+    font-family: 'Raleway', sans-serif;
     font-size: 1rem;
-    color: #757575;
+    color: var(--text-secondary);
+    font-weight: 400;
 }
 
 .full-width-input {
     width: 100%;
-    margin-bottom: 25px; /* Más espacio entre campos */
+    margin-bottom: 25px;
 }
 
-/* Estilos para los campos de formulario de Angular Material */
+/* Estilos para campos de formulario */
 mat-form-field.mat-form-field-appearance-outline .mat-form-field-wrapper {
-    background-color: #f8f9fa; /* Fondo ligeramente gris para los campos */
-    border-radius: 8px; /* Bordes redondeados para los campos */
+    background-color: var(--light-bg);
+    border-radius: var(--radius-sm);
+    transition: var(--transition);
+}
+
+mat-form-field.mat-focused .mat-form-field-wrapper {
+    box-shadow: 0 0 0 3px rgba(122, 45, 142, 0.1);
 }
 
 mat-form-field.mat-focused .mat-form-field-outline-thick {
-    color: #3f51b5 !important; /* Color del borde al enfocar */
+    color: var(--primary-light) !important;
 }
 
 input.mat-input-element {
-    font-family: 'Open Sans', sans-serif;
+    font-family: 'Raleway', sans-serif;
     font-size: 1.1rem;
+    font-weight: 500;
+    color: var(--text-primary);
 }
 
 .full-width-button {
     width: 100%;
-    padding: 15px 0; /* Más padding */
-    font-size: 1.1rem; /* Tamaño de fuente del botón */
+    padding: 15px 0;
+    font-size: 1.1rem;
     font-weight: 600;
-    margin-top: 20px; /* Más espacio superior */
-    border-radius: 8px; /* Bordes redondeados para el botón */
-    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
-    display: flex; /* Para centrar spinner/texto */
+    margin-top: 20px;
+    border-radius: var(--radius-sm);
+    transition: var(--transition);
+    display: flex;
     justify-content: center;
     align-items: center;
-    gap: 10px; /* Espacio entre spinner y texto */
+    gap: 10px;
+    background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
+    color: white;
+    position: relative;
+    overflow: hidden;
+    z-index: 1;
+    border: none;
+}
+
+.full-width-button::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, var(--primary-light), var(--accent-color));
+    opacity: 0;
+    transition: var(--transition);
+    z-index: -1;
 }
 
 .full-width-button:hover {
     transform: translateY(-3px);
-    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+    box-shadow: var(--shadow-medium);
+}
+
+.full-width-button:hover::before {
+    opacity: 1;
 }
 
 .full-width-button[disabled] {
     opacity: 0.7;
     cursor: not-allowed;
+    background: var(--text-secondary);
 }
 
-/* Estilo para el spinner de carga */
 mat-progress-spinner {
-    stroke: white; /* Color del spinner */
+    stroke: white;
 }
-
 
 .forgot-password {
-    margin-top: 25px; /* Más espacio */
+    margin-top: 25px;
     text-align: center;
 }
 
 .forgot-password a {
-    font-family: 'Open Sans', sans-serif;
-    color: #3f51b5;
+    font-family: 'Raleway', sans-serif;
+    color: var(--primary-color);
     text-decoration: none;
     font-size: 0.95em;
-    font-weight: 600; /* Más audaz */
+    font-weight: 600;
     transition: color 0.2s ease;
+    position: relative;
+}
+
+.forgot-password a::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background: var(--primary-color);
+    transition: width 0.3s ease;
 }
 
 .forgot-password a:hover {
-    text-decoration: underline;
-    color: #5c6bc0; /* Color ligeramente diferente al pasar el ratón */
+    color: var(--accent-color);
+}
+
+.forgot-password a:hover::after {
+    width: 100%;
 }
 
 .error-message {
-    color: #f44336;
-    background-color: #ffebee;
-    border: 1px solid #ef9a9a;
-    padding: 12px; /* Más padding */
-    border-radius: 6px; /* Más redondeado */
-    margin-top: 25px; /* Más espacio superior */
+    color: #c2185b;
+    background-color: #fce4ec;
+    border-left: 4px solid #c2185b;
+    padding: 12px;
+    border-radius: var(--radius-sm);
+    margin-top: 25px;
     text-align: center;
     font-size: 0.95em;
-    display: flex; /* Para el icono de error */
+    display: flex;
     align-items: center;
     justify-content: center;
     gap: 8px;
     font-weight: 500;
+    animation: fadeIn 0.5s ease;
 }
 
 .error-message .error-icon {
-    font-size: 20px; /* Tamaño del icono de error */
-    color: #f44336;
+    font-size: 20px;
+    color: #c2185b;
 }
 
 .login-card-footer {
-    margin-top: 30px; /* Espacio superior */
+    margin-top: 30px;
     text-align: center;
-    padding-top: 20px; /* Padding interno */
-    border-top: 1px solid #eee; /* Separador sutil */
+    padding-top: 20px;
+    border-top: 1px solid var(--border-color);
     font-size: 0.85em;
-    color: #9e9e9e;
+    color: var(--text-secondary);
+}
+
+/* Animación de onda para botón */
+@keyframes ripple {
+    0% {
+        transform: scale(0);
+        opacity: 0.8;
+    }
+    100% {
+        transform: scale(4);
+        opacity: 0;
+    }
+}
+
+.full-width-button:not([disabled]):active::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 20px;
+    height: 20px;
+    background: rgba(255, 255, 255, 0.5);
+    border-radius: 50%;
+    transform: translate(-50%, -50%) scale(0);
+    animation: ripple 0.6s ease-out;
+    z-index: -1;
 }
 
 /* --- Media Queries para Responsividad --- */
@@ -199,7 +307,7 @@ mat-progress-spinner {
 @media (max-width: 480px) {
     .login-card {
         padding: 25px 15px;
-        border-radius: 10px;
+        border-radius: var(--radius-md);
     }
     .login-card-header .mat-headline-5 {
         font-size: 1.6rem;
