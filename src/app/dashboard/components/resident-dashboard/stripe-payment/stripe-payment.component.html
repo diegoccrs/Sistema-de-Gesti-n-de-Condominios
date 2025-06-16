@@ -1,0 +1,8 @@
+<div class="stripe-payment-container">
+    <div id="stripe-card-element"></div>
+    <button (click)="pay()" [disabled]="isLoading || !cardElement">
+      <span *ngIf="!isLoading">Pay {{ amount / 100 | currency:currency }}</span>
+      <span *ngIf="isLoading">Processing...</span>
+    </button>
+    <div *ngIf="paymentError" class="payment-error">{{ paymentError }}</div>
+  </div>
