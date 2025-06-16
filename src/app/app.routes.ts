@@ -56,6 +56,10 @@ export const routes: Routes = [
         canActivate: [isAdminGuard] // Solo los administradores pueden acceder a este panel
       },
       {
+        path: 'admin/reminders',
+        loadComponent: () => import('./dashboard/reminder-config/reminder-config.component').then(m => m.ReminderConfigComponent)
+      },
+      {
         path: 'resident-home', // Ruta específica para el panel del residente
         title: 'Panel Residente',
         loadComponent: () => import('./dashboard/components/resident-dashboard/resident-dashboard.component').then(m => m.ResidentDashboardComponent),

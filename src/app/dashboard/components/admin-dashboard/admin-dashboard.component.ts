@@ -31,6 +31,7 @@ import { MatInputModule } from '@angular/material/input';
 
 import { AssignDebtDialogComponent } from './assign-debt-dialog/assign-debt-dialog.component';
 import { SelectResidentDialogComponent } from './select-resident-dialog/select-resident-dialog.component';
+import { ReminderConfigComponent } from '../../reminder-config/reminder-config.component';
 @Component({
   selector: 'app-admin-dashboard',
   standalone: true,
@@ -367,58 +368,65 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
   }
 
   async openAssignDebtDialog(): Promise<void> {
-  const user = await this.supabaseService.getCurrentUser();
-  if (!user) {
-    this.snackBar.open('Error: no se encontró usuario logueado.', 'Cerrar', { duration: 3000 });
-    return;
-  }
+    const user = await this.supabaseService.getCurrentUser();
+    if (!user) {
+      this.snackBar.open('Error: no se encontró usuario logueado.', 'Cerrar', { duration: 3000 });
+      return;
+    }
 
-  const profile = await this.supabaseService.getProfile(user.id);
-  if (!profile) {
-    this.snackBar.open('No se encontró perfil de administrador.', 'Cerrar', { duration: 3000 });
-    return;
-  }
+    const profile = await this.supabaseService.getProfile(user.id);
+    if (!profile) {
+      this.snackBar.open('No se encontró perfil de administrador.', 'Cerrar', { duration: 3000 });
+      return;
+    }
 
-  const selectDialogRef = this.dialog.open(SelectResidentDialogComponent, {
-    width: '500px'
-  });
-
-  selectDialogRef.afterClosed().subscribe(resident => {
-    if (!resident) return;
-
-    const dialogRef = this.dialog.open(AssignDebtDialogComponent, {
-      width: '500px',
-      data: { residentId: resident.id }
+    const selectDialogRef = this.dialog.open(SelectResidentDialogComponent, {
+      width: '500px'
     });
 
-    dialogRef.afterClosed().subscribe(async result => {
-      if (result) {
-        try {
-          await this.supabaseService.insertPayment({
-            resident_id: result.resident_id,
-            concept: result.concept,
-            amount: result.amount,
-            status: 'pending',
-            currency: result.currency,
-            payment_date: result.payment_date, // Ya viene en formato timestamptz
-            proof_url: null,
-            reported_at: null
-          });
+    selectDialogRef.afterClosed().subscribe(resident => {
+      if (!resident) return;
 
-          this.snackBar.open('Deuda asignada con éxito.', 'Cerrar', { 
-            duration: 3000, 
-            panelClass: ['snackbar-success'] 
-          });
-        } catch (error: any) {
-          console.error('Error al asignar deuda:', error);
-          this.snackBar.open(`Error: ${error.message}`, 'Cerrar', {
-            duration: 5000,
-            panelClass: ['snackbar-error']
-          });
+      const dialogRef = this.dialog.open(AssignDebtDialogComponent, {
+        width: '500px',
+        data: { residentId: resident.id }
+      });
+
+      dialogRef.afterClosed().subscribe(async result => {
+        if (result) {
+          try {
+            await this.supabaseService.insertPayment({
+              resident_id: result.resident_id,
+              concept: result.concept,
+              amount: result.amount,
+              status: 'pending',
+              currency: result.currency,
+              payment_date: result.payment_date, // Ya viene en formato timestamptz
+              proof_url: null,
+              reported_at: null
+            });
+
+            this.snackBar.open('Deuda asignada con éxito.', 'Cerrar', {
+              duration: 3000,
+              panelClass: ['snackbar-success']
+            });
+          } catch (error: any) {
+            console.error('Error al asignar deuda:', error);
+            this.snackBar.open(`Error: ${error.message}`, 'Cerrar', {
+              duration: 5000,
+              panelClass: ['snackbar-error']
+            });
+          }
         }
-      }
+      });
     });
-  });
-}
+  }
+  openReminderConfigDialog(): void {
+    this.dialog.open(ReminderConfigComponent, {
+      width: '500px',
+      disableClose: true
+    });
+  }
+
 
 }
