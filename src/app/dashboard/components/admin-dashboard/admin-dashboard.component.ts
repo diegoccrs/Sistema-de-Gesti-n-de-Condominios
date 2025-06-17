@@ -23,8 +23,8 @@ import { Subject, takeUntil } from 'rxjs';
 
 import { PaymentRegisterComponent } from '../payment-register/payment-register.component';
 
-import { CreateResidentFormDialogComponent } from './manage-resident-form-dialog/create-resident-form-dialog/create-resident-form-dialog.component';
-import { EditResidentFormDialogComponent } from './manage-resident-form-dialog/edit-resident-form-dialog/edit-resident-form-dialog.component';
+import { CreateResidentFormDialogComponent } from './manage-resident-form-dialog/create-resident-form-dialog/create-resident-form-dialog.component'; // Added import
+import { EditResidentFormDialogComponent } from './manage-resident-form-dialog/edit-resident-form-dialog/edit-resident-form-dialog.component'; // Added import
 import { FormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -47,10 +47,15 @@ import { ReminderConfigComponent } from '../../reminder-config/reminder-config.c
     UserProfileButtonComponent,
     MatProgressBarModule,
     MatProgressSpinnerModule,
+    MatToolbarModule, // Añadir MatToolbarModule a los imports
+    // MatPaginator, // Removed MatPaginator
+    CreateResidentFormDialogComponent, 
     MatToolbarModule,
     FormsModule,
     MatFormFieldModule,
     MatInputModule,
+    EditResidentFormDialogComponent
+
   ],
   templateUrl: './admin-dashboard.component.html',
   styleUrls: ['./admin-dashboard.component.css'],

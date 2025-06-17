@@ -1,0 +1,9 @@
+<div class="stripe-payment-container">
+  <h3 class="stripe-form-title">Pay with Card</h3>
+  <div id="stripe-card-element" class="stripe-card-element"></div>
+  <button mat-raised-button color="primary" (click)="pay()" [disabled]="isLoading || !cardElement" class="pay-button">
+    <span *ngIf="!isLoading">Pay {{ amount | currency:currency }}</span>
+    <mat-progress-spinner *ngIf="isLoading" mode="indeterminate" diameter="20"></mat-progress-spinner>
+  </button>
+  <div *ngIf="paymentError" class="payment-error">{{ paymentError }}</div>
+</div>
