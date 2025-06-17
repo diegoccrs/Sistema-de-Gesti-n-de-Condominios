@@ -1,41 +1,44 @@
-import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
-import Stripe from 'https://esm.sh/stripe@12.12.0?target=deno'
+import { serve } from 'https://deno.land/std@0.177.0/http/server.ts';
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.8';
+import Stripe from 'https://esm.sh/stripe@12.18.0';
+import { corsHeaders } from '../_shared/cors.ts'; // Import shared headers
 
-const stripe = new Stripe(Deno.env.get('STRIPE_SECRET_KEY')!, {
-  apiVersion: '2022-11-15',
-  httpClient: Stripe.createFetchHttpClient()
-});
-
-const corsHeaders = {
-  'Access-Control-Allow-Origin': '*', // For development; restrict in production
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-  'Access-Control-Allow-Methods': 'POST, OPTIONS', // Specify allowed methods
-};
-
-serve(async (req: Request) => {
-  // Handle OPTIONS preflight requests
+serve(async (req: Request) => { // Added Request type
+  // Handle preflight OPTIONS request
   if (req.method === 'OPTIONS') {
     return new Response('ok', { headers: corsHeaders });
   }
 
-  const { amount, currency } = await req.json()
-
   try {
+    const { amount, currency } = await req.json();
+
+    const supabase = createClient(
+      Deno.env.get('SUPABASE_URL')!,
+      Deno.env.get('SUPABASE_ANON_KEY')!,
+      { global: { headers: { Authorization: req.headers.get('Authorization')! } } }
+    );
+
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) throw new Error('User not found');
+
+    const stripe = new Stripe(Deno.env.get('STRIPE_SECRET_KEY')!, {
+      apiVersion: '2023-10-16',
+      httpClient: Stripe.createFetchHttpClient()
+    });
+
     const paymentIntent = await stripe.paymentIntents.create({
-      amount: Math.round(amount * 100), // Stripe expects the amount in cents
-      currency: currency,
-      automatic_payment_methods: {
-        enabled: true,
-      },
+      amount,
+      currency,
+      customer: user.id,
     });
 
     return new Response(JSON.stringify({ clientSecret: paymentIntent.client_secret }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
-  } catch (error: any) {
-    return new Response(JSON.stringify({ error: error.message }), {
-      status: 400,
+  } catch (e: any) { // Added any type for error
+    return new Response(JSON.stringify({ error: e.message }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      status: 400,
     });
   }
 });

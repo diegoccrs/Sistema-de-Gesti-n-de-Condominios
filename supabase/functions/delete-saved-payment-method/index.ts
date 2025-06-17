@@ -1,29 +1,23 @@
-import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
-import Stripe from 'https://esm.sh/stripe@12.12.0?target=deno'
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
+import { serve } from 'https://deno.land/std@0.177.0/http/server.ts'
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.8'
+import Stripe from 'https://esm.sh/stripe@12.18.0'
+import { corsHeaders } from '../_shared/cors.ts' // Import shared headers
 
-const stripe = new Stripe(Deno.env.get('STRIPE_SECRET_KEY')!, {
-  apiVersion: '2022-11-15',
-  httpClient: Stripe.createFetchHttpClient()
-});
-
-const corsHeaders = {
-  'Access-Control-Allow-Origin': '*', // For development; restrict in production
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-  'Access-Control-Allow-Methods': 'POST, OPTIONS', // Specify allowed methods
-};
-
-serve(async (req: Request) => {
-  // Handle OPTIONS preflight requests
+serve(async (req: Request) => { // Added Request type
+  // Handle preflight OPTIONS request
   if (req.method === 'OPTIONS') {
     return new Response('ok', { headers: corsHeaders });
   }
 
-  const { payment_method_id } = await req.json()
-
   try {
-    // Detach the payment method from the customer in Stripe
-    await stripe.paymentMethods.detach(payment_method_id)
+    const { paymentMethodId } = await req.json();
+
+    const stripe = new Stripe(Deno.env.get('STRIPE_SECRET_KEY') as string, {
+      apiVersion: '2023-10-16',
+      httpClient: Stripe.createFetchHttpClient(),
+    });
+
+    const detachedPaymentMethod = await stripe.paymentMethods.detach(paymentMethodId);
 
     const supabaseAdmin = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
@@ -34,17 +28,17 @@ serve(async (req: Request) => {
     const { error } = await supabaseAdmin
       .from('saved_payment_methods')
       .delete()
-      .eq('provider_payment_method_id', payment_method_id)
+      .eq('provider_payment_method_id', paymentMethodId)
 
     if (error) throw error;
 
     return new Response(JSON.stringify({ success: true }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
-  } catch (error: any) {
+  } catch (error: any) { // Added any type for error
     return new Response(JSON.stringify({ error: error.message }), {
-      status: 400,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      status: 400,
     });
   }
 });
