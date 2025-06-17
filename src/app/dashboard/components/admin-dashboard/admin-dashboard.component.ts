@@ -167,8 +167,12 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
         if (profile) {
           this.adminName = profile.first_name || 'Administrador';
           const allPayments = await this.supabaseService.getAllPayments();
-          this.pendingPaymentsCount = allPayments.filter(p => p.status === 'pending').length;
-          this.pendingProofCount = allPayments.filter(p => p.status === 'pending' && (p as any).proof_url).length;
+         this.pendingPaymentsCount = allPayments.filter(p => p.status === 'pending' && !(p as any).reported_at).length;
+
+
+
+          this.pendingProofCount = allPayments.filter(p => p.status === 'pending' && (p as any).reported_at).length;
+
           const allProfiles = await this.supabaseService.searchProfiles('');
           this.activeResidentsCount = allProfiles.filter(p => p.role === 'resident').length;
         }
