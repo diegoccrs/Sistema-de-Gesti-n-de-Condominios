@@ -14,11 +14,13 @@ import { MatOptionModule } from '@angular/material/core';
 import { Building } from '../../../../../core/domain/models/building.model';
 import { Apartment } from '../../../../../core/domain/models/apartment.model';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { CommonModule } from '@angular/common'; // Import CommonModule
 
 @Component({
   selector: 'app-edit-resident-form-dialog',
   standalone: true,
   imports: [
+    CommonModule, // Add CommonModule here
     MatDialogModule,
     MatFormFieldModule,
     MatInputModule,

@@ -1,41 +1,46 @@
 /// <reference types="https://deno.land/x/deno/cli/types/dts/index.dts" />
 
-import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
+import { serve } from 'https://deno.land/std@0.177.0/http/server.ts'
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.8'
+import Stripe from 'https://esm.sh/stripe@12.18.0'
+import { corsHeaders } from '../_shared/cors.ts' // Import shared headers
 
-const corsHeaders = {
-  'Access-Control-Allow-Origin': '*', // For development; restrict in production
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-  'Access-Control-Allow-Methods': 'POST, OPTIONS', // Specify allowed methods
-}
-
-serve(async (req: Request) => {
-  // Handle OPTIONS preflight requests
+serve(async (req: Request) => { // Added Request type
+  // Handle preflight OPTIONS request
   if (req.method === 'OPTIONS') {
-    return new Response('ok', { headers: corsHeaders })
+    return new Response('ok', { headers: corsHeaders });
   }
 
   try {
-    const { resident_id } = await req.json()
-    const supabaseAdmin = createClient(
-      Deno.env.get('SUPABASE_URL') ?? '',
-      Deno.env.get('CUSTOM_SERVICE_ROLE_KEY') ?? ''
-    )
+    const supabase = createClient(
+      Deno.env.get('SUPABASE_URL') as string,
+      Deno.env.get('SUPABASE_ANON_KEY') as string,
+      { global: { headers: { Authorization: req.headers.get('Authorization')! } } }
+    );
 
-    const { data, error } = await supabaseAdmin
-      .from('saved_payment_methods')
-      .select('*')
-      .eq('resident_id', resident_id)
+    const { data: { user } } = await supabase.auth.getUser();
 
-    if (error) throw error
+    if (!user) {
+      throw new Error('User not found');
+    }
 
-    return new Response(JSON.stringify({ paymentMethods: data }), {
+    const stripe = new Stripe(Deno.env.get('STRIPE_SECRET_KEY') as string, {
+      apiVersion: '2023-10-16',
+      httpClient: Stripe.createFetchHttpClient(),
+    });
+
+    const paymentMethods = await stripe.paymentMethods.list({
+      customer: user.id,
+      type: 'card',
+    });
+
+    return new Response(JSON.stringify(paymentMethods.data), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-    })
-  } catch (error: any) {
+    });
+  } catch (error: any) { // Added any type for error
     return new Response(JSON.stringify({ error: error.message }), {
-      status: 400,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-    })
+      status: 400,
+    });
   }
-})
+});

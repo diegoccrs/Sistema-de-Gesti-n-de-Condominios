@@ -1,73 +1,45 @@
-import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
-import Stripe from 'https://esm.sh/stripe@12.12.0?target=deno'
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
+import { serve } from 'https://deno.land/std@0.177.0/http/server.ts'
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.8'
+import Stripe from 'https://esm.sh/stripe@12.18.0'
+import { corsHeaders } from '../_shared/cors.ts' // Import shared headers
 
-const stripe = new Stripe(Deno.env.get('STRIPE_SECRET_KEY')!, {
-  apiVersion: '2022-11-15',
-  httpClient: Stripe.createFetchHttpClient()
-});
-
-const corsHeaders = {
-  'Access-Control-Allow-Origin': '*', // For development; restrict in production
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-  'Access-Control-Allow-Methods': 'POST, OPTIONS', // Specify allowed methods
-};
-
-serve(async (req: Request) => {
-  // Handle OPTIONS preflight requests
+serve(async (req: Request) => { // Added Request type
+  // Handle preflight OPTIONS request
   if (req.method === 'OPTIONS') {
     return new Response('ok', { headers: corsHeaders });
   }
-
-  const { resident_id, payment_method_id } = await req.json()
-
+  
   try {
-    const supabaseAdmin = createClient(
-      Deno.env.get('SUPABASE_URL') ?? '',
-      Deno.env.get('CUSTOM_SERVICE_ROLE_KEY') ?? ''
-    )
+    const { paymentMethodId } = await req.json();
 
-    const { data: profile, error: profileError } = await supabaseAdmin
-      .from('profiles')
-      .select('stripe_customer_id')
-      .eq('id', resident_id)
-      .single()
+    const supabase = createClient(
+      Deno.env.get('SUPABASE_URL') as string,
+      Deno.env.get('SUPABASE_ANON_KEY') as string,
+      { global: { headers: { Authorization: req.headers.get('Authorization')! } } }
+    );
 
-    if (profileError || !profile.stripe_customer_id) {
-      throw new Error('Stripe customer not found for this resident.')
+    const { data: { user } } = await supabase.auth.getUser();
+
+    if (!user) {
+      throw new Error('User not found');
     }
 
-    // Attach the payment method to the customer in Stripe
-    await stripe.paymentMethods.attach(payment_method_id, {
-      customer: profile.stripe_customer_id,
-    })
+    const stripe = new Stripe(Deno.env.get('STRIPE_SECRET_KEY') as string, {
+      apiVersion: '2023-10-16',
+      httpClient: Stripe.createFetchHttpClient(),
+    });
 
-    // Get payment method details to store in our database
-    const paymentMethod = await stripe.paymentMethods.retrieve(payment_method_id)
-
-    const { error: insertError } = await supabaseAdmin
-      .from('saved_payment_methods')
-      .insert({
-        resident_id: resident_id,
-        provider: 'stripe',
-        provider_payment_method_id: payment_method_id,
-        card_details: {
-          brand: paymentMethod.card.brand,
-          last4: paymentMethod.card.last4,
-          exp_month: paymentMethod.card.exp_month,
-          exp_year: paymentMethod.card.exp_year,
-        },
-      })
-
-    if (insertError) throw insertError;
+    await stripe.paymentMethods.attach(paymentMethodId, {
+      customer: user.id,
+    });
 
     return new Response(JSON.stringify({ success: true }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
-  } catch (error: any) {
+  } catch (error: any) { // Added any type for error
     return new Response(JSON.stringify({ error: error.message }), {
-      status: 400,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      status: 400,
     });
   }
 });
