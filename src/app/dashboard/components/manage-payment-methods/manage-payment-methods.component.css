@@ -1,0 +1,36 @@
+.manage-payment-methods-container {
+    padding: 24px;
+  }
+  .loading-spinner {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 48px;
+  }
+  .no-methods {
+    text-align: center;
+    padding: 48px;
+    color: #616161;
+  }
+  .payment-methods-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+  .payment-method-card {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px;
+  }
+  .card-details {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+  .card-brand-icon {
+    width: 40px;
+  }
+  .add-method-button {
+    margin-top: 24px;
+  }
