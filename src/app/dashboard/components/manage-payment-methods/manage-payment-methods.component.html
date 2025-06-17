@@ -1,0 +1,24 @@
+<div class="manage-payment-methods-container">
+    <h2>Manage Payment Methods</h2>
+    <div *ngIf="isLoading" class="loading-spinner">
+      <mat-spinner></mat-spinner>
+    </div>
+    <div *ngIf="!isLoading && paymentMethods.length === 0" class="no-methods">
+      <p>You have no saved payment methods.</p>
+    </div>
+    <div *ngIf="!isLoading && paymentMethods.length > 0" class="payment-methods-list">
+      <div *ngFor="let method of paymentMethods" class="payment-method-card">
+        <div class="card-details">
+          <img [src]="getCardBrandIcon(method.card_details.brand)" alt="{{ method.card_details.brand }}" class="card-brand-icon">
+          <span class="card-number">**** **** **** {{ method.card_details.last4 }}</span>
+          <span class="card-expiry">Expires {{ method.card_details.exp_month }}/{{ method.card_details.exp_year }}</span>
+        </div>
+        <button mat-icon-button (click)="deletePaymentMethod(method.provider_payment_method_id)" class="delete-button" aria-label="Delete payment method">
+          <mat-icon>delete</mat-icon>
+        </button>
+      </div>
+    </div>
+    <button mat-raised-button color="primary" (click)="openAddPaymentMethodDialog()" class="add-method-button">
+      Add New Payment Method
+    </button>
+  </div>

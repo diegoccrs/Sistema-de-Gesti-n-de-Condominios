@@ -1,5 +1,11 @@
+.payment-dialog-content {
+    min-width: 400px;
+}
+
 .payment-details {
-    margin-bottom: 16px;
+    margin-bottom: 24px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid #eee;
 
     p {
         margin: 4px 0;
@@ -10,30 +16,50 @@
 .payment-methods {
     display: flex;
     flex-direction: column;
-    gap: 12px;
-    align-items: flex-start;
+    gap: 16px;
+}
 
-    button {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        width: 100%;
-        padding: 12px;
-        font-size: 16px;
-        font-weight: 500;
-        text-transform: none;
-        border-radius: 8px;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    }
+.payment-method-card {
+    display: flex;
+    align-items: center;
+    padding: 16px;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+}
 
-    .payment-icon {
-        width: 20px;
-        height: 20px;
-        object-fit: contain;
-    }
+.payment-method-card:hover {
+    background-color: #f5f5f5;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.08);
+}
 
-    
-    .not-supported-message {
+.payment-icon {
+    width: 40px;
+    height: 40px;
+    margin-right: 16px;
+}
+
+.payment-method-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.payment-method-title {
+    font-size: 16px;
+    font-weight: 500;
+}
+
+.payment-method-subtitle {
+    font-size: 14px;
+    color: #616161;
+}
+
+.stripe-form-container {
+    margin-top: 16px;
+}
+
+.not-supported-message {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -43,9 +69,8 @@
     border-radius: 4px;
     color: #c56000; /* A dark orange text color */
     margin-bottom: 16px;
-    }
+}
 
-    .not-supported-message mat-icon {
+.not-supported-message mat-icon {
     margin-right: 8px;
-    }
 }
