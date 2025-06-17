@@ -21,7 +21,7 @@
                     El apellido es requerido
                 </mat-error>
             </mat-form-field>
-
+            <!--
             <h3>Edificios y Apartamentos</h3>
 
             <mat-form-field appearance="outline" class="full-width">
@@ -53,25 +53,25 @@
         </div>
     </form>
 </mat-dialog-content>
+-->
+            <mat-dialog-actions align="end">
+                <div class="actions-container">
+                    <button mat-button color="warn" (click)="onDelete()" [disabled]="isDeleting" class="delete-button">
+                        <mat-icon *ngIf="!isDeleting">delete</mat-icon>
+                        <mat-spinner *ngIf="isDeleting" diameter="20"></mat-spinner>
+                        Eliminar
+                    </button>
 
-<mat-dialog-actions align="end">
-    <div class="actions-container">
-        <button mat-button color="warn" (click)="onDelete()" [disabled]="isDeleting" class="delete-button">
-            <mat-icon *ngIf="!isDeleting">delete</mat-icon>
-            <mat-spinner *ngIf="isDeleting" diameter="20"></mat-spinner>
-            Eliminar
-        </button>
+                    <div class="spacer"></div>
 
-        <div class="spacer"></div>
-
-        <button mat-button (click)="onCancel()" [disabled]="isLoading || isDeleting">
-            <mat-icon>cancel</mat-icon> Cancelar
-        </button>
-        <button mat-raised-button color="primary" (click)="onSubmit()"
-            [disabled]="editForm.invalid || isLoading || isDeleting" class="save-button">
-            <mat-icon *ngIf="!isLoading">save</mat-icon>
-            <mat-spinner *ngIf="isLoading" diameter="20"></mat-spinner>
-            Guardar
-        </button>
-    </div>
-</mat-dialog-actions>
+                    <button mat-button (click)="onCancel()" [disabled]="isLoading || isDeleting">
+                        <mat-icon>cancel</mat-icon> Cancelar
+                    </button>
+                    <button mat-raised-button color="primary" (click)="onSubmit()"
+                        [disabled]="editForm.invalid || isLoading || isDeleting" class="save-button">
+                        <mat-icon *ngIf="!isLoading">save</mat-icon>
+                        <mat-spinner *ngIf="isLoading" diameter="20"></mat-spinner>
+                        Guardar
+                    </button>
+                </div>
+            </mat-dialog-actions>
