@@ -1,24 +1,33 @@
-<div class="manage-payment-methods-container">
-    <h2>Manage Payment Methods</h2>
-    <div *ngIf="isLoading" class="loading-spinner">
-      <mat-spinner></mat-spinner>
-    </div>
-    <div *ngIf="!isLoading && paymentMethods.length === 0" class="no-methods">
-      <p>You have no saved payment methods.</p>
-    </div>
-    <div *ngIf="!isLoading && paymentMethods.length > 0" class="payment-methods-list">
-      <div *ngFor="let method of paymentMethods" class="payment-method-card">
-        <div class="card-details">
-          <img [src]="getCardBrandIcon(method.card_details.brand)" alt="{{ method.card_details.brand }}" class="card-brand-icon">
-          <span class="card-number">**** **** **** {{ method.card_details.last4 }}</span>
-          <span class="card-expiry">Expires {{ method.card_details.exp_month }}/{{ method.card_details.exp_year }}</span>
-        </div>
-        <button mat-icon-button (click)="deletePaymentMethod(method.provider_payment_method_id)" class="delete-button" aria-label="Delete payment method">
-          <mat-icon>delete</mat-icon>
-        </button>
+<div class="manage-payments-container">
+  <mat-card>
+    <mat-card-header>
+      <mat-card-title>Manage Payment Methods</mat-card-title>
+      <mat-card-subtitle>View and manage your saved payment methods.</mat-card-subtitle>
+    </mat-card-header>
+    <mat-card-content>
+      <div *ngIf="paymentMethods.length > 0; else noPaymentMethods">
+        <mat-list>
+          <mat-list-item *ngFor="let method of paymentMethods">
+            <mat-icon matListItemIcon>credit_card</mat-icon>
+            <div matListItemTitle>**** **** **** {{ method.card.last4 }}</div>
+            <div matListItemLine>{{ method.card.brand | titlecase }} - Expires: {{ method.card.exp_month }}/{{ method.card.exp_year }}</div>
+            <button mat-icon-button color="warn" (click)="deletePaymentMethod(method.id)" matListItemMeta>
+              <mat-icon>delete</mat-icon>
+            </button>
+          </mat-list-item>
+        </mat-list>
       </div>
-    </div>
-    <button mat-raised-button color="primary" (click)="openAddPaymentMethodDialog()" class="add-method-button">
-      Add New Payment Method
-    </button>
-  </div>
+
+      <ng-template #noPaymentMethods>
+        <div class="no-methods-placeholder">
+          <mat-icon>payment</mat-icon>
+          <p>You have no saved payment methods.</p>
+        </div>
+      </ng-template>
+    </mat-card-content>
+    <mat-card-actions>
+      <button mat-flat-button color="primary" (click)="openAddPaymentMethodDialog()">Add New Payment Method</button>
+      <button mat-stroked-button (click)="returnToDashboard()">Return to Dashboard</button>
+    </mat-card-actions>
+  </mat-card>
+</div>

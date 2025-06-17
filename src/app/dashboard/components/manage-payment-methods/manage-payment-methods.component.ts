@@ -9,6 +9,7 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatCardModule } from '@angular/material/card';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-manage-payment-methods',
@@ -30,7 +31,11 @@ export class ManagePaymentMethodsComponent implements OnInit {
   isLoading = true;
   userId: string | undefined;
 
-  constructor(private supabaseService: SupabaseService, public dialog: MatDialog) {}
+  constructor(
+    private supabaseService: SupabaseService,
+    public dialog: MatDialog,
+    private router: Router
+  ) {}
 
   async ngOnInit() {
     const { data: { user } } = await this.supabaseService.supabase.auth.getUser();
@@ -81,5 +86,9 @@ export class ManagePaymentMethodsComponent implements OnInit {
         this.loadPaymentMethods();
       }
     });
+  }
+
+  returnToDashboard(): void {
+    this.router.navigate(['/dashboard']);
   }
 }
