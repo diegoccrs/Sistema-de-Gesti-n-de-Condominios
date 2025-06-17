@@ -1,15 +1,31 @@
-#stripe-card-element {
-    padding: 12px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    margin-bottom: 12px;
-  }
-  
-  button {
-    width: 100%;
-  }
-  
-  .payment-error {
-    color: #fa755a;
-    margin-top: 8px;
-  }
+.stripe-payment-container {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.stripe-form-title {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 500;
+  text-align: center;
+}
+
+.stripe-card-element {
+  padding: 12px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background-color: white;
+}
+
+.pay-button {
+  width: 100%;
+  height: 48px;
+  font-size: 16px;
+}
+
+.payment-error {
+  color: #f44336; /* Material Design red */
+  text-align: center;
+  font-size: 14px;
+}

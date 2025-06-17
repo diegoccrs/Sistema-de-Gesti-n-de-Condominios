@@ -3,6 +3,8 @@ import { Component, Input, OnInit, Output, EventEmitter, ElementRef, ViewChild }
 import { CommonModule, CurrencyPipe } from '@angular/common';
 import { environment } from '../../../../../environments/environment';
 import { SupabaseService } from '../../../../core/infrastructure/supabase/supabase.service';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatButtonModule } from '@angular/material/button';
 
 declare var Stripe: any;
 
@@ -11,7 +13,7 @@ declare var Stripe: any;
   templateUrl: './stripe-payment.component.html',
   styleUrls: ['./stripe-payment.component.css'],
   standalone: true,
-  imports: [CommonModule, CurrencyPipe]
+  imports: [CommonModule, CurrencyPipe, MatProgressSpinnerModule, MatButtonModule]
 })
 export class StripePaymentComponent implements OnInit {
   @Input() amount!: number;

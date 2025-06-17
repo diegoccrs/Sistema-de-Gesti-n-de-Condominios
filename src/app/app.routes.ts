@@ -4,6 +4,7 @@ import { PaymentsConfirmationComponent } from './dashboard/components/payments-c
 
 import { authGuard } from './auth/guards/auth.guard';
 import { isAdminGuard } from './auth/guards/is-admin.guard';
+import { ManagePaymentMethodsComponent } from './dashboard/components/manage-payment-methods/manage-payment-methods.component';
 
 // NOTA: No necesitamos importar AdminDashboardComponent ni ResidentDashboardComponent aquí si usamos lazy loading
 // loadComponent para los componentes hijos.
@@ -68,6 +69,13 @@ export const routes: Routes = [
         loadComponent: () => import('./dashboard/components/payments-confirmation/payments-confirmation.component').then(m => m.PaymentsConfirmationComponent),
         canActivate: [isAdminGuard] // Protegida solo para administradores
       },
+      {
+        path: 'payment-methods',
+        title: 'Payment Methods', // Added title
+        loadComponent: () => import('./dashboard/components/manage-payment-methods/manage-payment-methods.component').then(m => m.ManagePaymentMethodsComponent), // Changed to loadComponent
+        canActivate: [authGuard] // Added canActivate guard
+      }
+        
       // Otras rutas hijas de gestión, por ejemplo:
       // {
       //   path: 'residents-management',
