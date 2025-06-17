@@ -135,7 +135,7 @@
 }
 
 .dashboard-header h1 {
-    font-family: 'Montserrat', sans-serif;
+    font-family: 'Raleway', sans-serif;
     font-size: 3.5rem;
     font-weight: 800;
     color: #2c3e50;
@@ -144,7 +144,7 @@
 }
 
 .dashboard-header .subtitle {
-    font-family: 'Open Sans', sans-serif;
+    font-family: 'Raleway', sans-serif;
     font-size: 1.2rem;
     color: #616161;
 }
@@ -197,7 +197,7 @@
 }
 
 .section-card .mat-headline-6 {
-    font-family: 'Montserrat', sans-serif;
+    font-family: 'Raleway', sans-serif;
     font-size: 1.5rem;
     font-weight: 700;
     color: #333;
@@ -206,7 +206,7 @@
 }
 
 .section-card mat-card-subtitle {
-    font-family: 'Open Sans', sans-serif;
+    font-family: 'Raleway', sans-serif;
     font-size: 0.95rem;
     color: #757575;
     margin-left: 15px;
@@ -319,7 +319,7 @@ mat-card-actions {
 }
 
 .quick-actions h2 {
-    font-family: 'Montserrat', sans-serif;
+    font-family: 'Raleway', sans-serif;
     font-size: 1.8rem;
     font-weight: 700;
     color: #333;
