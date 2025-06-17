@@ -70,6 +70,12 @@ export const routes: Routes = [
         canActivate: [isAdminGuard] // Protegida solo para administradores
       },
       {
+        path: 'add-payment-method', // Make sure this route is a child of a protected route
+        title: 'Add Payment Method', // Added title for consistency
+        loadComponent: () => import('./dashboard/components/add-payment-method/add-payment-method.component').then(m => m.AddPaymentMethodComponent)
+        // canActivate is inherited from the parent, so it's also protected by authGuard
+      },
+      {
         path: 'payment-methods',
         title: 'Payment Methods', // Added title
         loadComponent: () => import('./dashboard/components/manage-payment-methods/manage-payment-methods.component').then(m => m.ManagePaymentMethodsComponent), // Changed to loadComponent

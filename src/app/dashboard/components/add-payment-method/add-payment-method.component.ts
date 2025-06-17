@@ -35,6 +35,14 @@ export class AddPaymentMethodComponent implements OnInit, OnDestroy {
   async ngOnInit() {
     const { data: { user } } = await this.supabaseService.supabase.auth.getUser();
     this.userId = user?.id;
+
+    if (!this.userId) {
+      this.errorMessage = 'User not authenticated or user ID is missing. Cannot initialize payment form.';
+      this.isLoading = false; // Assuming you have an isLoading state for initialization
+      console.error('User ID is missing in ngOnInit of AddPaymentMethodComponent');
+      return; // Stop further execution if userId is not found
+    }
+
     this.initializeStripe();
   }
 
@@ -48,15 +56,26 @@ export class AddPaymentMethodComponent implements OnInit, OnDestroy {
     this.stripe = Stripe(environment.stripePublishableKey);
 
     try {
-      const { data, error } = await this.supabaseService.supabase.functions.invoke('create-setup-intent', {
+      // First, get or create the Stripe customer
+      const { data: customerData, error: customerError } = await this.supabaseService.supabase.functions.invoke('create-stripe-customer', {
         body: { resident_id: this.userId },
       });
-      if (error) throw error;
-      
-      const elements = this.stripe.elements({ clientSecret: data.clientSecret });
+
+      if (customerError) throw customerError;
+
+      const stripeCustomerId = customerData.stripe_customer_id;
+
+      // Then, create the setup intent with the customer ID
+      const { data: setupIntentData, error: setupIntentError } = await this.supabaseService.supabase.functions.invoke('create-setup-intent', {
+        body: { stripe_customer_id: stripeCustomerId },
+      });
+
+      if (setupIntentError) throw setupIntentError;
+
+      const elements = this.stripe.elements({ clientSecret: setupIntentData.clientSecret });
       this.cardElement = elements.create('card');
       this.cardElement.mount('#card-element');
-    } catch (error: any) { // Specify type of error as any
+    } catch (error: any) {
       this.errorMessage = error.message ? error.message : 'Failed to initialize payment form.';
       console.error(error);
     }

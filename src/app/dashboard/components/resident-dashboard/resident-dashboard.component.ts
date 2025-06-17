@@ -28,7 +28,6 @@ import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 
 // 🚨 ¡IMPORTA AQUI EL NEIGHBOR DIRECTORY COMPONENT!
 import { NeighborDirectoryComponent } from './neighbor-directory/neighbor-directory.component';
-import { PaymentMethodDialogComponent } from './payment-method-dialog/payment-method-dialog.component';
 
 
 //importa conexion con Telegram
@@ -37,6 +36,7 @@ import { PaymentMethodDialogComponent } from './payment-method-dialog/payment-me
 // Imports proveedores de pago
 
 import { PaymentService } from '../../../core/services/payment.service'; // Import the new service
+import { PaymentMethodDialogComponent } from './payment-method-dialog/payment-method-dialog.component'; // Corrected import path
 
 
 
