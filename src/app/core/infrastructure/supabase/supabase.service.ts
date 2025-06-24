@@ -9,6 +9,8 @@ import { Apartment } from '../../domain/models/apartment.model';
 import { Building } from '../../domain/models/building.model';
 import { ProfileApartment } from '../../domain/models/profile-apartment.model';
 import { Announcement } from '../../domain/models/announcement.model';
+import { ServiceProvider } from '../../domain/models/service-provider.model';
+
 
 export interface ProfileWithApartmentInfo extends Profile {
   apartment_info?: {
@@ -452,13 +454,33 @@ export class SupabaseService {
   }
 
   async getAllResidents() {
-  const { data, error } = await this.supabase
-    .from('profiles')
-    .select('id, first_name, last_name')
-    .eq('role', 'resident');
+    const { data, error } = await this.supabase
+      .from('profiles')
+      .select('id, first_name, last_name')
+      .eq('role', 'resident');
 
-  if (error) throw error;
-  return data;
-}
-  
-}
+    if (error) throw error;
+    return data;
+  }
+
+  /**
+   * Obtiene la lista de proveedores de servicios de la base de datos.
+   * @returns Una promesa que resuelve con un array de ServiceProvider o null en caso de error.
+   */
+  async getServiceProviders(): Promise<ServiceProvider[] | null> {
+    try {
+      const { data, error } = await this.supabase
+        .from('service_providers') // Nombre de la tabla que creamos
+        .select('*'); // Selecciona todas las columnas
+
+      if (error) {
+        console.error('Error fetching service providers:', error.message);
+        return null;
+      }
+      return data as ServiceProvider[];
+    } catch (error) {
+      console.error('Unexpected error in getServiceProviders:', error);
+      return null;
+    }
+  }
+}9

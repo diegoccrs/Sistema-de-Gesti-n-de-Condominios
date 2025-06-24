@@ -84,8 +84,15 @@ export const routes: Routes = [
         title: 'Payment Methods', // Added title
         loadComponent: () => import('./dashboard/components/manage-payment-methods/manage-payment-methods.component').then(m => m.ManagePaymentMethodsComponent), // Changed to loadComponent
         canActivate: [authGuard] // Added canActivate guard
+      },
+      {
+        path: 'providers', // La URL completa será /dashboard/proveedores
+        title: 'Services Providers',
+        loadComponent: () => import('./dashboard/components/resident-dashboard/services-provider/service-provider.component').then(m => m.ServiceProvidersComponent),
+        canActivate: [authGuard] // Accesible para cualquier usuario autenticado
       }
-        
+
+
       // Otras rutas hijas de gestión, por ejemplo:
       // {
       //   path: 'residents-management',
