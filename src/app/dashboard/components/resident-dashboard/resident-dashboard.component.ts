@@ -11,7 +11,7 @@ import { MatTableModule } from '@angular/material/table';
 import { UserProfileButtonComponent } from '../user-profile-button/user-profile-button.component';
 
 
-
+import { RouterModule } from '@angular/router';
 import { Router } from '@angular/router';
 import { Payment } from '../../../core/domain/models/payment.model';
 import { SupabaseService } from '../../../core/infrastructure/supabase/supabase.service';
@@ -31,7 +31,7 @@ import { NeighborDirectoryComponent } from './neighbor-directory/neighbor-direct
 
 
 //importa conexion con Telegram
- import { ConectarTelegramComponent } from '../conectar-telegram/conectar-telegram.component';
+import { ConectarTelegramComponent } from '../conectar-telegram/conectar-telegram.component';
 
 // Imports proveedores de pago
 
@@ -376,32 +376,37 @@ export class ResidentDashboardComponent implements OnInit {
     this.errorMessage = 'Funcionalidad "Contactar Administración" en desarrollo.';
   }
 
+  goToServiceProviders() {
+    console.log('Navegar a proveedores de servicios');
+    this.router.navigate(['./dashboard/providers']);
+  }
+
   openPaymentMethods(payment: any): void {
-        const dialogRef = this.dialog.open(PaymentMethodDialogComponent, {
-          width: '400px',
-          data: payment
-        });
-    
-        dialogRef.afterClosed().subscribe(result => {
-          if (result && result.selectedMethod) {
-            // Handle successful PayPal payment
-            if (result.selectedMethod === 'paypal' && result.details) {
-              this.snackBar.open(`Pago con PayPal exitoso para: ${payment.concept}`, 'Cerrar', {
-                duration: 5000
-              });
-              // Here, you can add logic to save the transaction to your database
-              console.log('PayPal payment details:', result.details);
-            } else {
-              // Handle other payment methods
-              this.snackBar.open(`Iniciando pago con ${result.selectedMethod} para: ${payment.concept}`, 'Cerrar', {
-                duration: 3000
-              });
-              
-              this.paymentService.processPayment(payment, result.selectedMethod);
-            }
-          }
-        });
+    const dialogRef = this.dialog.open(PaymentMethodDialogComponent, {
+      width: '400px',
+      data: payment
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result && result.selectedMethod) {
+        // Handle successful PayPal payment
+        if (result.selectedMethod === 'paypal' && result.details) {
+          this.snackBar.open(`Pago con PayPal exitoso para: ${payment.concept}`, 'Cerrar', {
+            duration: 5000
+          });
+          // Here, you can add logic to save the transaction to your database
+          console.log('PayPal payment details:', result.details);
+        } else {
+          // Handle other payment methods
+          this.snackBar.open(`Iniciando pago con ${result.selectedMethod} para: ${payment.concept}`, 'Cerrar', {
+            duration: 3000
+          });
+
+          this.paymentService.processPayment(payment, result.selectedMethod);
+        }
       }
+    });
+  }
 
 }
 
