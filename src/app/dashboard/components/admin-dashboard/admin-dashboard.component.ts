@@ -23,8 +23,8 @@ import { Subject, takeUntil } from 'rxjs';
 
 import { PaymentRegisterComponent } from '../payment-register/payment-register.component';
 
-import { CreateResidentFormDialogComponent } from './manage-resident-form-dialog/create-resident-form-dialog/create-resident-form-dialog.component';
-import { EditResidentFormDialogComponent } from './manage-resident-form-dialog/edit-resident-form-dialog/edit-resident-form-dialog.component';
+import { CreateResidentFormDialogComponent } from './manage-resident-form-dialog/create-resident-form-dialog/create-resident-form-dialog.component'; // Added import
+import { EditResidentFormDialogComponent } from './manage-resident-form-dialog/edit-resident-form-dialog/edit-resident-form-dialog.component'; // Added import
 import { FormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -43,12 +43,14 @@ import { ReminderConfigComponent } from '../../reminder-config/reminder-config.c
     MatDividerModule,
     MatTableModule,
     MatTooltipModule,
-    RouterModule, // <-- Asegúrate de que RouterModule esté aquí
+    RouterModule,
     UserProfileButtonComponent,
     MatProgressBarModule,
     MatProgressSpinnerModule,
     MatToolbarModule, // Añadir MatToolbarModule a los imports
-    CreateResidentFormDialogComponent,
+    // MatPaginator, // Removed MatPaginator
+    CreateResidentFormDialogComponent, 
+    MatToolbarModule,
     FormsModule,
     MatFormFieldModule,
     MatInputModule,
@@ -60,6 +62,7 @@ import { ReminderConfigComponent } from '../../reminder-config/reminder-config.c
   providers: [DatePipe]
 })
 export class AdminDashboardComponent implements OnInit, OnDestroy {
+  currentYear: number = new Date().getFullYear();
   adminName: string = 'Administrador';
   pendingPaymentsCount: number = 0;
   activeResidentsCount: number = 0;
@@ -68,17 +71,13 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
   searchQuery: string = '';
   searchResults: ProfileWithApartmentInfo[] = [];
   isSearching: boolean = false;
-
   announcements: Announcement[] = [];
   displayedAnnouncementColumns: string[] = ['title', 'content_snippet', 'created_at', 'expiration_date', 'is_published', 'priority', 'actions'];
-
   isLoading: boolean = true;
   errorMessage: string | null = null;
-
   recentResidents: ProfileWithApartmentInfo[] = [];
   recentResidentsColumns: string[] = ['name', 'email', 'apartment', 'actions'];
   isLoadingResidents = false;
-
   private destroy$ = new Subject<void>();
 
   constructor(
@@ -128,7 +127,6 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
   async loadRecentResidents(): Promise<void> {
     this.isLoadingResidents = true;
     try {
-      // Obtener los últimos 5 residentes registrados
       this.recentResidents = (await this.supabaseService.searchProfiles(''))
         .filter(p => p.role === 'resident')
         .slice(0, 5);
@@ -144,7 +142,6 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
       width: '500px',
       data: { resident } // Pasamos el objeto residente completo
     });
-
     dialogRef.afterClosed().subscribe(result => {
       if (result?.success) {
         // Actualizar la lista de residentes
@@ -160,7 +157,6 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
           panelClass: ['snackbar-success']
         });
       } else if (result?.deleted) {
-        // Eliminar residente de la lista si fue eliminado
         this.recentResidents = this.recentResidents.filter(r => r.id !== result.residentId);
       }
     });
@@ -175,28 +171,21 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
         const profile = await this.supabaseService.getProfile(user.id);
         if (profile) {
           this.adminName = profile.first_name || 'Administrador';
-
-          const allPayments = await this.supabaseService.getAllPayments(); // Asegúrate de que esta función exista y obtenga los pagos
-          this.pendingPaymentsCount = allPayments.filter(p => p.status === 'pending').length;
-          // Asegúrate de que 'proof_url' exista en el modelo Payment, si no, usa la propiedad correcta
-          this.pendingProofCount = allPayments.filter(p => p.status === 'pending' && (p as any).proof_url).length;
+          const allPayments = await this.supabaseService.getAllPayments();
+         this.pendingPaymentsCount = allPayments.filter(p => p.status === 'pending' && !(p as any).reported_at).length;
 
 
-          // Aquí deberías cargar los conteos reales para estos:
-          // this.activeResidentsCount = await this.supabaseService.getResidentsCount();
-          // this.activeAnnouncementsCount = await this.supabaseService.getActiveAnnouncementsCount();
 
-          // Placeholder para otros contadores
-          this.activeResidentsCount = 0; // Implementar lógica para obtener esto
-          // this.pendingProofCount = 0; // Implementar lógica para obtener esto (ya lo hice con proof_url)
+          this.pendingProofCount = allPayments.filter(p => p.status === 'pending' && (p as any).reported_at).length;
+
+          const allProfiles = await this.supabaseService.searchProfiles('');
+          this.activeResidentsCount = allProfiles.filter(p => p.role === 'resident').length;
         }
       }
     } catch (error: any) {
       console.error('Error al cargar datos del administrador:', error);
       this.errorMessage = `Error al cargar datos: ${error.message || error}`;
-    } finally {
-      // El isLoading global se desactivará después de que loadAnnouncements también termine
-    }
+    } finally {}
   }
 
   async loadAnnouncements(): Promise<void> {
@@ -331,20 +320,22 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
   }
 
   goToManageResidents(): void {
-    this.router.navigate(['/dashboard/residents-management']); // Actualiza esta ruta si la tienes
+    this.router.navigate(['/dashboard/residents-management']); 
   }
 
-  goToReviewProofs(): void {
-    // ¡ESTE ES EL MÉTODO CLAVE QUE NAVEGA A LA CONFIRMACIÓN DE PAGOS!
-    this.router.navigate(['/dashboard/payments-confirmation']);
-  }
+ goToReviewProofs(tipo: 'deudas' | 'comprobantes'): void {
+  this.router.navigate(['/dashboard/payments-confirmation'], {
+    queryParams: { tipo }
+  });
+}
+
 
   goToGenerateReports(): void {
-    this.router.navigate(['/admin/reports']); // Actualiza esta ruta si la tienes
+    this.router.navigate(['/admin/reports']); 
   }
 
   goToManageDocuments(): void {
-    this.router.navigate(['/admin/documents']); // Actualiza esta ruta si la tienes
+    this.router.navigate(['/admin/documents']); 
   }
 
   goToManageAnnouncements(): void {
@@ -354,17 +345,15 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
       announcementsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
     } else {
       console.warn('Announcements section not found for scrolling.');
-      // Fallback or alternative action if needed, e.g., just load announcements
-      // await this.loadAnnouncements();
     }
   }
 
   goToFinancialManagement(): void {
-    this.router.navigate(['/admin/financial']); // Actualiza esta ruta si la tienes
+    this.router.navigate(['/admin/financial']); 
   }
 
   goToUserManagement(): void {
-    this.router.navigate(['/admin/users']); // Actualiza esta ruta si la tienes
+    this.router.navigate(['/admin/users']); 
   }
 
   async openAssignDebtDialog(): Promise<void> {
@@ -401,7 +390,7 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
               amount: result.amount,
               status: 'pending',
               currency: result.currency,
-              payment_date: result.payment_date, // Ya viene en formato timestamptz
+              payment_date: result.payment_date, 
               proof_url: null,
               reported_at: null
             });
@@ -427,6 +416,4 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
       disableClose: true
     });
   }
-
-
 }

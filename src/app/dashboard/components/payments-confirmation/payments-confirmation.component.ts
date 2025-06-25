@@ -3,11 +3,10 @@ import { CommonModule } from '@angular/common';
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
 import { MatTableModule } from '@angular/material/table';
 import { MatButtonModule } from '@angular/material/button';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { environment } from '../../../../environments/environment';
-
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner'; 
 
 const supabase: SupabaseClient = createClient(environment.supabaseUrl, environment.supabaseKey);
@@ -28,33 +27,42 @@ const supabase: SupabaseClient = createClient(environment.supabaseUrl, environme
 })
 export class PaymentsConfirmationComponent implements OnInit {
   pagosPendientes: any[] = [];
-  // Ensure your displayedColumns match what you intend to show
   displayedColumns: string[] = ['resident_name', 'amount', 'currency', 'payment_date', 'status', 'proof_url', 'actions'];
   isLoading = true;
   errorMessage: string | null = null;
 
-  constructor(private router: Router) {}
+  constructor(private router: Router, private route: ActivatedRoute) {}
 
   async ngOnInit() {
-    await this.cargarPagos();
+    const tipo = this.route.snapshot.queryParamMap.get('tipo');
+    await this.cargarPagos(tipo);
   }
 
-  async cargarPagos() {
+  async cargarPagos(tipo: string | null) {
     this.isLoading = true;
     this.errorMessage = null;
     try {
-      const { data, error } = await supabase
+      let query = supabase
         .from('payments')
-        .select('*, resident_id(email, first_name, last_name)') 
-        .eq('status', 'pending_confirmation') 
-        .order('reported_at', { ascending: true });
+        .select('*, resident_id(email, first_name, last_name)')
+        .eq('status', 'pending');
 
-      if (error) {
-        throw error;
+      if (tipo === 'deudas') {
+        query = query.is('reported_at', null);
+      } else {
+        query = query.not('reported_at', 'is', null);
       }
+
+      const { data, error } = await query.order('reported_at', { ascending: true });
+
+      if (error) throw error;
+
       this.pagosPendientes = data?.map(p => ({
         ...p,
-        resident_name: p.resident_id ? `${(p.resident_id as any).first_name || ''} ${(p.resident_id as any).last_name || ''}`.trim() || (p.resident_id as any).email : 'N/A',
+        resident_name: p.resident_id
+          ? `${(p.resident_id as any).first_name || ''} ${(p.resident_id as any).last_name || ''}`.trim()
+              || (p.resident_id as any).email
+          : 'N/A',
       })) || [];
 
     } catch (error: any) {
@@ -79,14 +87,15 @@ export class PaymentsConfirmationComponent implements OnInit {
       const { error } = await supabase
         .from('payments')
         .update({
-          status: 'confirmed', 
+          status: 'confirmed',
           confirmed_by: user.id,
           confirmation_date: new Date().toISOString()
         })
         .eq('id', id);
 
       if (error) throw error;
-      await this.cargarPagos(); 
+      const tipo = this.route.snapshot.queryParamMap.get('tipo');
+      await this.cargarPagos(tipo);
     } catch (error: any) {
       this.errorMessage = 'Error al aprobar el pago: ' + error?.message;
     } finally {
@@ -102,7 +111,7 @@ export class PaymentsConfirmationComponent implements OnInit {
       this.isLoading = false;
       return;
     }
-    
+
     try {
       const { error } = await supabase
         .from('payments')
@@ -114,9 +123,10 @@ export class PaymentsConfirmationComponent implements OnInit {
         .eq('id', id);
 
       if (error) throw error;
-      await this.cargarPagos();
+      const tipo = this.route.snapshot.queryParamMap.get('tipo');
+      await this.cargarPagos(tipo);
     } catch (error: any) {
-       this.errorMessage = 'Error al rechazar el pago: ' + error?.message;
+      this.errorMessage = 'Error al rechazar el pago: ' + error?.message;
     } finally {
       this.isLoading = false;
     }
@@ -133,4 +143,9 @@ export class PaymentsConfirmationComponent implements OnInit {
       console.warn('No proof URL available for this payment.');
     }
   }
+  recargar() {
+  const tipo = this.route.snapshot.queryParamMap.get('tipo');
+  this.cargarPagos(tipo);
+}
+
 }

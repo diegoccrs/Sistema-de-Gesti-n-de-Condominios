@@ -1,11 +1,11 @@
-/* GLOBAL FONT OVERRIDE */
+@import url('https://fonts.googleapis.com/css2?family=Raleway:ital,wght@0,100..900;1,100..900&display=swap');
 :host {
-    font-family: 'Inter', sans-serif;
+    font-family: 'Raleway', sans-serif;
 }
 
 html,
 body {
-    font-family: 'Inter', sans-serif;
+    font-family: 'Raleway', sans-serif;
     margin: 0;
     padding: 0;
     background-color: #f9f9f9;
@@ -15,7 +15,7 @@ body {
 .mat-typography,
 .mat-card,
 .mat-button {
-    font-family: 'Inter', sans-serif !important;
+    font-family: 'Raleway', sans-serif !important;
 }
 
 /* LAYOUT */
@@ -126,8 +126,9 @@ body {
 /* FEATURES SECTION */
 .features {
     padding: 2rem;
-    background-color: #f8f9fa;
+    background-color: #ffffff;
     text-align: center;
+
 }
 
 .features h2 {

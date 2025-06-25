@@ -1,11 +1,30 @@
-@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&family=Open+Sans:wght@400;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Raleway:ital,wght@0,100..900;1,100..900&display=swap');
+
+:root {
+  --primary-color: #5a287d;
+  --primary-light: #8c005f;
+  --accent-color: #8c005f;
+  --success-color: #4caf50;
+  --warning-color: #ff9800;
+  --danger-color: #d32f2f;
+  --light-bg: #f9f9f9;
+  --card-bg: #ffffff;
+  --text-primary: #333;
+  --text-secondary: #666;
+  --border-color: rgba(0, 0, 0, 0.08);
+  --shadow-light: 0 4px 15px rgba(0, 0, 0, 0.1);
+  --shadow-medium: 0 6px 15px rgba(0, 0, 0, 0.1);
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --transition: all 0.3s ease;
+}
 
 :host {
     display: block;
     overflow-x: hidden;
-    background-color: #f0f2f5;
+    background-color: #ffffff;
     min-height: 100vh;
-    font-family: 'Open Sans', sans-serif;
+    font-family: 'Raleway', sans-serif;
 }
 
 @keyframes fadeIn {
@@ -116,7 +135,7 @@
 }
 
 .dashboard-header h1 {
-    font-family: 'Montserrat', sans-serif;
+    font-family: 'Raleway', sans-serif;
     font-size: 3.5rem;
     font-weight: 800;
     color: #2c3e50;
@@ -125,7 +144,7 @@
 }
 
 .dashboard-header .subtitle {
-    font-family: 'Open Sans', sans-serif;
+    font-family: 'Raleway', sans-serif;
     font-size: 1.2rem;
     color: #616161;
 }
@@ -138,17 +157,18 @@
 }
 
 .section-card {
-    background-color: white;
+    background-color: var(--primary-light);
     border-radius: 12px;
     padding: 25px;
     box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
     transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
     display: flex;
     flex-direction: column;
+    margin: 20px
 }
 
 .section-card:hover {
-    transform: translateY(-8px);
+  
     box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
 }
 
@@ -177,7 +197,7 @@
 }
 
 .section-card .mat-headline-6 {
-    font-family: 'Montserrat', sans-serif;
+    font-family: 'Raleway', sans-serif;
     font-size: 1.5rem;
     font-weight: 700;
     color: #333;
@@ -186,7 +206,7 @@
 }
 
 .section-card mat-card-subtitle {
-    font-family: 'Open Sans', sans-serif;
+    font-family: 'Raleway', sans-serif;
     font-size: 0.95rem;
     color: #757575;
     margin-left: 15px;
@@ -269,7 +289,7 @@ mat-list-item:last-child {
 }
 
 mat-card-actions {
-    padding: 15px 25px 0;
+    padding: 30px ;
     border-top: 1px solid #eee;
     margin-top: 20px;
     display: flex;
@@ -293,12 +313,13 @@ mat-card-actions {
     border-radius: 12px;
     padding: 30px;
     text-align: center;
-    margin-top: 40px;
+    margin: 20px;
+    
     box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
 }
 
 .quick-actions h2 {
-    font-family: 'Montserrat', sans-serif;
+    font-family: 'Raleway', sans-serif;
     font-size: 1.8rem;
     font-weight: 700;
     color: #333;
@@ -313,7 +334,7 @@ mat-card-actions {
 }
 
 .action-button {
-    padding: 15px 20px;
+    padding: 30px;
     font-size: 1rem;
     font-weight: 600;
     border-radius: 8px;
@@ -404,6 +425,7 @@ mat-card-actions {
     .main-content {
         grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
         gap: 25px;
+        margin: 20px;
     }
 
     .section-card {
@@ -474,7 +496,7 @@ mat-card-actions {
     }
 
     .action-button {
-        padding: 12px 15px;
+        padding: 10px 12px;
         font-size: 0.9rem;
     }
 
@@ -525,6 +547,7 @@ mat-card-actions {
     width: 100%;
     margin-top: 20px;
     border-collapse: collapse;
+    background-color: #ffffff;
 }
 
 .payments-history-table th.mat-header-cell,
@@ -618,7 +641,7 @@ app-neighbor-directory {
 }
 
 .clickable-payment:hover {
-    background-color: #f5f5f5;
+    background-color: #ffffff;
 }
 
 .amount-right {

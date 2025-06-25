@@ -1,25 +1,39 @@
-<h2 mat-dialog-title>Selecciona un Método de Pago</h2>
+<h2 mat-dialog-title>Select a Payment Method</h2>
 
-<mat-dialog-content>
+<mat-dialog-content class="payment-dialog-content">
     <div class="payment-details">
-        <p><strong>Concepto:</strong> {{ payment.concept }}</p>
-        <p><strong>Monto:</strong> {{ payment.amount | currency:payment.currency }}</p>
+        <p><strong>Concept:</strong> {{ payment.concept }}</p>
+        <p><strong>Amount:</strong> {{ payment.amount | currency:payment.currency }}</p>
     </div>
 
-    <div class="payment-methods">
-        <div id="paypal-button-container"></div>
-
-        <button mat-raised-button color="accent" (click)="selectMethod('stripe')">
+    <div class="payment-methods" *ngIf="!showStripeForm">
+        <div *ngIf="isPayPalSupported; else notSupported">
+            <div id="paypal-button-container"></div>
+        </div>
+        <ng-template #notSupported>
+            <div class="not-supported-message">
+                <mat-icon>warning</mat-icon>
+                <span>This payment method is not available for the currency {{ payment.currency }}.</span>
+            </div>
+        </ng-template>
+        <div class="payment-method-card" (click)="selectMethod('stripe')">
             <img src="/assets/icons/stripe.png" alt="Stripe" class="payment-icon" />
-            Stripe
-        </button>
-        <button mat-raised-button color="warn" (click)="selectMethod('mercadopago')">
-            <img src="/assets/icons/mercadopago.png" alt="MercadoPago" class="payment-icon" />
-            MercadoPago
-        </button>
+            <div class="payment-method-info">
+                <span class="payment-method-title">Credit or Debit Card</span>
+                <span class="payment-method-subtitle">Powered by Stripe</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="stripe-form-container" *ngIf="showStripeForm">
+        <app-stripe-payment
+            [amount]="payment.amount"
+            [currency]="payment.currency"
+            (paymentResult)="handleStripePaymentResult($event)"
+        ></app-stripe-payment>
     </div>
 </mat-dialog-content>
 
 <mat-dialog-actions align="end">
-    <button mat-button (click)="dialogRef.close()">Cancelar</button>
+    <button mat-button (click)="dialogRef.close()">Cancel</button>
 </mat-dialog-actions>

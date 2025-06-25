@@ -1,0 +1,12 @@
+<h2 mat-dialog-title>Add New Payment Method</h2>
+<mat-dialog-content>
+  <div id="card-element" class="card-element"></div>
+  <div *ngIf="errorMessage" class="error-message">{{ errorMessage }}</div>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button mat-button mat-dialog-close>Cancel</button>
+  <button mat-raised-button color="primary" (click)="saveMethod()" [disabled]="isLoading">
+    <span *ngIf="!isLoading">Save</span>
+    <mat-progress-spinner *ngIf="isLoading" mode="indeterminate" diameter="20"></mat-progress-spinner>
+  </button>
+</mat-dialog-actions>
