@@ -65,6 +65,7 @@ export class CreateResidentFormDialogComponent implements OnInit {
       // ✅ Nuevos campos para selección de edificios y apartamentos
       selectedBuildingIds: [[], Validators.required],
       selectedApartmentIds: [[], Validators.required],
+      role: [{value: 'resident', disabled: true}, Validators.required] // <-- Control 'role' deshabilitado por defecto
 
     });
 
@@ -132,7 +133,7 @@ export class CreateResidentFormDialogComponent implements OnInit {
     this.isLoading = true;
     this.errorMessage = null;
 
-    const { email, password, firstName, lastName, selectedApartmentIds } = this.createResidentForm.value;
+    const { email, password, firstName, lastName, selectedApartmentIds } = this.createResidentForm.getRawValue(); // <-- Usar getRawValue()
 
     try {
       // 1. Registrar el usuario en Supabase Auth

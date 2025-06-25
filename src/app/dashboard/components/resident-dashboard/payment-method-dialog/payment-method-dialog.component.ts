@@ -1,11 +1,13 @@
+// src/app/dashboard/components/resident-dashboard/payment-method-dialog/payment-method-dialog.component.ts
 import { Component, Inject, AfterViewInit } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialogModule } from '@angular/material/dialog';
+import { StripePaymentComponent } from '../stripe-payment/stripe-payment.component';
 
-declare var paypal: any; // Declare the PayPal global object
+declare var paypal: any;
 
 @Component({
   selector: 'app-payment-method-dialog',
@@ -16,31 +18,43 @@ declare var paypal: any; // Declare the PayPal global object
     CommonModule,
     MatIconModule,
     MatButtonModule,
-    MatDialogModule
+    MatDialogModule,
+    StripePaymentComponent
   ],
 })
 export class PaymentMethodDialogComponent implements AfterViewInit {
   payment: any;
+  isPayPalSupported: boolean = true; // Flag to check if PayPal is supported
+  showStripeForm = false;
 
   constructor(
     public dialogRef: MatDialogRef<PaymentMethodDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any
   ) {
     this.payment = data;
+    // PayPal does not support VES, so we disable it for that currency
+    if (this.payment.currency === 'VES') {
+      this.isPayPalSupported = false;
+    }
   }
 
   ngAfterViewInit(): void {
-    this.renderPayPalButton();
+    if (this.isPayPalSupported) {
+      this.renderPayPalButton();
+    }
   }
 
   renderPayPalButton(): void {
+    
+    console.log('Payment data for PayPal:', this.payment);
+
     paypal.Buttons({
       createOrder: (data: any, actions: any) => {
         return actions.order.create({
           purchase_units: [{
             amount: {
-              value: this.payment.amount.toString(),
-              currency_code: this.payment.currency
+              value: Number(this.payment.amount).toFixed(2),
+              currency_code: this.payment.currency || 'USD'
             },
             description: this.payment.concept
           }]
@@ -62,6 +76,14 @@ export class PaymentMethodDialogComponent implements AfterViewInit {
   }
 
   selectMethod(method: string) {
-    this.dialogRef.close({ selectedMethod: method });
+    if (method === 'stripe') {
+      this.showStripeForm = true;
+    } else {
+      this.dialogRef.close({ selectedMethod: method });
+    }
+  }
+
+  handleStripePaymentResult(result: any) {
+    this.dialogRef.close({ selectedMethod: 'stripe', details: result });
   }
 }
