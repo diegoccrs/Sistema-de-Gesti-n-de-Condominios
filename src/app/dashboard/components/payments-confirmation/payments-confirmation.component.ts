@@ -7,7 +7,7 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { environment } from '../../../../environments/environment';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner'; 
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 const supabase: SupabaseClient = createClient(environment.supabaseUrl, environment.supabaseKey);
 
@@ -20,7 +20,7 @@ const supabase: SupabaseClient = createClient(environment.supabaseUrl, environme
     MatButtonModule,
     MatIconModule,
     MatToolbarModule,
-    MatProgressSpinnerModule 
+    MatProgressSpinnerModule
   ],
   templateUrl: './payments-confirmation.component.html',
   styleUrls: ['./payments-confirmation.component.css']
@@ -31,7 +31,7 @@ export class PaymentsConfirmationComponent implements OnInit {
   isLoading = true;
   errorMessage: string | null = null;
 
-  constructor(private router: Router, private route: ActivatedRoute) {}
+  constructor(private router: Router, private route: ActivatedRoute) { }
 
   async ngOnInit() {
     const tipo = this.route.snapshot.queryParamMap.get('tipo');
@@ -61,7 +61,7 @@ export class PaymentsConfirmationComponent implements OnInit {
         ...p,
         resident_name: p.resident_id
           ? `${(p.resident_id as any).first_name || ''} ${(p.resident_id as any).last_name || ''}`.trim()
-              || (p.resident_id as any).email
+          || (p.resident_id as any).email
           : 'N/A',
       })) || [];
 
@@ -87,7 +87,7 @@ export class PaymentsConfirmationComponent implements OnInit {
       const { error } = await supabase
         .from('payments')
         .update({
-          status: 'confirmed',
+          status: 'approved',
           confirmed_by: user.id,
           confirmation_date: new Date().toISOString()
         })
@@ -144,8 +144,8 @@ export class PaymentsConfirmationComponent implements OnInit {
     }
   }
   recargar() {
-  const tipo = this.route.snapshot.queryParamMap.get('tipo');
-  this.cargarPagos(tipo);
-}
+    const tipo = this.route.snapshot.queryParamMap.get('tipo');
+    this.cargarPagos(tipo);
+  }
 
 }
