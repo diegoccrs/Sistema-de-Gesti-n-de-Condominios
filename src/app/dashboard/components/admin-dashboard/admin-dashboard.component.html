@@ -1,7 +1,7 @@
 <div class="admin-dashboard-container">
   <mat-toolbar color="primary" class="admin-toolbar titulo">
     <span class="toolbar-title">Panel de Administración - ¡Hola, {{ adminName }}!</span>
-   
+
     <app-user-profile-button></app-user-profile-button>
   </mat-toolbar>
 
@@ -70,6 +70,11 @@
         <button mat-flat-button color="primary" class="action-button" (click)="goToReviewProofs('deudas')">
           <mat-icon>receipt_long</mat-icon>
           Ver Deudas
+        </button>
+
+        <button mat-flat-button color="primary" class="action-button">
+          <mat-icon>receipt_long</mat-icon>
+          Generar Reporte Mensual
         </button>
 
       </div>
