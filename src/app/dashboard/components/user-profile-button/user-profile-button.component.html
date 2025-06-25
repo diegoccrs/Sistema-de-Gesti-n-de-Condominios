@@ -1,6 +1,10 @@
-<button mat-icon-button [matMenuTriggerFor]="menu">
-  <mat-icon>account_circle</mat-icon>
-</button>
+<div class="profile-header">
+  <span class="user-email">{{ user?.email }}</span>
+  <button mat-icon-button [matMenuTriggerFor]="menu">
+    <mat-icon>account_circle</mat-icon>
+  </button>
+</div>
+
 <mat-menu #menu="matMenu">
   <button mat-menu-item (click)="openEditProfileDialog()">
     <mat-icon>edit</mat-icon>
