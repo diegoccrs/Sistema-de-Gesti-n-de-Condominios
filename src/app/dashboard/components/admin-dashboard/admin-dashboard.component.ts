@@ -32,6 +32,7 @@ import { MatInputModule } from '@angular/material/input';
 import { AssignDebtDialogComponent } from './assign-debt-dialog/assign-debt-dialog.component';
 import { SelectResidentDialogComponent } from './select-resident-dialog/select-resident-dialog.component';
 import { ReminderConfigComponent } from '../../reminder-config/reminder-config.component';
+
 @Component({
   selector: 'app-admin-dashboard',
   standalone: true,
@@ -49,7 +50,7 @@ import { ReminderConfigComponent } from '../../reminder-config/reminder-config.c
     MatProgressSpinnerModule,
     MatToolbarModule, // Añadir MatToolbarModule a los imports
     // MatPaginator, // Removed MatPaginator
-    CreateResidentFormDialogComponent, 
+    CreateResidentFormDialogComponent,
     MatToolbarModule,
     FormsModule,
     MatFormFieldModule,
@@ -172,7 +173,7 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
         if (profile) {
           this.adminName = profile.first_name || 'Administrador';
           const allPayments = await this.supabaseService.getAllPayments();
-         this.pendingPaymentsCount = allPayments.filter(p => p.status === 'pending' && !(p as any).reported_at).length;
+          this.pendingPaymentsCount = allPayments.filter(p => p.status === 'pending' && !(p as any).reported_at).length;
 
 
 
@@ -185,7 +186,7 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
     } catch (error: any) {
       console.error('Error al cargar datos del administrador:', error);
       this.errorMessage = `Error al cargar datos: ${error.message || error}`;
-    } finally {}
+    } finally { }
   }
 
   async loadAnnouncements(): Promise<void> {
@@ -320,22 +321,22 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
   }
 
   goToManageResidents(): void {
-    this.router.navigate(['/dashboard/residents-management']); 
+    this.router.navigate(['/dashboard/residents-management']);
   }
 
- goToReviewProofs(tipo: 'deudas' | 'comprobantes'): void {
-  this.router.navigate(['/dashboard/payments-confirmation'], {
-    queryParams: { tipo }
-  });
-}
+  goToReviewProofs(tipo: 'deudas' | 'comprobantes'): void {
+    this.router.navigate(['/dashboard/payments-confirmation'], {
+      queryParams: { tipo }
+    });
+  }
 
 
   goToGenerateReports(): void {
-    this.router.navigate(['/admin/reports']); 
+    this.router.navigate(['/admin/reports']);
   }
 
   goToManageDocuments(): void {
-    this.router.navigate(['/admin/documents']); 
+    this.router.navigate(['/admin/documents']);
   }
 
   goToManageAnnouncements(): void {
@@ -349,11 +350,11 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
   }
 
   goToFinancialManagement(): void {
-    this.router.navigate(['/admin/financial']); 
+    this.router.navigate(['/admin/financial']);
   }
 
   goToUserManagement(): void {
-    this.router.navigate(['/admin/users']); 
+    this.router.navigate(['/admin/users']);
   }
 
   async openAssignDebtDialog(): Promise<void> {
@@ -390,7 +391,7 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
               amount: result.amount,
               status: 'pending',
               currency: result.currency,
-              payment_date: result.payment_date, 
+              payment_date: result.payment_date,
               proof_url: null,
               reported_at: null
             });
@@ -416,4 +417,77 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
       disableClose: true
     });
   }
-}
+  async generarReporte(): Promise<void> {
+    try {
+      // Importación correcta dentro del método
+      const pdfMakeModule = await import('pdfmake/build/pdfmake');
+      const pdfFontsModule = await import('pdfmake/build/vfs_fonts');
+
+      (pdfMakeModule as any).default.vfs = (pdfFontsModule as any).default;
+
+      const { data, error } = await this.supabaseService.supabase
+        .from('payments')
+        .select('concept, amount, currency, payment_date, status');
+
+      if (error) {
+        throw new Error('Error al obtener pagos: ' + error.message);
+      }
+
+      const currentDate = new Date();
+      const currentMonth = currentDate.getMonth();
+      const currentYear = currentDate.getFullYear();
+
+      const approvedPayments = data?.filter(p => {
+        const date = new Date(p.payment_date);
+        return (
+          p.status === 'approved' &&
+          date.getMonth() === currentMonth &&
+          date.getFullYear() === currentYear
+        );
+      }) ?? [];
+
+      const docDefinition: any = {
+        content: [
+          { text: 'Reporte Mensual de Pagos Confirmados', style: 'header' },
+          {
+            text: `Mes: ${currentDate.toLocaleString('es-ES', {
+              month: 'long',
+              year: 'numeric'
+            })}`,
+            style: 'subheader'
+          },
+          {
+            table: {
+              headerRows: 1,
+              widths: ['*', 'auto', 'auto', 'auto'],
+              body: [
+                ['Concepto', 'Monto', 'Moneda', 'Fecha de Pago'],
+                ...approvedPayments.map(p => [
+                  p.concept,
+                  `${p.amount.toFixed(2)}`,
+                  p.currency,
+                  new Date(p.payment_date).toLocaleDateString('es-ES')
+                ])
+              ]
+            }
+          }
+        ],
+        styles: {
+          header: { fontSize: 18, bold: true, margin: [0, 0, 0, 10] },
+          subheader: { fontSize: 14, margin: [0, 10, 0, 10] }
+        }
+      };
+
+      // Usar el pdfMake importado dinámicamente
+      (pdfMakeModule as any).default.createPdf(docDefinition).open();
+
+    } catch (err: any) {
+      console.error('Error al generar reporte:', err);
+      this.snackBar.open('No se pudo generar el reporte.', 'Cerrar', {
+        duration: 4000,
+        panelClass: ['snackbar-error']
+      });
+    }
+  }
+
+}  
