@@ -90,22 +90,13 @@ export const routes: Routes = [
         title: 'Services Providers',
         loadComponent: () => import('./dashboard/components/resident-dashboard/services-provider/service-provider.component').then(m => m.ServiceProvidersComponent),
         canActivate: [authGuard] // Accesible para cualquier usuario autenticado
+      },
+      {
+        path: 'normas', // La URL completa será /dashboard/normas
+        title: 'Normas del Condominio',
+        loadComponent: () => import('./dashboard/components/condo-rules-page/condo-rules-page.component').then(m => m.CondoRulesPageComponent),
+        canActivate: [authGuard] // Accesible para cualquier usuario autenticado
       }
-
-
-      // Otras rutas hijas de gestión, por ejemplo:
-      // {
-      //   path: 'residents-management',
-      //   title: 'Gestión de Residentes',
-      //   loadComponent: () => import('./dashboard/components/admin-dashboard/residents-management/residents-management.component').then(m => m.ResidentsManagementComponent),
-      //   canActivate: [isAdminGuard]
-      // },
-      // {
-      //   path: 'announcements-management',
-      //   title: 'Gestión de Anuncios',
-      //   loadComponent: () => import('./dashboard/components/admin-dashboard/announcements-management/announcements-management.component').then(m => m.AnnouncementsManagementComponent),
-      //   canActivate: [isAdminGuard]
-      // }
     ]
   },
 
