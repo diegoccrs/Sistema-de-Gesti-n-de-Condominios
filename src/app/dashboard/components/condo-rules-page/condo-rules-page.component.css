@@ -1,0 +1,180 @@
+/* src/app/condo-rules-page/condo-rules-page.component.css */
+@import url('https://fonts.googleapis.com/css2?family=Raleway:wght@400;700&display=swap');
+
+.condo-rules-container {
+  position: relative;
+  padding: 20px;
+  max-width: 900px;
+  margin: 30px auto;
+  background-color: #f5f7fa;
+  border-radius: 12px;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+  font-family: 'Raleway', sans-serif;
+}
+
+.back-button {
+  position: absolute;
+  top: 15px;
+  left: 15px;
+  z-index: 10;
+  background: white;
+  border-radius: 50%;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s ease-in-out;
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  border: none;
+  color: #ff4081; /* Color principal */
+}
+
+.back-button:hover {
+  transform: translateX(-5px);
+  background: #e0e0e0;
+}
+
+.page-title {
+  text-align: center;
+  color: #000000;
+  font-size: 2.2em;
+  font-weight: 700;
+  margin-bottom: 25px;
+  padding-top: 10px; /* Espacio para el botón de regreso */
+}
+
+.search-bar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 30px;
+  padding: 10px 15px;
+  background-color: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.08);
+  border: 1px solid #e0e0e0;
+}
+
+.search-bar mat-icon {
+  color: #ff4081;
+  font-size: 24px;
+}
+
+.search-bar input::placeholder {
+  color: #999;
+}
+
+.search-bar input {
+  flex-grow: 1;
+  border: none;
+  outline: none;
+  padding: 8px 0;
+  font-size: 1.1em;
+  font-family: "Raleway", sans-serif;
+}
+
+.loading-indicator, .error-message, .no-data-message {
+  text-align: center;
+  padding: 30px;
+  margin: 20px 0;
+  border-radius: 8px;
+  font-size: 1.1em;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
+}
+
+.loading-indicator {
+  background-color: #e3f2fd;
+  color: #ff4081;
+}
+
+.error-message {
+  background-color: #ffebee;
+  color: #d32f2f;
+  border: 1px solid #ef9a9a;
+}
+
+.no-data-message {
+  background-color: #fffde7;
+  color: #ffb300;
+}
+
+.rules-list {
+  margin-top: 20px;
+}
+
+.rule-panel {
+  margin-bottom: 15px;
+  border-radius: 8px;
+  overflow: hidden; /* Asegura que el border-radius se aplique */
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  transition: all 0.3s ease;
+}
+
+.rule-panel:hover {
+  box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+}
+
+.mat-expansion-panel-header {
+  background-color: #e8f0fe; /* Un color de fondo suave para el header */
+  color: #ff4081; /* Un color oscuro para el texto del header */
+  font-weight: 600;
+  padding: 15px 20px;
+}
+
+.mat-expansion-panel-header mat-panel-title {
+  display: flex;
+  align-items: center;
+  font-size: 1.1em;
+}
+
+.mat-expansion-panel-header mat-panel-title mat-icon {
+  margin-right: 10px;
+  color: #ff4081;
+}
+
+.mat-expansion-panel-header mat-panel-description {
+  color: #767777;
+  font-size: 0.9em;
+  margin-left: auto;
+}
+
+.mat-expansion-panel-body {
+  padding: 20px;
+  background-color: #ffffff;
+  border-top: 1px solid #e0e0e0;
+}
+
+.rule-content {
+  line-height: 1.7;
+  color: #333;
+}
+
+.rule-content h1,
+.rule-content h2,
+.rule-content h3 {
+  color: #1565c0; /* Azul más claro para subtítulos dentro del contenido */
+  margin-top: 1.5em;
+  margin-bottom: 0.8em;
+  font-family: 'Raleway', sans-serif;
+  font-weight: 700;
+}
+
+.rule-content p,
+.rule-content ul,
+.rule-content ol {
+  margin-bottom: 1em;
+}
+
+.rule-content ul,
+.rule-content ol {
+  padding-left: 25px;
+}
+
+.rule-content li {
+  margin-bottom: 0.5em;
+}

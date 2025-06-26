@@ -1,0 +1,50 @@
+<div class="condo-rules-container">
+  <button mat-icon-button class="back-button" (click)="goBack()" aria-label="Regresar">
+    <mat-icon>arrow_back</mat-icon>
+  </button>
+
+  <h2 class="page-title">Normas del Condominio</h2>
+
+  <div class="search-bar">
+  <mat-icon>search</mat-icon>
+  <input
+    type="text"
+    [(ngModel)]="searchTerm"
+    (ngModelChange)="applyFilter()"
+    placeholder="Buscar normas por título o contenido..."
+    aria-label="Buscar normas"
+  >
+</div>
+
+  <div *ngIf="isLoading" class="loading-indicator">
+    <mat-spinner diameter="50"></mat-spinner>
+    <p>Cargando normas del condominio...</p>
+  </div>
+
+  <div *ngIf="errorMessage" class="error-message">
+    <mat-icon color="warn">error</mat-icon>
+    <p>{{ errorMessage }}</p>
+  </div>
+
+  <div *ngIf="!isLoading && filteredCondoRules.length === 0 && !errorMessage" class="no-data-message">
+    <mat-icon>info</mat-icon>
+    <p>No se encontraron normas que coincidan con su búsqueda.</p>
+  </div>
+
+  <div *ngIf="!isLoading && filteredCondoRules.length > 0" class="rules-list">
+    <mat-accordion multi>
+      <mat-expansion-panel *ngFor="let rule of filteredCondoRules" class="rule-panel">
+        <mat-expansion-panel-header>
+          <mat-panel-title>
+            <mat-icon>gavel</mat-icon>
+            {{ rule.title }}
+          </mat-panel-title>
+          <mat-panel-description>
+            Versión: {{ rule.version }} | Última actualización: {{ rule.updated_at | date:'shortDate' }}
+          </mat-panel-description>
+        </mat-expansion-panel-header>
+        <div class="rule-content" [innerHTML]="rule.content_html"></div>
+      </mat-expansion-panel>
+    </mat-accordion>
+  </div>
+</div>

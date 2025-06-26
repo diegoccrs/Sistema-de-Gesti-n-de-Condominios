@@ -371,10 +371,9 @@ export class ResidentDashboardComponent implements OnInit {
     this.errorMessage = 'Funcionalidad "Documentos Comunes" en desarrollo.';
   }
 
-  contactAdmin() {
-    console.log('Contactar administración');
-    this.errorMessage = 'Funcionalidad "Contactar Administración" en desarrollo.';
-  }
+  goToNormas() {
+    console.log('Navegar a las normas del condominio');
+    this.router.navigate(['./dashboard/normas']);  }
 
   goToServiceProviders() {
     console.log('Navegar a proveedores de servicios');
