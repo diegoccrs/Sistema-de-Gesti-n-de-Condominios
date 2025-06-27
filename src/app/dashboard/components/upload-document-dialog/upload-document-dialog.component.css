@@ -1,0 +1,43 @@
+.upload-dialog-container {
+    display: flex;
+    flex-direction: column;
+    padding: 1rem;
+}
+
+mat-form-field {
+    width: 100%;
+    margin-bottom: 0.5rem;
+}
+
+.file-upload-label {
+    display: inline-flex;
+    align-items: center;
+    padding: 8px 12px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-top: 1rem;
+    transition: background-color 0.2s;
+
+    &:hover {
+        background-color: #f0f0f0;
+    }
+
+    mat-icon {
+        margin-right: 8px;
+    }
+}
+
+.file-name {
+    margin-left: 1rem;
+    font-style: italic;
+    color: #555;
+}
+
+mat-error {
+    margin-top: 1rem;
+}
+
+.button-spinner {
+    margin-right: 8px;
+}
