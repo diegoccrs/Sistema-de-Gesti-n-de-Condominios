@@ -336,7 +336,7 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
   }
 
   goToManageDocuments(): void {
-    this.router.navigate(['/admin/documents']);
+    this.router.navigate(['/dashboard/documents']);
   }
 
   goToManageAnnouncements(): void {

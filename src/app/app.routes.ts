@@ -96,6 +96,12 @@ export const routes: Routes = [
         title: 'Normas del Condominio',
         loadComponent: () => import('./dashboard/components/condo-rules-page/condo-rules-page.component').then(m => m.CondoRulesPageComponent),
         canActivate: [authGuard] // Accesible para cualquier usuario autenticado
+      },
+      {
+        path: 'documents', // La URL completa será /dashboard/documents
+        title: 'Documentos del Condominio',
+        loadComponent: () => import('./dashboard/components/documents/documents.component').then(m => m.DocumentsComponent),
+        canActivate: [authGuard] // Accesible para cualquier usuario autenticado
       }
     ]
   },

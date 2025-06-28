@@ -1,0 +1,182 @@
+<div class="documents-container">
+  <!-- Header -->
+  <div class="documents-header">
+    <h1 class="page-title">
+      <mat-icon class="page-icon">folder_open</mat-icon>
+      Documentos del Condominio
+    </h1>
+    <p class="page-subtitle">
+      Accede y gestiona los documentos importantes de la comunidad
+    </p>
+  </div>
+
+  <!-- Search and Filter Controls -->
+  <mat-card class="search-card mat-elevation-z2">
+    <mat-card-content>
+      <form [formGroup]="searchForm" class="search-form">
+        <div class="search-row">
+          <mat-form-field appearance="outline" class="search-field">
+            <mat-label>Buscar documentos</mat-label>
+            <input matInput 
+                   formControlName="keyword" 
+                   placeholder="Título, descripción, nombre del archivo...">
+            <mat-icon matSuffix>search</mat-icon>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="category-field">
+            <mat-label>Categoría</mat-label>
+            <mat-select formControlName="category">
+              <mat-option value="">Todas las categorías</mat-option>
+              <mat-option *ngFor="let category of documentCategories" [value]="category">
+                {{ category }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <button mat-stroked-button 
+                  type="button" 
+                  (click)="clearFilters()"
+                  class="clear-button"
+                  [disabled]="!searchForm.dirty">
+            <mat-icon>clear</mat-icon>
+            Limpiar
+          </button>
+        </div>
+      </form>
+    </mat-card-content>
+  </mat-card>
+
+  <!-- Action Bar -->
+  <div class="action-bar" *ngIf="isAdmin">
+    <button mat-flat-button color="primary" (click)="openUploadDialog()" class="upload-button">
+      <mat-icon>cloud_upload</mat-icon>
+      Subir Documento
+    </button>
+  </div>
+
+  <!-- Documents Table -->
+  <mat-card class="table-card mat-elevation-z4">
+    <mat-card-content>
+      <!-- Loading State -->
+      <div *ngIf="isLoading" class="loading-container">
+        <mat-spinner diameter="40"></mat-spinner>
+        <p>Cargando documentos...</p>
+      </div>
+
+      <!-- Documents Table -->
+      <div *ngIf="!isLoading" class="table-container">
+        <table mat-table [dataSource]="filteredDocuments" class="documents-table">
+          
+          <!-- Title Column -->
+          <ng-container matColumnDef="title">
+            <th mat-header-cell *matHeaderCellDef>Título</th>
+            <td mat-cell *matCellDef="let document">
+              <div class="document-title">
+                <mat-icon class="file-icon">{{ getFileIcon(document.file_name) }}</mat-icon>
+                <div class="title-info">
+                  <div class="title">{{ document.title }}</div>
+                  <div class="description" *ngIf="document.description">
+                    {{ document.description }}
+                  </div>
+                </div>
+              </div>
+            </td>
+          </ng-container>
+
+          <!-- Category Column -->
+          <ng-container matColumnDef="category">
+            <th mat-header-cell *matHeaderCellDef>Categoría</th>
+            <td mat-cell *matCellDef="let document">
+              <mat-chip [color]="getCategoryColor(document.category)" class="category-chip">
+                {{ document.category }}
+              </mat-chip>
+            </td>
+          </ng-container>
+
+          <!-- File Name Column -->
+          <ng-container matColumnDef="file_name">
+            <th mat-header-cell *matHeaderCellDef>Archivo</th>
+            <td mat-cell *matCellDef="let document">
+              <div class="file-info">
+                <span class="file-name" [matTooltip]="document.file_name">
+                  {{ document.file_name }}
+                </span>
+                <span class="file-type" *ngIf="document.file_type">
+                  ({{ document.file_type }})
+                </span>
+              </div>
+            </td>
+          </ng-container>
+
+          <!-- Created Date Column -->
+          <ng-container matColumnDef="created_at">
+            <th mat-header-cell *matHeaderCellDef>Fecha de Subida</th>
+            <td mat-cell *matCellDef="let document">
+              {{ document.created_at | date:'dd/MM/yyyy HH:mm' }}
+            </td>
+          </ng-container>
+
+          <!-- File Size Column -->
+          <ng-container matColumnDef="file_size">
+            <th mat-header-cell *matHeaderCellDef>Tamaño</th>
+            <td mat-cell *matCellDef="let document">
+              {{ formatFileSize(document.file_size) }}
+            </td>
+          </ng-container>
+
+          <!-- Actions Column (Admin Only) -->
+          <ng-container matColumnDef="actions">
+            <th mat-header-cell *matHeaderCellDef>Acciones</th>
+            <td mat-cell *matCellDef="let document">
+              <div class="action-buttons">
+                <button mat-icon-button 
+                        (click)="downloadDocument(document)"
+                        matTooltip="Descargar documento"
+                        color="primary">
+                  <mat-icon>download</mat-icon>
+                </button>
+                <button mat-icon-button 
+                        (click)="deleteDocument(document)"
+                        matTooltip="Eliminar documento"
+                        color="warn"
+                        *ngIf="isAdmin">
+                  <mat-icon>delete</mat-icon>
+                </button>
+              </div>
+            </td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns;" class="document-row"></tr>
+        </table>
+
+        <!-- Empty State -->
+        <div *ngIf="filteredDocuments.length === 0" class="empty-state">
+          <mat-icon class="empty-icon">folder_open</mat-icon>
+          <h3>No hay documentos disponibles</h3>
+          <p *ngIf="searchForm.value.keyword || searchForm.value.category">
+            No se encontraron documentos que coincidan con tu búsqueda.
+            <button mat-button (click)="clearFilters()">Limpiar filtros</button>
+          </p>
+          <p *ngIf="!searchForm.value.keyword && !searchForm.value.category">
+            No hay documentos cargados en el sistema aún.
+          </p>
+          <button *ngIf="isAdmin && !searchForm.value.keyword && !searchForm.value.category" 
+                  mat-flat-button color="primary" 
+                  (click)="openUploadDialog()">
+            <mat-icon>cloud_upload</mat-icon>
+            Subir el primer documento
+          </button>
+        </div>
+      </div>
+    </mat-card-content>
+  </mat-card>
+
+  <!-- Results Summary -->
+  <div *ngIf="!isLoading && filteredDocuments.length > 0" class="results-summary">
+    <p>
+      Mostrando {{ filteredDocuments.length }} de {{ documents.length }} documentos
+      <span *ngIf="searchForm.value.keyword || searchForm.value.category"> (filtrados)</span>
+    </p>
+  </div>
+</div>

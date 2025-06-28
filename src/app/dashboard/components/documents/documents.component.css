@@ -1,0 +1,319 @@
+.documents-container {
+  padding: 24px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* Header */
+.documents-header {
+  margin-bottom: 32px;
+}
+
+.page-title {
+  display: flex;
+  align-items: center;
+  font-size: 2rem;
+  font-weight: 500;
+  color: #333;
+  margin: 0 0 8px 0;
+}
+
+.page-icon {
+  margin-right: 12px;
+  font-size: 2rem;
+  color: #1976d2;
+}
+
+.page-subtitle {
+  color: #666;
+  font-size: 1.1rem;
+  margin: 0;
+}
+
+/* Search Card */
+.search-card {
+  margin-bottom: 24px;
+}
+
+.search-form {
+  margin: 0;
+}
+
+.search-row {
+  display: flex;
+  gap: 16px;
+  align-items: flex-end;
+  flex-wrap: wrap;
+}
+
+.search-field {
+  flex: 2;
+  min-width: 300px;
+}
+
+.category-field {
+  flex: 1;
+  min-width: 200px;
+}
+
+.clear-button {
+  height: 56px;
+  min-width: 120px;
+}
+
+/* Action Bar */
+.action-bar {
+  margin-bottom: 24px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.upload-button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Table Card */
+.table-card {
+  margin-bottom: 24px;
+}
+
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 48px;
+  text-align: center;
+}
+
+.loading-container p {
+  margin-top: 16px;
+  color: #666;
+}
+
+.table-container {
+  overflow-x: auto;
+}
+
+.documents-table {
+  width: 100%;
+  min-width: 800px;
+}
+
+/* Document Title Column */
+.document-title {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.file-icon {
+  color: #1976d2;
+  font-size: 24px;
+  margin-top: 2px;
+  flex-shrink: 0;
+}
+
+.title-info {
+  flex: 1;
+}
+
+.title {
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 1.4;
+  margin-bottom: 4px;
+}
+
+.description {
+  font-size: 12px;
+  color: #666;
+  line-height: 1.3;
+  max-width: 250px;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+/* Category Column */
+.category-chip {
+  font-size: 12px;
+  height: 24px;
+  border-radius: 12px;
+}
+
+/* File Info Column */
+.file-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.file-name {
+  font-weight: 500;
+  font-size: 13px;
+  max-width: 200px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.file-type {
+  font-size: 11px;
+  color: #888;
+}
+
+/* Actions Column */
+.action-buttons {
+  display: flex;
+  gap: 4px;
+}
+
+/* Table Rows */
+.document-row {
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.document-row:hover {
+  background-color: #f5f5f5;
+}
+
+/* Empty State */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 64px 24px;
+  text-align: center;
+}
+
+.empty-icon {
+  font-size: 64px;
+  color: #ddd;
+  margin-bottom: 16px;
+}
+
+.empty-state h3 {
+  color: #333;
+  font-size: 1.2rem;
+  margin: 0 0 8px 0;
+}
+
+.empty-state p {
+  color: #666;
+  margin: 0 0 16px 0;
+  max-width: 400px;
+}
+
+/* Results Summary */
+.results-summary {
+  display: flex;
+  justify-content: center;
+  padding: 16px;
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  margin-top: 16px;
+}
+
+.results-summary p {
+  margin: 0;
+  color: #666;
+  font-size: 14px;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .documents-container {
+    padding: 16px;
+  }
+  
+  .search-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .search-field,
+  .category-field {
+    min-width: unset;
+    flex: unset;
+  }
+  
+  .clear-button {
+    height: 48px;
+  }
+  
+  .page-title {
+    font-size: 1.5rem;
+  }
+  
+  .action-bar {
+    justify-content: center;
+  }
+  
+  .documents-table {
+    min-width: 600px;
+  }
+  
+  .title-info {
+    max-width: 150px;
+  }
+  
+  .description {
+    max-width: 150px;
+  }
+  
+  .file-name {
+    max-width: 120px;
+  }
+}
+
+@media (max-width: 480px) {
+  .documents-container {
+    padding: 12px;
+  }
+  
+  .page-title {
+    font-size: 1.3rem;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+  
+  .page-icon {
+    margin-right: 0;
+  }
+  
+  .empty-state {
+    padding: 32px 16px;
+  }
+  
+  .empty-icon {
+    font-size: 48px;
+  }
+}
+
+/* Snackbar Styles */
+::ng-deep .snackbar-success {
+  background-color: #4caf50 !important;
+  color: white !important;
+}
+
+::ng-deep .snackbar-error {
+  background-color: #f44336 !important;
+  color: white !important;
+}
+
+/* Material Design Overrides */
+::ng-deep .mat-mdc-table .mdc-data-table__header-cell {
+  font-weight: 600;
+  color: #333;
+}
+
+::ng-deep .mat-mdc-chip.mat-mdc-standard-chip {
+  height: 28px;
+  font-size: 12px;
+}
