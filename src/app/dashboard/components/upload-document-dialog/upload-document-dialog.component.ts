@@ -14,7 +14,7 @@ import { MatIconModule } from '@angular/material/icon';
 @Component({
   selector: 'app-upload-document-dialog',
   templateUrl: './upload-document-dialog.component.html',
-  styleUrls: ['./upload-document-dialog.component.scss'],
+  styleUrls: ['./upload-document-dialog.component.css'],
   standalone: true,
   imports: [
     CommonModule,
@@ -53,14 +53,39 @@ export class UploadDocumentDialogComponent implements OnInit {
     const input = event.target as HTMLInputElement;
     if (input.files && input.files.length > 0) {
       this.selectedFile = input.files[0];
-      // Basic validation for file types
-      const allowedTypes = ['application/pdf', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'];
-      if (!allowedTypes.includes(this.selectedFile.type)) {
-          this.errorMessage = 'Invalid file type. Please upload a PDF, Word, or Excel file.';
-          this.selectedFile = null;
-          this.uploadForm.get('file')?.setValue(null);
+      
+      // Enhanced validation for file types
+      const allowedTypes = [
+        'application/pdf',
+        'application/vnd.openxmlformats-officedocument.wordprocessingml.document', // .docx
+        'application/msword', // .doc
+        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', // .xlsx
+        'application/vnd.ms-excel', // .xls
+        'image/jpeg',
+        'image/png',
+        'text/plain'
+      ];
+      
+      const allowedExtensions = ['.pdf', '.doc', '.docx', '.xls', '.xlsx', '.jpg', '.jpeg', '.png', '.txt'];
+      const fileExtension = this.selectedFile.name.toLowerCase().substring(this.selectedFile.name.lastIndexOf('.'));
+      
+      // Validate file size (max 10MB)
+      const maxSize = 10 * 1024 * 1024; // 10MB
+      if (this.selectedFile.size > maxSize) {
+        this.errorMessage = 'El archivo es demasiado grande. El tamaño máximo permitido es 10MB.';
+        this.selectedFile = null;
+        this.uploadForm.get('file')?.setValue(null);
+        return;
+      }
+      
+      // Validate file type
+      if (!allowedTypes.includes(this.selectedFile.type) && !allowedExtensions.includes(fileExtension)) {
+        this.errorMessage = 'Tipo de archivo no válido. Por favor sube archivos PDF, Word, Excel, o imágenes.';
+        this.selectedFile = null;
+        this.uploadForm.get('file')?.setValue(null);
       } else {
-          this.errorMessage = null;
+        this.errorMessage = null;
+        this.uploadForm.get('file')?.setValue(this.selectedFile);
       }
     }
   }

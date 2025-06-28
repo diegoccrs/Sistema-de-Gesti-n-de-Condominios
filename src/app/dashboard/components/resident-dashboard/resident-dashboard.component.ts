@@ -368,7 +368,7 @@ export class ResidentDashboardComponent implements OnInit {
 
   goToDocuments() {
     console.log('Navegar a documentos comunes');
-    this.errorMessage = 'Funcionalidad "Documentos Comunes" en desarrollo.';
+    this.router.navigate(['/dashboard/documents']);
   }
 
   goToNormas() {
