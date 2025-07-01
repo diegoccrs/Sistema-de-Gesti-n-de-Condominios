@@ -5,7 +5,7 @@ import { CondoRules } from '../domain/models/condo-rules.model';
 export const STATIC_CONDO_RULES: CondoRules[] = [
   {
     id: 'rule-001',
-    title: 'Reglamento de Uso de Áreas Comunes',
+    title: 'Uso de Áreas Comunes',
     content_html: `
       <h2>Artículo 1: Horarios de Uso</h2>
       <p>Las áreas comunes (piscina, gimnasio, salón de fiestas) podrán ser utilizadas de <strong>8:00 AM a 10:00 PM</strong>. Cualquier excepción deberá ser autorizada por la administración.</p>
