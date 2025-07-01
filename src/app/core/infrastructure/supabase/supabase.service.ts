@@ -441,6 +441,7 @@ export class SupabaseService {
     status: string;
     currency: string;
     payment_date: string;
+    expiration_date: string | null ; // ← ✅ AGREGA ESTO
     proof_url: string | null;
     reported_at: string | null;
   }): Promise<any> {

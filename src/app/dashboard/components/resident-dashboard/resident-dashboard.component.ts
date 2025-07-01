@@ -38,6 +38,12 @@ import { ConectarTelegramComponent } from '../conectar-telegram/conectar-telegra
 import { PaymentService } from '../../../core/services/payment.service'; // Import the new service
 import { PaymentMethodDialogComponent } from './payment-method-dialog/payment-method-dialog.component'; // Corrected import path
 
+// import sincronización de Google Calendar
+import { GoogleCalendarService } from 'src/app/core/services/google-calendar.service';
+import { LogicaService } from 'src/app/core/services/logica.service';
+
+
+
 
 
 @Component({
@@ -92,13 +98,41 @@ export class ResidentDashboardComponent implements OnInit {
     private fb: FormBuilder,
     private dialog: MatDialog,
     private snackBar: MatSnackBar,
-    private paymentService: PaymentService
+    private paymentService: PaymentService,
+    private calendarService: GoogleCalendarService, // ✅ ← este es el nuevo
+    private logicaService: LogicaService
+
   ) {
     this.dateFilterForm = this.fb.group({
       startDate: [null],
       endDate: [null]
     });
   }
+
+  telegramUrl: string | null = null;
+
+async conectarConTelegram() {
+  const user = await this.supabaseService.getCurrentUser();
+  if (!user?.id) {
+    console.error('Usuario no autenticado.');
+    return;
+  }
+
+  const token = crypto.randomUUID(); // Ya que estás en un proyecto moderno, puedes usar esto
+
+  const { error } = await this.supabaseService.supabase
+    .from('profiles')
+    .update({ login_token: token })
+    .eq('id', user.id);
+
+  if (error) {
+    console.error('Error guardando el token:', error);
+    return;
+  }
+
+  this.telegramUrl = `https://t.me/notificacionesCDBot?start=${token}`;
+  window.open(this.telegramUrl, '_blank');
+}
 
   async ngOnInit() {
     this.isLoading = true;
@@ -359,6 +393,36 @@ export class ResidentDashboardComponent implements OnInit {
       this.snackBar.open('Ocurrió un error inesperado al subir el comprobante.', 'Cerrar', { duration: 3000 });
     }
   }
+ async syncWithCalendar() {
+  try {
+    const userId = await this.logicaService.getUserId();
+
+    if (!userId) throw new Error('No se encontró el ID del residente');
+
+    await this.calendarService.initClient();  // 🔧 Inicia el cliente
+    await this.calendarService.signIn();      // 🔐 Pide permisos
+
+    const pagos = await this.logicaService.getPagosPendientesConVencimiento(userId);
+
+    for (const pago of pagos) {
+      const fecha = pago.expiration_date.split('T')[0]; // 🗓️ Solo la fechax`
+      await this.calendarService.createEvent(
+        `Pago pendiente: ${pago.concept}`,
+        `Monto: $${pago.amount}\nRecuerda pagar antes de la fecha límite.`,
+        fecha
+      );
+    }
+
+    alert('✅ Todos los eventos han sido creados en Google Calendar');
+  } catch (error) {
+    console.error('Error completo:', error);
+    alert('❌ Error al sincronizar con Google Calendar');
+  }
+}
+
+
+
+
 
 
   reportIssue() {
