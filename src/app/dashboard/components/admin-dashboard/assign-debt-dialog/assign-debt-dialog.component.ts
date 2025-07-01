@@ -12,7 +12,7 @@ import { CommonModule } from '@angular/common';
   standalone: true,
   imports: [
     CommonModule,
-    ReactiveFormsModule, // <-- Añade esto
+    ReactiveFormsModule,
     MatFormFieldModule,
     MatInputModule,
     MatSelectModule,
@@ -33,7 +33,8 @@ export class AssignDebtDialogComponent {
       concept: ['', Validators.required],
       amount: [0, [Validators.required, Validators.min(0.01)]],
       currency: ['VES', Validators.required],
-      payment_date: [this.getCurrentDateFormatted(), Validators.required]
+      payment_date: [this.getCurrentDateFormatted(), Validators.required],
+      months_duration: [1, [Validators.required, Validators.min(1)]]
     });
   }
 
@@ -48,13 +49,28 @@ export class AssignDebtDialogComponent {
     return date.toISOString();
   }
 
+  private addMonths(dateString: string, months: number): string {
+    const date = new Date(dateString);
+    date.setUTCMonth(date.getUTCMonth() + months);
+    date.setUTCHours(12, 0, 0, 0);
+    return date.toISOString();
+  }
+
   submit(): void {
     if (this.form.valid) {
+      const paymentDateIso = this.convertToTimestampTz(this.form.value.payment_date);
+      const expirationDateIso = this.addMonths(this.form.value.payment_date, this.form.value.months_duration);
+
       const formValue = {
-        ...this.form.value,
-        resident_id: this.data.residentId,
-        payment_date: this.convertToTimestampTz(this.form.value.payment_date)
+        concept: this.form.value.concept,
+        amount: this.form.value.amount,
+        currency: this.form.value.currency,
+        payment_date: paymentDateIso,
+        expiration_date: expirationDateIso,
+        resident_id: this.data.residentId
       };
+
+      console.log('📤 Enviando a Supabase:', formValue);
       this.dialogRef.close(formValue);
     }
   }

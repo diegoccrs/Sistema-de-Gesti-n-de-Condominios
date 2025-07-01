@@ -392,6 +392,7 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
               status: 'pending',
               currency: result.currency,
               payment_date: result.payment_date,
+              expiration_date: result.expiration_date,
               proof_url: null,
               reported_at: null
             });

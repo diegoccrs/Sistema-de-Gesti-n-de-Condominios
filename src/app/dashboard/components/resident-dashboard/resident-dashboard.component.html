@@ -11,6 +11,18 @@
     <section class="quick-actions mat-elevation-z4 animated-fade-in-up delay-3">
         <h2 class="mat-headline-6">Acciones Rápidas</h2>
         <div class="actions-grid">
+            <button mat-flat-button color="primary" class="action-button" (click)="conectarConTelegram()">
+                <mat-icon>send</mat-icon>
+                <span>Conectar con Telegram</span>
+            </button>
+
+
+
+            <button mat-flat-button color="primary" (click)="syncWithCalendar()" class="action-button">
+                <mat-icon>event</mat-icon>
+                <span>Sincronizar con Google Calendar</span>
+            </button>
+
 
             <button mat-flat-button color="primary" (click)="openPaymentRegisterDialog()" class="action-button">
                 <mat-icon>add_card</mat-icon>
@@ -35,7 +47,7 @@
                 <mat-icon>handshake</mat-icon>
                 <span>Proveedores de Servicios</span>
             </button>
-            <app-conectar-telegram></app-conectar-telegram>
+            <!-- <app-conectar-telegram></app-conectar-telegram> -->
         </div>
     </section>
 
