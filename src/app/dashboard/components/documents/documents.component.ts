@@ -13,6 +13,7 @@ import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
 import { DocumentService } from '../../../core/services/document.service';
 import { Document, DOCUMENT_CATEGORIES } from '../../../core/models/document.model';
 import { UploadDocumentDialogComponent } from '../upload-document-dialog/upload-document-dialog.component';
@@ -56,7 +57,8 @@ export class DocumentsComponent implements OnInit {
     private supabaseService: SupabaseService,
     private dialog: MatDialog,
     private snackBar: MatSnackBar,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    private router: Router
   ) {
     this.searchForm = this.fb.group({
       keyword: [''],
@@ -198,13 +200,22 @@ export class DocumentsComponent implements OnInit {
 
   getCategoryColor(category: string): string {
     const colors: { [key: string]: string } = {
-      'Financial': 'primary',
-      'Administrative': 'accent',
-      'Meeting Minutes': 'warn',
+      'Financiero': 'primary',
+      'Administrativo': 'accent',
+      'Actas de Reunión': 'warn',
       'Legal': 'warn',
-      'Rules and Regulations': 'primary',
-      'Other': ''
+      'Normas y Reglamentos': 'primary',
+      'Otros': ''
     };
     return colors[category] || '';
+  }
+
+  goBack(): void {
+    // Check if user is admin and navigate to appropriate dashboard
+    if (this.isAdmin) {
+      this.router.navigate(['/dashboard/admin-home']);
+    } else {
+      this.router.navigate(['/dashboard/resident-home']);
+    }
   }
 }

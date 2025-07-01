@@ -50,12 +50,15 @@ export class DocumentService {
    * @returns A promise that resolves when the upload is complete.
    */
   async uploadDocument(file: File, documentData: { title: string; description: string; category: string }): Promise<void> {
-    const user = (await this.supabase.auth.getUser()).data.user;
+    // Add retry logic for auth timeout issues
+    const user = await this.getCurrentUserWithRetry();
     if (!user) {
       throw new Error('User must be logged in to upload documents.');
     }
 
-    const filePath = `public/${user.id}/${Date.now()}_${file.name}`;
+    // Sanitize filename to remove special characters and spaces
+    const sanitizedFileName = this.sanitizeFileName(file.name);
+    const filePath = `public/${user.id}/${Date.now()}_${sanitizedFileName}`;
 
     // 1. Upload the file to Supabase Storage
     const { error: uploadError } = await this.supabase.storage
@@ -139,5 +142,54 @@ export class DocumentService {
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
+  }
+
+  /**
+   * Sanitizes a filename by removing special characters and spaces that could cause issues in storage.
+   * @param fileName - The original filename to sanitize.
+   * @returns A sanitized filename safe for storage.
+   */
+  private sanitizeFileName(fileName: string): string {
+    // Get file extension
+    const lastDotIndex = fileName.lastIndexOf('.');
+    const extension = lastDotIndex !== -1 ? fileName.substring(lastDotIndex) : '';
+    const nameWithoutExtension = lastDotIndex !== -1 ? fileName.substring(0, lastDotIndex) : fileName;
+    
+    // Remove or replace problematic characters:
+    // - Remove accents and special characters
+    // - Replace spaces with underscores
+    // - Remove any characters that aren't alphanumeric, underscores, or hyphens
+    const sanitized = nameWithoutExtension
+      .normalize('NFD')                     // Decompose accented characters
+      .replace(/[\u0300-\u036f]/g, '')      // Remove diacritical marks
+      .replace(/\s+/g, '_')                 // Replace spaces with underscores
+      .replace(/[^a-zA-Z0-9_-]/g, '')       // Remove any other special characters
+      .substring(0, 100);                   // Limit length to 100 characters
+    
+    return sanitized + extension;
+  }
+
+  /**
+   * Get current user with retry logic to handle auth lock timeouts.
+   * @param maxRetries - Maximum number of retry attempts.
+   * @returns The current user or null.
+   */
+  private async getCurrentUserWithRetry(maxRetries = 3): Promise<any> {
+    for (let attempt = 1; attempt <= maxRetries; attempt++) {
+      try {
+        const { data } = await this.supabase.auth.getUser();
+        return data.user;
+      } catch (error: any) {
+        console.warn(`Auth attempt ${attempt} failed:`, error.message);
+        
+        if (attempt === maxRetries) {
+          throw error;
+        }
+        
+        // Wait before retrying (exponential backoff)
+        await new Promise(resolve => setTimeout(resolve, attempt * 1000));
+      }
+    }
+    return null;
   }
 }

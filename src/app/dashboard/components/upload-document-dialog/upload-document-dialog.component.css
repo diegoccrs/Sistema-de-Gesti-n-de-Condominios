@@ -34,6 +34,16 @@ mat-form-field {
     color: #555;
 }
 
+.file-help-text {
+    margin-top: 0.5rem;
+    padding-left: 1rem;
+}
+
+.file-help-text small {
+    color: #666;
+    font-size: 0.8rem;
+}
+
 mat-error {
     margin-top: 1rem;
 }

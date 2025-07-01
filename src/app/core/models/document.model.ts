@@ -13,10 +13,10 @@ export interface Document {
 
 // We can also define the categories here for consistency
 export const DOCUMENT_CATEGORIES = [
-  'Financial',
-  'Administrative',
-  'Meeting Minutes',
+  'Financiero',
+  'Administrativo',
+  'Actas de Reunión',
   'Legal',
-  'Rules and Regulations',
-  'Other'
+  'Normas y Reglamentos',
+  'Otros'
 ];
