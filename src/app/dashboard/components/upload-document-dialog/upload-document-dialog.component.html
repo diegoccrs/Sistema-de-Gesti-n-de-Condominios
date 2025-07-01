@@ -33,6 +33,9 @@
                    accept=".pdf,.doc,.docx,.xls,.xlsx,.jpg,.jpeg,.png,.txt"
                    hidden>
             <span *ngIf="selectedFile" class="file-name">{{ selectedFile.name }}</span>
+            <div class="file-help-text">
+                <small>Tamaño máximo: 10MB. Para mejores resultados, evita caracteres especiales en el nombre del archivo.</small>
+            </div>
         </div>
 
         <mat-error *ngIf="errorMessage">{{ errorMessage }}</mat-error>

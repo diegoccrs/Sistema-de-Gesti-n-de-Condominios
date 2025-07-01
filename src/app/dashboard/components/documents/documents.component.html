@@ -1,13 +1,20 @@
 <div class="documents-container">
-  <!-- Header -->
+  <!-- Header with Back Button -->
   <div class="documents-header">
-    <h1 class="page-title">
-      <mat-icon class="page-icon">folder_open</mat-icon>
-      Documentos del Condominio
-    </h1>
-    <p class="page-subtitle">
-      Accede y gestiona los documentos importantes de la comunidad
-    </p>
+    <div class="header-top">
+      <button mat-icon-button (click)="goBack()" matTooltip="Volver al panel de administración" matTooltipPosition="right" class="back-button">
+        <mat-icon>arrow_back</mat-icon>
+      </button>
+      <div class="title-section">
+        <h1 class="page-title">
+          <mat-icon class="page-icon">folder_open</mat-icon>
+          Documentos del Condominio
+        </h1>
+        <p class="page-subtitle">
+          Accede y gestiona los documentos importantes de la comunidad
+        </p>
+      </div>
+    </div>
   </div>
 
   <!-- Search and Filter Controls -->

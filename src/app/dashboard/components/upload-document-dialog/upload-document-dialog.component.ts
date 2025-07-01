@@ -82,10 +82,13 @@ export class UploadDocumentDialogComponent implements OnInit {
       if (!allowedTypes.includes(this.selectedFile.type) && !allowedExtensions.includes(fileExtension)) {
         this.errorMessage = 'Tipo de archivo no válido. Por favor sube archivos PDF, Word, Excel, o imágenes.';
         this.selectedFile = null;
+        // Reset the input element value instead of trying to set it programmatically
+        input.value = '';
         this.uploadForm.get('file')?.setValue(null);
       } else {
         this.errorMessage = null;
-        this.uploadForm.get('file')?.setValue(this.selectedFile);
+        // Don't set file input value programmatically - just mark the form control as valid
+        this.uploadForm.get('file')?.setValue('valid');
       }
     }
   }
@@ -106,9 +109,19 @@ export class UploadDocumentDialogComponent implements OnInit {
         category: this.uploadForm.value.category
       });
       this.dialogRef.close(true); // Close dialog and signal success
-    } catch (error) {
+    } catch (error: any) {
       console.error('Upload failed', error);
-      this.errorMessage = 'Upload failed. Please try again.';
+      
+      // Provide more specific error messages
+      if (error.message?.includes('InvalidKey')) {
+        this.errorMessage = 'Error en el nombre del archivo. Intenta renombrar el archivo removiendo caracteres especiales.';
+      } else if (error.message?.includes('auth')) {
+        this.errorMessage = 'Error de autenticación. Por favor, intenta nuevamente.';
+      } else if (error.message?.includes('timeout')) {
+        this.errorMessage = 'La operación tardó demasiado. Por favor, intenta nuevamente.';
+      } else {
+        this.errorMessage = 'Error al subir el archivo. Por favor, intenta nuevamente.';
+      }
     } finally {
       this.isUploading = false;
     }
