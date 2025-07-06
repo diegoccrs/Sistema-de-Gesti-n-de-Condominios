@@ -57,6 +57,10 @@ export const routes: Routes = [
         canActivate: [isAdminGuard] // Solo los administradores pueden acceder a este panel
       },
       {
+        path: 'admin/reminders',
+        loadComponent: () => import('./dashboard/reminder-config/reminder-config.component').then(m => m.ReminderConfigComponent)
+      },
+      {
         path: 'resident-home', // Ruta específica para el panel del residente
         title: 'Panel Residente',
         loadComponent: () => import('./dashboard/components/resident-dashboard/resident-dashboard.component').then(m => m.ResidentDashboardComponent),
@@ -80,21 +84,25 @@ export const routes: Routes = [
         title: 'Payment Methods', // Added title
         loadComponent: () => import('./dashboard/components/manage-payment-methods/manage-payment-methods.component').then(m => m.ManagePaymentMethodsComponent), // Changed to loadComponent
         canActivate: [authGuard] // Added canActivate guard
+      },
+      {
+        path: 'providers', // La URL completa será /dashboard/proveedores
+        title: 'Services Providers',
+        loadComponent: () => import('./dashboard/components/resident-dashboard/services-provider/service-provider.component').then(m => m.ServiceProvidersComponent),
+        canActivate: [authGuard] // Accesible para cualquier usuario autenticado
+      },
+      {
+        path: 'normas', // La URL completa será /dashboard/normas
+        title: 'Normas del Condominio',
+        loadComponent: () => import('./dashboard/components/condo-rules-page/condo-rules-page.component').then(m => m.CondoRulesPageComponent),
+        canActivate: [authGuard] // Accesible para cualquier usuario autenticado
+      },
+      {
+        path: 'documents', // La URL completa será /dashboard/documents
+        title: 'Documentos del Condominio',
+        loadComponent: () => import('./dashboard/components/documents/documents.component').then(m => m.DocumentsComponent),
+        canActivate: [authGuard] // Accesible para cualquier usuario autenticado
       }
-        
-      // Otras rutas hijas de gestión, por ejemplo:
-      // {
-      //   path: 'residents-management',
-      //   title: 'Gestión de Residentes',
-      //   loadComponent: () => import('./dashboard/components/admin-dashboard/residents-management/residents-management.component').then(m => m.ResidentsManagementComponent),
-      //   canActivate: [isAdminGuard]
-      // },
-      // {
-      //   path: 'announcements-management',
-      //   title: 'Gestión de Anuncios',
-      //   loadComponent: () => import('./dashboard/components/admin-dashboard/announcements-management/announcements-management.component').then(m => m.AnnouncementsManagementComponent),
-      //   canActivate: [isAdminGuard]
-      // }
     ]
   },
 

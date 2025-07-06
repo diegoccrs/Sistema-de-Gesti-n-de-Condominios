@@ -31,6 +31,8 @@ import { MatInputModule } from '@angular/material/input';
 
 import { AssignDebtDialogComponent } from './assign-debt-dialog/assign-debt-dialog.component';
 import { SelectResidentDialogComponent } from './select-resident-dialog/select-resident-dialog.component';
+import { ReminderConfigComponent } from '../../reminder-config/reminder-config.component';
+
 @Component({
   selector: 'app-admin-dashboard',
   standalone: true,
@@ -42,13 +44,13 @@ import { SelectResidentDialogComponent } from './select-resident-dialog/select-r
     MatDividerModule,
     MatTableModule,
     MatTooltipModule,
-    RouterModule, // <-- Asegúrate de que RouterModule esté aquí
+    RouterModule,
     UserProfileButtonComponent,
     MatProgressBarModule,
     MatProgressSpinnerModule,
     MatToolbarModule, // Añadir MatToolbarModule a los imports
     // MatPaginator, // Removed MatPaginator
-    CreateResidentFormDialogComponent, 
+    CreateResidentFormDialogComponent,
     FormsModule,
     MatFormFieldModule,
     MatInputModule,
@@ -60,6 +62,7 @@ import { SelectResidentDialogComponent } from './select-resident-dialog/select-r
   providers: [DatePipe]
 })
 export class AdminDashboardComponent implements OnInit, OnDestroy {
+  currentYear: number = new Date().getFullYear();
   adminName: string = 'Administrador';
   pendingPaymentsCount: number = 0;
   activeResidentsCount: number = 0;
@@ -68,17 +71,13 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
   searchQuery: string = '';
   searchResults: ProfileWithApartmentInfo[] = [];
   isSearching: boolean = false;
-
   announcements: Announcement[] = [];
   displayedAnnouncementColumns: string[] = ['title', 'content_snippet', 'created_at', 'expiration_date', 'is_published', 'priority', 'actions'];
-
   isLoading: boolean = true;
   errorMessage: string | null = null;
-
   recentResidents: ProfileWithApartmentInfo[] = [];
   recentResidentsColumns: string[] = ['name', 'email', 'apartment', 'actions'];
   isLoadingResidents = false;
-
   private destroy$ = new Subject<void>();
 
   constructor(
@@ -128,7 +127,6 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
   async loadRecentResidents(): Promise<void> {
     this.isLoadingResidents = true;
     try {
-      // Obtener los últimos 5 residentes registrados
       this.recentResidents = (await this.supabaseService.searchProfiles(''))
         .filter(p => p.role === 'resident')
         .slice(0, 5);
@@ -144,7 +142,6 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
       width: '500px',
       data: { resident } // Pasamos el objeto residente completo
     });
-
     dialogRef.afterClosed().subscribe(result => {
       if (result?.success) {
         // Actualizar la lista de residentes
@@ -160,7 +157,6 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
           panelClass: ['snackbar-success']
         });
       } else if (result?.deleted) {
-        // Eliminar residente de la lista si fue eliminado
         this.recentResidents = this.recentResidents.filter(r => r.id !== result.residentId);
       }
     });
@@ -175,28 +171,21 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
         const profile = await this.supabaseService.getProfile(user.id);
         if (profile) {
           this.adminName = profile.first_name || 'Administrador';
-
-          const allPayments = await this.supabaseService.getAllPayments(); // Asegúrate de que esta función exista y obtenga los pagos
-          this.pendingPaymentsCount = allPayments.filter(p => p.status === 'pending').length;
-          // Asegúrate de que 'proof_url' exista en el modelo Payment, si no, usa la propiedad correcta
-          this.pendingProofCount = allPayments.filter(p => p.status === 'pending' && (p as any).proof_url).length;
+          const allPayments = await this.supabaseService.getAllPayments();
+          this.pendingPaymentsCount = allPayments.filter(p => p.status === 'pending' && !(p as any).reported_at).length;
 
 
-          // Aquí deberías cargar los conteos reales para estos:
-          // this.activeResidentsCount = await this.supabaseService.getResidentsCount();
-          // this.activeAnnouncementsCount = await this.supabaseService.getActiveAnnouncementsCount();
 
-          // Placeholder para otros contadores
-          this.activeResidentsCount = 0; // Implementar lógica para obtener esto
-          // this.pendingProofCount = 0; // Implementar lógica para obtener esto (ya lo hice con proof_url)
+          this.pendingProofCount = allPayments.filter(p => p.status === 'pending' && (p as any).reported_at).length;
+
+          const allProfiles = await this.supabaseService.searchProfiles('');
+          this.activeResidentsCount = allProfiles.filter(p => p.role === 'resident').length;
         }
       }
     } catch (error: any) {
       console.error('Error al cargar datos del administrador:', error);
       this.errorMessage = `Error al cargar datos: ${error.message || error}`;
-    } finally {
-      // El isLoading global se desactivará después de que loadAnnouncements también termine
-    }
+    } finally { }
   }
 
   async loadAnnouncements(): Promise<void> {
@@ -331,20 +320,22 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
   }
 
   goToManageResidents(): void {
-    this.router.navigate(['/dashboard/residents-management']); // Actualiza esta ruta si la tienes
+    this.router.navigate(['/dashboard/residents-management']);
   }
 
-  goToReviewProofs(): void {
-    // ¡ESTE ES EL MÉTODO CLAVE QUE NAVEGA A LA CONFIRMACIÓN DE PAGOS!
-    this.router.navigate(['/dashboard/payments-confirmation']);
+  goToReviewProofs(tipo: 'deudas' | 'comprobantes'): void {
+    this.router.navigate(['/dashboard/payments-confirmation'], {
+      queryParams: { tipo }
+    });
   }
+
 
   goToGenerateReports(): void {
-    this.router.navigate(['/admin/reports']); // Actualiza esta ruta si la tienes
+    this.router.navigate(['/admin/reports']);
   }
 
   goToManageDocuments(): void {
-    this.router.navigate(['/admin/documents']); // Actualiza esta ruta si la tienes
+    this.router.navigate(['/dashboard/documents']);
   }
 
   goToManageAnnouncements(): void {
@@ -354,72 +345,149 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
       announcementsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
     } else {
       console.warn('Announcements section not found for scrolling.');
-      // Fallback or alternative action if needed, e.g., just load announcements
-      // await this.loadAnnouncements();
     }
   }
 
   goToFinancialManagement(): void {
-    this.router.navigate(['/admin/financial']); // Actualiza esta ruta si la tienes
+    this.router.navigate(['/admin/financial']);
   }
 
   goToUserManagement(): void {
-    this.router.navigate(['/admin/users']); // Actualiza esta ruta si la tienes
+    this.router.navigate(['/admin/users']);
   }
 
   async openAssignDebtDialog(): Promise<void> {
-  const user = await this.supabaseService.getCurrentUser();
-  if (!user) {
-    this.snackBar.open('Error: no se encontró usuario logueado.', 'Cerrar', { duration: 3000 });
-    return;
-  }
+    const user = await this.supabaseService.getCurrentUser();
+    if (!user) {
+      this.snackBar.open('Error: no se encontró usuario logueado.', 'Cerrar', { duration: 3000 });
+      return;
+    }
 
-  const profile = await this.supabaseService.getProfile(user.id);
-  if (!profile) {
-    this.snackBar.open('No se encontró perfil de administrador.', 'Cerrar', { duration: 3000 });
-    return;
-  }
+    const profile = await this.supabaseService.getProfile(user.id);
+    if (!profile) {
+      this.snackBar.open('No se encontró perfil de administrador.', 'Cerrar', { duration: 3000 });
+      return;
+    }
 
-  const selectDialogRef = this.dialog.open(SelectResidentDialogComponent, {
-    width: '500px'
-  });
-
-  selectDialogRef.afterClosed().subscribe(resident => {
-    if (!resident) return;
-
-    const dialogRef = this.dialog.open(AssignDebtDialogComponent, {
-      width: '500px',
-      data: { residentId: resident.id }
+    const selectDialogRef = this.dialog.open(SelectResidentDialogComponent, {
+      width: '500px'
     });
 
-    dialogRef.afterClosed().subscribe(async result => {
-      if (result) {
-        try {
-          await this.supabaseService.insertPayment({
-            resident_id: result.resident_id,
-            concept: result.concept,
-            amount: result.amount,
-            status: 'pending',
-            currency: result.currency,
-            payment_date: result.payment_date, // Ya viene en formato timestamptz
-            proof_url: null,
-            reported_at: null
-          });
+    selectDialogRef.afterClosed().subscribe(resident => {
+      if (!resident) return;
 
-          this.snackBar.open('Deuda asignada con éxito.', 'Cerrar', { 
-            duration: 3000, 
-            panelClass: ['snackbar-success'] 
-          });
-        } catch (error: any) {
-          console.error('Error al asignar deuda:', error);
-          this.snackBar.open(`Error: ${error.message}`, 'Cerrar', {
-            duration: 5000,
-            panelClass: ['snackbar-error']
-          });
+      const dialogRef = this.dialog.open(AssignDebtDialogComponent, {
+        width: '500px',
+        data: { residentId: resident.id }
+      });
+
+      dialogRef.afterClosed().subscribe(async result => {
+        if (result) {
+          try {
+            await this.supabaseService.insertPayment({
+              resident_id: result.resident_id,
+              concept: result.concept,
+              amount: result.amount,
+              status: 'pending',
+              currency: result.currency,
+              payment_date: result.payment_date,
+              expiration_date: result.expiration_date,
+              proof_url: null,
+              reported_at: null
+            });
+
+            this.snackBar.open('Deuda asignada con éxito.', 'Cerrar', {
+              duration: 3000,
+              panelClass: ['snackbar-success']
+            });
+          } catch (error: any) {
+            console.error('Error al asignar deuda:', error);
+            this.snackBar.open(`Error: ${error.message}`, 'Cerrar', {
+              duration: 5000,
+              panelClass: ['snackbar-error']
+            });
+          }
         }
-      }
+      });
     });
-  });
-}
+  }
+  openReminderConfigDialog(): void {
+    this.dialog.open(ReminderConfigComponent, {
+      width: '500px',
+      disableClose: true
+    });
+  }
+  async generarReporte(): Promise<void> {
+    try {
+      // Importación correcta dentro del método
+      const pdfMakeModule = await import('pdfmake/build/pdfmake');
+      const pdfFontsModule = await import('pdfmake/build/vfs_fonts');
 
-}
+      (pdfMakeModule as any).default.vfs = (pdfFontsModule as any).default;
+
+      const { data, error } = await this.supabaseService.supabase
+        .from('payments')
+        .select('concept, amount, currency, payment_date, status');
+
+      if (error) {
+        throw new Error('Error al obtener pagos: ' + error.message);
+      }
+
+      const currentDate = new Date();
+      const currentMonth = currentDate.getMonth();
+      const currentYear = currentDate.getFullYear();
+
+      const approvedPayments = data?.filter(p => {
+        const date = new Date(p.payment_date);
+        return (
+          p.status === 'approved' &&
+          date.getMonth() === currentMonth &&
+          date.getFullYear() === currentYear
+        );
+      }) ?? [];
+
+      const docDefinition: any = {
+        content: [
+          { text: 'Reporte Mensual de Pagos Confirmados', style: 'header' },
+          {
+            text: `Mes: ${currentDate.toLocaleString('es-ES', {
+              month: 'long',
+              year: 'numeric'
+            })}`,
+            style: 'subheader'
+          },
+          {
+            table: {
+              headerRows: 1,
+              widths: ['*', 'auto', 'auto', 'auto'],
+              body: [
+                ['Concepto', 'Monto', 'Moneda', 'Fecha de Pago'],
+                ...approvedPayments.map(p => [
+                  p.concept,
+                  `${p.amount.toFixed(2)}`,
+                  p.currency,
+                  new Date(p.payment_date).toLocaleDateString('es-ES')
+                ])
+              ]
+            }
+          }
+        ],
+        styles: {
+          header: { fontSize: 18, bold: true, margin: [0, 0, 0, 10] },
+          subheader: { fontSize: 14, margin: [0, 10, 0, 10] }
+        }
+      };
+
+      // Usar el pdfMake importado dinámicamente
+      (pdfMakeModule as any).default.createPdf(docDefinition).open();
+
+    } catch (err: any) {
+      console.error('Error al generar reporte:', err);
+      this.snackBar.open('No se pudo generar el reporte.', 'Cerrar', {
+        duration: 4000,
+        panelClass: ['snackbar-error']
+      });
+    }
+  }
+
+}  

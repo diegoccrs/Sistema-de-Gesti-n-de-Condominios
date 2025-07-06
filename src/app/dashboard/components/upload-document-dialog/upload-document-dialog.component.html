@@ -1,0 +1,51 @@
+<div class="upload-dialog-container">
+    <h1 mat-dialog-title>Upload a New Document</h1>
+
+    <div mat-dialog-content [formGroup]="uploadForm">
+        <mat-form-field appearance="fill">
+            <mat-label>Document Title</mat-label>
+            <input matInput formControlName="title" required>
+        </mat-form-field>
+
+        <mat-form-field appearance="fill">
+            <mat-label>Description (Optional)</mat-label>
+            <textarea matInput formControlName="description"></textarea>
+        </mat-form-field>
+
+        <mat-form-field appearance="fill">
+            <mat-label>Category</mat-label>
+            <mat-select formControlName="category" required>
+                <mat-option *ngFor="let category of documentCategories" [value]="category">
+                    {{ category }}
+                </mat-option>
+            </mat-select>
+        </mat-form-field>
+
+        <div>
+            <label for="file-upload" class="file-upload-label">
+                <mat-icon>attach_file</mat-icon>
+                Seleccionar Archivo (PDF, Word, Excel, Imágenes)
+            </label>
+            <input id="file-upload" 
+                   type="file" 
+                   (change)="onFileSelected($event)" 
+                   formControlName="file" 
+                   accept=".pdf,.doc,.docx,.xls,.xlsx,.jpg,.jpeg,.png,.txt"
+                   hidden>
+            <span *ngIf="selectedFile" class="file-name">{{ selectedFile.name }}</span>
+            <div class="file-help-text">
+                <small>Tamaño máximo: 10MB. Para mejores resultados, evita caracteres especiales en el nombre del archivo.</small>
+            </div>
+        </div>
+
+        <mat-error *ngIf="errorMessage">{{ errorMessage }}</mat-error>
+    </div>
+
+    <div mat-dialog-actions align="end">
+        <button mat-stroked-button (click)="onCancel()" [disabled]="isUploading">Cancel</button>
+        <button mat-flat-button color="primary" (click)="onUpload()" [disabled]="uploadForm.invalid || !selectedFile || isUploading">
+            <mat-spinner *ngIf="isUploading" diameter="20" class="button-spinner"></mat-spinner>
+            <span *ngIf="!isUploading">Upload</span>
+        </button>
+    </div>
+</div>

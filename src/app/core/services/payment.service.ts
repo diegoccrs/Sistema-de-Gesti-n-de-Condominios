@@ -41,4 +41,5 @@ export class PaymentService {
     // In a real application, you would use the Mercado Pago SDK to create a payment preference.
     console.log('Redirecting to MercadoPago...');
   }
+  
 }

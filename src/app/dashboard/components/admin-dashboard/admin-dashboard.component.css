@@ -1,4 +1,4 @@
-/* src/app/dashboard/components/admin-dashboard/admin-dashboard.component.css */
+@import url('https://fonts.googleapis.com/css2?family=Raleway:ital,wght@0,100..900;1,100..900&display=swap');
 
 /* ====================
    VARIABLES Y SETTINGS
@@ -25,12 +25,13 @@
 /* ====================
    BASE STYLES
    ==================== */
-.dashboard-container {
+.admin-dashboard-container {
   padding: 1.25rem;
   max-width: 75rem;
   margin: 1.25rem auto;
-  font-family: 'Roboto', sans-serif;
+  font-family: 'Raleway', sans-serif;
   color: var(--text-primary);
+  background-color: #ffffff;
 }
 
 /* ====================
@@ -41,7 +42,7 @@
   box-shadow: var(--shadow-light);
   border-radius: var(--radius-md);
   padding: 1.25rem;
-  background-color: var(--card-bg);
+  background-color: #ffffff;
 }
 
 mat-card-header {
@@ -72,6 +73,10 @@ mat-card-subtitle {
   gap: 0.625rem;
   margin-bottom: 1.25rem;
   font-size: 0.9em;
+}
+
+span{
+  background-color: transparent;
 }
 
 .error-message {
@@ -105,8 +110,8 @@ mat-card-subtitle {
 }
 
 .metric-card {
-  background-color: #f7e6f9;
-  border-radius: var(--radius-sm);
+  background-color: #ba005c;
+  border-radius: 8px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
   padding: 1.25rem;
   display: flex;
@@ -115,6 +120,7 @@ mat-card-subtitle {
   text-align: center;
   transition: var(--transition);
   height: 100%;
+  color: #ffffff;
 }
 
 .metric-card:hover {
@@ -161,7 +167,8 @@ mat-divider {
 /* Actions Grid */
 .actions-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(12.5rem, 1fr));
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(2, 1fr);
   gap: 0.9375rem;
   margin-bottom: 1.875rem;
 }
@@ -170,7 +177,7 @@ mat-divider {
   padding: 0.9375rem 1.25rem;
   font-size: 1em;
   font-weight: 500;
-  border-radius: var(--radius-sm);
+  border-radius: 8px;
   text-transform: uppercase;
   display: flex;
   align-items: center;
@@ -189,21 +196,27 @@ mat-divider {
   transform: translateY(-0.125rem);
 }
 
+.titulo{
+
+  background-color: #ffffff;
+}
+
 /* Tables */
 .table-container {
   overflow-x: auto;
   border-radius: var(--radius-sm);
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-  background-color: var(--card-bg);
+  background-color: #ffffff;
 }
 
 .full-width-table {
   width: 100%;
   min-width: 43.75rem;
+  background-color: #ffffff;
 }
 
 th.mat-header-cell {
-  background-color: #ede7f6;
+  background-color: #ffffff;
   color: var(--primary-color);
   font-weight: 600;
   padding: 0.75rem 1rem;
@@ -308,6 +321,7 @@ td.mat-cell .mat-icon-button mat-icon {
   
   .action-button {
     width: 100%;
+    border-radius: 8px;
   }
   
   .full-width-table {
@@ -366,4 +380,22 @@ td.mat-cell .mat-icon-button mat-icon {
   .metric-card p {
     font-size: 1.5em;
   }
+}
+
+/* Agregar dentro de la sección .metrics-grid */
+
+.metric-card mat-icon[color="primary"] {
+  color: var(--primary-color);
+}
+
+.metric-card mat-icon[color="accent"] {
+  color: var(--accent-color);
+}
+
+.metric-card mat-icon[color="warn"] {
+  color: var(--danger-color);
+}
+
+.metric-card mat-icon[color="success"] {
+  color: var(--success-color);
 }

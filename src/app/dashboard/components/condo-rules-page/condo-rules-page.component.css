@@ -1,0 +1,350 @@
+/* src/app/condo-rules-page/condo-rules-page.component.css */
+@import url('https://fonts.googleapis.com/css2?family=Raleway:wght@400;700&display=swap');
+
+:host {
+    font-family: 'Raleway', sans-serif;
+    display: block; /* Asegura que el host ocupe el ancho completo */
+}
+
+/* Contenedor principal de las reglas */
+.condo-rules-container {
+    position: relative;
+    padding: 20px;
+    max-width: 900px;
+    margin: 30px auto;
+    background-color: #f5f7fa;
+    border-radius: 12px;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+    font-family: 'Raleway', sans-serif;
+    box-sizing: border-box; /* Asegura que padding y border se incluyan en el ancho */
+}
+
+/* Botón de regreso */
+.back-button {
+    position: absolute;
+    top: 15px;
+    left: 15px;
+    z-index: 10;
+    background: white;
+    border-radius: 50%;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s ease-in-out;
+    width: 44px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    border: none;
+    color: #ba005c; /* Color principal */
+    font-size: 24px; /* Tamaño del icono */
+}
+
+.back-button:hover {
+    transform: translateX(-5px);
+    background: #e0e0e0;
+}
+
+/* Título de la página */
+.page-title {
+    text-align: center;
+    color: #000000;
+    font-size: 2.2em;
+    font-weight: 700;
+    margin-bottom: 25px;
+    padding-top: 10px; /* Espacio para el botón de regreso */
+}
+
+/* Barra de búsqueda */
+.search-bar {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 30px;
+    padding: 10px 15px;
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.08);
+    border: 1px solid #e0e0e0;
+}
+
+.search-bar mat-icon {
+    color: #ba005c;
+    font-size: 24px;
+    flex-shrink: 0; /* Evita que el icono se encoja */
+}
+
+.search-bar input::placeholder {
+    color: #999;
+}
+
+.search-bar input {
+    flex-grow: 1;
+    border: none;
+    outline: none;
+    padding: 8px 0;
+    font-size: 1.1em;
+    font-family: "Raleway", sans-serif;
+    min-width: 0; /* Permite que el input se encoja en flexbox */
+}
+
+/* Indicadores de estado */
+.loading-indicator, .error-message, .no-data-message {
+    text-align: center;
+    padding: 30px;
+    margin: 20px 0;
+    border-radius: 8px;
+    font-size: 1.1em;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+}
+
+.loading-indicator {
+    background-color: #e3f2fd;
+    color: #ba005c;
+}
+
+.error-message {
+    background-color: #ffebee;
+    color: #d32f2f;
+    border: 1px solid #ef9a9a;
+}
+
+.no-data-message {
+    background-color: #fffde7;
+    color: #ffb300;
+}
+
+/* Lista de reglas */
+.rules-list {
+    margin-top: 20px;
+}
+
+/* Panel de cada regla */
+.rule-panel {
+    margin-bottom: 15px;
+    border-radius: 8px;
+    overflow: hidden; /* Asegura que el border-radius se aplique */
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    transition: all 0.3s ease;
+}
+
+.rule-panel:hover {
+    box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+}
+
+/* Encabezado del panel de expansión de Material */
+.mat-expansion-panel-header {
+    background-color: #ffffff; /* Un color de fondo suave para el header */
+    color: #ba005c; /* Un color oscuro para el texto del header */
+    font-weight: 600;
+    padding: 15px 20px;
+    min-height: 48px; /* Altura mínima para la accesibilidad táctil */
+    display: flex; /* Asegura flexbox */
+    align-items: center; /* Centra verticalmente */
+    justify-content: space-between; /* Distribuye espacio */
+    flex-wrap: nowrap; /* Evita que los elementos se envuelvan a una nueva línea */
+}
+
+.mat-expansion-panel-header mat-panel-title {
+    display: flex; /* Para el ícono dentro del título */
+    align-items: center;
+    font-size: 1.1em;
+    flex-grow: 1; /* Permite que el título ocupe el espacio disponible */
+    flex-basis: 65%; /* Título toma ~65% del ancho disponible por defecto */
+    min-width: 0; /* Permite al título encogerse */
+    padding-right: 10px; /* Espacio antes de la descripción */
+}
+
+.mat-expansion-panel-header mat-panel-title mat-icon {
+    margin-right: 10px;
+    color: #ba005c;
+    flex-shrink: 0;
+}
+
+.mat-expansion-panel-header mat-panel-description {
+    color: #767777;
+    font-size: 0.9em;
+    /* margin-left: auto; -- Eliminado para un control más preciso con flex-basis */
+    flex-shrink: 0; /* Evita que la descripción se encoja */
+    flex-basis: 35%; /* Descripción toma ~35% del ancho disponible */
+    text-align: right; /* Alinea a la derecha */
+    white-space: nowrap; /* Evita saltos de línea para el texto "Versión: X | Última actualización: Y" */
+    overflow: hidden; /* Oculta el contenido que se desborda */
+    text-overflow: ellipsis; /* Añade puntos suspensivos si el texto se corta */
+}
+
+/* Cuerpo del panel de expansión de Material */
+.mat-expansion-panel-body {
+    padding: 20px;
+    background-color: #ffffff;
+    border-top: 1px solid #e0e0e0;
+}
+
+/* Contenido de la regla */
+.rule-content {
+    line-height: 1.7;
+    color: #333;
+}
+
+.rule-content h1,
+.rule-content h2,
+.rule-content h3 {
+    color: #1565c0; /* Azul más claro para subtítulos dentro del contenido */
+    margin-top: 1.5em;
+    margin-bottom: 0.8em;
+    font-family: 'Raleway', sans-serif;
+    font-weight: 700;
+}
+
+.rule-content p,
+.rule-content ul,
+.rule-content ol {
+    margin-bottom: 1em;
+}
+
+.rule-content ul,
+.rule-content ol {
+    padding-left: 25px;
+}
+
+.rule-content li {
+    margin-bottom: 0.5em;
+}
+
+/* --- Media Queries para Responsividad --- */
+
+/* Teléfonos pequeños y medianos (hasta 767px) */
+@media (max-width: 767px) {
+    .condo-rules-container {
+        margin: 20px 15px;
+        padding: 20px;
+    }
+
+    .back-button {
+        top: 15px;
+        left: 15px;
+        width: 40px;
+        height: 40px;
+        font-size: 22px;
+    }
+
+    .page-title {
+        font-size: 1.8em; /* Un poco más pequeño para dejar más espacio */
+        margin-bottom: 20px;
+        padding-top: 40px;
+    }
+
+    .search-bar {
+        margin-bottom: 25px;
+        padding: 12px 15px;
+    }
+
+    .search-bar mat-icon {
+        font-size: 24px; /* Ajuste sutil */
+    }
+
+    .search-bar input {
+        font-size: 1em; /* Ajuste sutil */
+    }
+
+    .loading-indicator, .error-message, .no-data-message {
+        padding: 25px;
+        font-size: 1em;
+    }
+
+    .rule-panel {
+        margin-bottom: 15px;
+    }
+
+    .mat-expansion-panel-header {
+        padding: 12px 15px; /* Reducimos el padding horizontal del header */
+    }
+
+    .mat-expansion-panel-header mat-panel-title {
+        font-size: 1em; /* Reducimos el tamaño de fuente del título del panel */
+        flex-basis: 60%; /* Damos un poco menos de espacio al título en móvil */
+        padding-right: 5px; /* Reducimos el padding entre título y descripción */
+    }
+
+    .mat-expansion-panel-header mat-panel-description {
+        font-size: 0.75em; /* **Aún más pequeño para la descripción en móvil** */
+        flex-basis: 40%; /* Damos más espacio a la descripción en móvil */
+        min-width: 90px; /* Aseguramos un ancho mínimo para la descripción */
+    }
+
+    .mat-expansion-panel-body {
+        padding: 15px; /* Reducimos el padding del cuerpo del panel */
+    }
+
+    .rule-content {
+        font-size: 0.95em; /* Ligeramente más pequeño para el contenido general */
+    }
+
+    .rule-content h1,
+    .rule-content h2,
+    .rule-content h3 {
+        font-size: 1.2em; /* Hacemos los subtítulos un poco más pequeños */
+    }
+
+    .rule-content ul,
+    .rule-content ol {
+        padding-left: 18px; /* Reducimos el padding de lista */
+    }
+}
+
+/* Tablets (768px a 1023px) */
+@media (min-width: 768px) and (max-width: 1023px) {
+    .condo-rules-container {
+        margin: 30px 25px;
+        padding: 30px;
+    }
+
+    .back-button {
+        top: 25px;
+        left: 25px;
+    }
+
+    .page-title {
+        font-size: 2.1em;
+        padding-top: 15px;
+    }
+
+    .search-bar {
+        padding: 12px 20px;
+    }
+
+    .search-bar input {
+        font-size: 1.1em;
+    }
+
+    .mat-expansion-panel-header {
+        padding: 18px 25px;
+    }
+
+    .mat-expansion-panel-header mat-panel-title {
+        font-size: 1.15em;
+        flex-basis: 60%; /* Ajuste para tablets */
+    }
+
+    .mat-expansion-panel-header mat-panel-description {
+        flex-basis: 40%; /* Ajuste para tablets */
+    }
+}
+
+/* Desktops y pantallas grandes (1024px y más) */
+@media (min-width: 1024px) {
+    .condo-rules-container {
+        margin: 40px auto;
+        padding: 30px;
+    }
+    /* Volvemos a las bases para mat-panel-title y mat-panel-description */
+    .mat-expansion-panel-header mat-panel-title {
+        flex-basis: 65%;
+    }
+    .mat-expansion-panel-header mat-panel-description {
+        flex-basis: 35%;
+    }
+}

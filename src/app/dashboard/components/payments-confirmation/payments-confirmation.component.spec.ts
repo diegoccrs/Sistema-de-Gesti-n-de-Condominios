@@ -38,38 +38,38 @@ class MockSupabaseClient {
       _promiseError: null,
       _tableName: tableName, // Keep track of table name for spy configuration
 
-      setResponse: function(this: SupabaseChainableMock, data: any, error: any) {
+      setResponse: function (this: SupabaseChainableMock, data: any, error: any) {
         this._promiseData = data;
         this._promiseError = error;
         return this;
       },
 
-      select: jasmine.createSpy('select').and.callFake(function(this: SupabaseChainableMock) {
+      select: jasmine.createSpy('select').and.callFake(function (this: SupabaseChainableMock) {
         // Configure this spy in tests to return a Promise if it's terminal
         // For chaining, it returns itself.
         return this;
       }),
-      update: jasmine.createSpy('update').and.callFake(function(this: SupabaseChainableMock) {
+      update: jasmine.createSpy('update').and.callFake(function (this: SupabaseChainableMock) {
         return this;
       }),
-      insert: jasmine.createSpy('insert').and.callFake(function(this: SupabaseChainableMock) {
+      insert: jasmine.createSpy('insert').and.callFake(function (this: SupabaseChainableMock) {
         return this;
       }),
-      delete: jasmine.createSpy('delete').and.callFake(function(this: SupabaseChainableMock) {
+      delete: jasmine.createSpy('delete').and.callFake(function (this: SupabaseChainableMock) {
         return this;
       }),
-      eq: jasmine.createSpy('eq').and.callFake(function(this: SupabaseChainableMock) {
+      eq: jasmine.createSpy('eq').and.callFake(function (this: SupabaseChainableMock) {
         // If .eq() is terminal (e.g., after .update()), it should return a Promise.
         // This specific spy will be configured in tests for such cases.
         return this;
       }),
-      gte: jasmine.createSpy('gte').and.callFake(function(this: SupabaseChainableMock) {
+      gte: jasmine.createSpy('gte').and.callFake(function (this: SupabaseChainableMock) {
         return this;
       }),
-      lte: jasmine.createSpy('lte').and.callFake(function(this: SupabaseChainableMock) {
+      lte: jasmine.createSpy('lte').and.callFake(function (this: SupabaseChainableMock) {
         return this;
       }),
-      order: jasmine.createSpy('order').and.callFake(function(this: SupabaseChainableMock) {
+      order: jasmine.createSpy('order').and.callFake(function (this: SupabaseChainableMock) {
         // This is often terminal for SELECT queries, so it needs to return a Promise.
         // The actual Promise.resolve value will be set in the test spy configuration.
         // Returning 'this' here makes the default behavior chaining,
@@ -78,7 +78,7 @@ class MockSupabaseClient {
       }),
       // Generic .then to make the chain awaitable.
       // The actual data/error should come from the spy configured for the terminal operation.
-      then: function(this: SupabaseChainableMock, onFulfilled: (value: { data: any; error: any; }) => any, onRejected?: (reason: any) => any) {
+      then: function (this: SupabaseChainableMock, onFulfilled: (value: { data: any; error: any; }) => any, onRejected?: (reason: any) => any) {
         // This is a fallback. Ideally, the spy for the *actual* terminal method 
         // (like the 'order' spy or 'eq' spy after an update) is configured to return the promise.
         return Promise.resolve({ data: this._promiseData, error: this._promiseError }).then(onFulfilled, onRejected);
@@ -121,7 +121,7 @@ describe('PaymentsConfirmationComponent', () => {
   beforeEach(async () => {
     supabaseMockInstance = new MockSupabaseClient();
     spyOn(require('@supabase/supabase-js'), 'createClient').and.returnValue(supabaseMockInstance);
-    
+
     snackBarMock = jasmine.createSpyObj('MatSnackBar', ['open']);
 
     await TestBed.configureTestingModule({
@@ -147,7 +147,7 @@ describe('PaymentsConfirmationComponent', () => {
       (supabaseMockInstance.from('payments').order as jasmine.Spy).and.returnValue(
         Promise.resolve({ data: mockRawPaymentsData, error: null })
       );
-      
+
       await component.ngOnInit();
 
       const queryChain = supabaseMockInstance.from('payments');
@@ -155,7 +155,7 @@ describe('PaymentsConfirmationComponent', () => {
       expect(queryChain.select).toHaveBeenCalledWith(jasmine.stringContaining('profiles ('));
       expect(queryChain.eq).toHaveBeenCalledWith('status', 'pending_confirmation');
       expect(queryChain.order).toHaveBeenCalledWith('reported_at', { ascending: true });
-      
+
       expect(component.pagosPendientes.length).toBe(2);
       expect(component.pagosPendientes[0].resident_name).toBe('Juan Pérez');
       expect(component.isLoading).toBeFalse();
@@ -176,15 +176,15 @@ describe('PaymentsConfirmationComponent', () => {
       const updateChain = supabaseMockInstance.from('payments');
       // For update().eq(), the .eq() call is terminal and returns the promise
       (updateChain.eq as jasmine.Spy).and.returnValue(Promise.resolve({ error: null }));
-      
+
       // Mock the refresh call to cargarPagos
-      (supabaseMockInstance.from('payments').order as jasmine.Spy).and.callFake(() => 
+      (supabaseMockInstance.from('payments').order as jasmine.Spy).and.callFake(() =>
         Promise.resolve({ data: mockRawPaymentsData.filter(p => p.id !== 'payment1'), error: null })
       );
 
       await component.aprobarPago('payment1');
 
-      expect(updateChain.update).toHaveBeenCalledWith(jasmine.objectContaining({ status: 'confirmed' }));
+      expect(updateChain.update).toHaveBeenCalledWith(jasmine.objectContaining({ status: 'approved' }));
       expect(updateChain.eq).toHaveBeenCalledWith('id', 'payment1');
       expect(component.errorMessage).toBeNull();
       expect(component.pagosPendientes.length).toBe(1);

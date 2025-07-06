@@ -47,7 +47,6 @@ export class EditResidentFormDialogComponent implements OnInit {
   selectedApartments: string[] = [];
   isLoadingApartments = false;
 
-
   constructor(
     private fb: FormBuilder,
     private supabaseService: SupabaseService,
@@ -62,6 +61,7 @@ export class EditResidentFormDialogComponent implements OnInit {
       selectedApartmentIds: [[]] // Añadir este control
     });
   }
+
   async ngOnInit(): Promise<void> {
     try {
       // Cargar edificios
@@ -81,9 +81,13 @@ export class EditResidentFormDialogComponent implements OnInit {
           .map(a => a.building_id)
           .filter(id => id !== undefined) as string[]
       )];
+      console.log('Current Building IDs:', currentBuildingIds);
 
-      // Preseleccionar edificios y apartamentos
-      this.editForm.get('selectedBuildingIds')?.setValue(currentBuildingIds);
+      // --- CORRECCIÓN AQUÍ ---
+      // Preseleccionar edificios sin disparar el evento valueChanges
+      this.editForm.get('selectedBuildingIds')?.setValue(currentBuildingIds, { emitEvent: false });
+
+      // Filtrar apartamentos y preseleccionar
       this.filterApartmentsByBuildings(currentBuildingIds);
       this.editForm.get('selectedApartmentIds')?.setValue(currentApartmentIds);
 
@@ -97,7 +101,7 @@ export class EditResidentFormDialogComponent implements OnInit {
       this.isLoadingApartments = false;
     }
 
-    // Suscribirse a cambios de edificios seleccionados
+    // Suscribirse a cambios HECHOS POR EL USUARIO de edificios seleccionados
     this.editForm.get('selectedBuildingIds')?.valueChanges.subscribe(selectedIds => {
       this.filterApartmentsByBuildings(selectedIds);
     });
@@ -106,12 +110,23 @@ export class EditResidentFormDialogComponent implements OnInit {
   filterApartmentsByBuildings(selectedBuildingIds: string[]): void {
     if (!selectedBuildingIds || selectedBuildingIds.length === 0) {
       this.filteredApartments = [];
+      // Limpiar apartamentos seleccionados si no hay edificios seleccionados
+      this.editForm.get('selectedApartmentIds')?.setValue([]);
       return;
     }
 
     this.filteredApartments = this.allApartments.filter(apartment =>
       selectedBuildingIds.includes(apartment.building_id)
     );
+
+    // Filtrar apartamentos seleccionados que ya no pertenecen a los edificios seleccionados
+    const selectedApartmentIds: string[] = this.editForm.get('selectedApartmentIds')?.value || [];
+    const validApartmentIds = selectedApartmentIds.filter(id =>
+      this.filteredApartments.some(a => a.id === id)
+    );
+    if (selectedApartmentIds.length !== validApartmentIds.length) {
+      this.editForm.get('selectedApartmentIds')?.setValue(validApartmentIds);
+    }
   }
 
   async onSubmit(): Promise<void> {

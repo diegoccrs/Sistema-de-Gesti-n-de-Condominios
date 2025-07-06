@@ -1,7 +1,7 @@
 <div class="admin-dashboard-container">
-  <mat-toolbar color="primary" class="admin-toolbar">
-    <span class="toolbar-title">Panel de Administración - ¡Hola, {{ adminName }}!</span>
-    <span class="spacer"></span>
+  <mat-toolbar color="primary" class="admin-toolbar titulo">
+    <span class="toolbar-title">¡Hola, {{ adminName }}!</span>
+
     <app-user-profile-button></app-user-profile-button>
   </mat-toolbar>
 
@@ -21,41 +21,23 @@
           <mat-icon color="primary">attach_money</mat-icon>
           <h3>Deudas</h3>
           <p>{{ pendingPaymentsCount }}</p>
-          <mat-card-actions class="card-actions-bottom">
-            <button mat-button color="primary" (click)="goToReviewProofs()">
-              <mat-icon>visibility</mat-icon> Revisar
-            </button>
-          </mat-card-actions>
+
         </mat-card>
         <mat-card class="metric-card mat-elevation-z2">
           <mat-icon color="accent">group</mat-icon>
           <h3>Residentes Activos</h3>
           <p>{{ activeResidentsCount }}</p>
-          <mat-card-actions class="card-actions-bottom">
-            <button mat-button color="accent" (click)="goToManageResidents()">
-              <mat-icon>settings</mat-icon> Administrar
-            </button>
-          </mat-card-actions>
         </mat-card>
         <mat-card class="metric-card mat-elevation-z2">
           <mat-icon color="warn">pending_actions</mat-icon>
           <h3>Comprobantes Pendientes</h3>
           <p>{{ pendingProofCount }}</p>
-          <mat-card-actions class="card-actions-bottom">
-            <button mat-button color="warn" (click)="goToReviewProofs()">
-              <mat-icon>receipt_long</mat-icon> Revisar
-            </button>
-          </mat-card-actions>
+
         </mat-card>
         <mat-card class="metric-card mat-elevation-z2">
-          <mat-icon color="success">announcement</mat-icon>
+          <mat-icon color="primary">campaign</mat-icon>
           <h3>Anuncios Activos</h3>
           <p>{{ activeAnnouncementsCount }}</p>
-          <mat-card-actions class="card-actions-bottom">
-            <button mat-button color="success" (click)="goToManageAnnouncements()">
-              <mat-icon>edit</mat-icon> Gestionar
-            </button>
-          </mat-card-actions>
         </mat-card>
       </div>
 
@@ -67,20 +49,41 @@
           <mat-icon>campaign</mat-icon>
           Publicar Anuncio
         </button>
-        <button mat-flat-button color="accent" class="action-button" (click)="openAssignDebtDialog()">
+        <button mat-flat-button color="primary" class="action-button" (click)="openAssignDebtDialog()">
           <mat-icon>payment</mat-icon>
           Asignar Deudas
         </button>
         <button mat-flat-button color="primary" class="action-button" (click)="openCreateResidentDialog()">
           <mat-icon>person_add</mat-icon>
-          Crear Nuevo Residente
+          Crear Residente
         </button>
-        <button mat-flat-button color="warn" class="action-button" (click)="goToReviewProofs()">
+        <button mat-flat-button color="primary" class="action-button" (click)="goToReviewProofs('comprobantes')">
           <mat-icon>receipt_long</mat-icon>
-          Revisar Comprobantes
+          Ver Comprobantes
         </button>
+
+        <button mat-flat-button color="primary" class="action-button" (click)="openReminderConfigDialog()">
+          <mat-icon>alarm</mat-icon>
+          Enviar Recordatorio
+        </button>
+
+        <button mat-flat-button color="primary" class="action-button" (click)="goToReviewProofs('deudas')">
+          <mat-icon>receipt_long</mat-icon>
+          Ver Deudas
+        </button>
+
+        <button mat-flat-button color="primary" class="action-button" (click)="generarReporte()">
+          <mat-icon>receipt_long</mat-icon>
+          Reporte de Pagos Confirmados
+        </button>
+
+        <button mat-flat-button color="primary" class="action-button" (click)="goToManageDocuments()">
+          <mat-icon>folder_open</mat-icon>
+          Documentos Comunes
+        </button>
+
       </div>
- 
+
       <!-- Agregar encima de la sección de Residentes Recientes -->
       <mat-divider></mat-divider>
       <div class="search-section">
@@ -257,8 +260,7 @@
         </div>
       </div>
 
-      <mat-divider></mat-divider>
-      <h3 class="section-title">Gestión Completa</h3>
+      <!--<h3 class="section-title">Gestión Completa</h3>
       <div class="full-management-links">
         <button mat-button (click)="goToManageResidents()">
           <mat-icon>people</mat-icon> Gestión de Residentes
@@ -276,7 +278,11 @@
           <mat-icon>admin_panel_settings</mat-icon> Gestión de Usuarios y Roles
         </button>
       </div>
-
+-->
     </mat-card-content>
+    <mat-divider></mat-divider>
+    <div class="copyright-section" style="text-align:center; margin-top: 16px; color: #888;">
+      © {{ currentYear }} Condominio Digital. Todos los derechos reservados.
+    </div>
   </mat-card>
 </div>
