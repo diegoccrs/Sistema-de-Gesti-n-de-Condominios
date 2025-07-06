@@ -36,7 +36,7 @@
     justify-content: center;
     cursor: pointer;
     border: none;
-    color: #ff4081; /* Color principal */
+    color: #ba005c; /* Color principal */
     font-size: 24px; /* Tamaño del icono */
 }
 
@@ -69,7 +69,7 @@
 }
 
 .search-bar mat-icon {
-    color: #ff4081;
+    color: #ba005c;
     font-size: 24px;
     flex-shrink: 0; /* Evita que el icono se encoja */
 }
@@ -103,7 +103,7 @@
 
 .loading-indicator {
     background-color: #e3f2fd;
-    color: #ff4081;
+    color: #ba005c;
 }
 
 .error-message {
@@ -137,8 +137,8 @@
 
 /* Encabezado del panel de expansión de Material */
 .mat-expansion-panel-header {
-    background-color: #e8f0fe; /* Un color de fondo suave para el header */
-    color: #ff4081; /* Un color oscuro para el texto del header */
+    background-color: #ffffff; /* Un color de fondo suave para el header */
+    color: #ba005c; /* Un color oscuro para el texto del header */
     font-weight: 600;
     padding: 15px 20px;
     min-height: 48px; /* Altura mínima para la accesibilidad táctil */
@@ -160,7 +160,7 @@
 
 .mat-expansion-panel-header mat-panel-title mat-icon {
     margin-right: 10px;
-    color: #ff4081;
+    color: #ba005c;
     flex-shrink: 0;
 }
 

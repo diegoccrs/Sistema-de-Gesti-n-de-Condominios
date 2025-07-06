@@ -28,7 +28,7 @@
      justify-content: center;
      cursor: pointer;
      border: none;
-     color: #ff4081; /* Usando el color primary de tu tema */
+     color: #ba005c; /* Usando el color primary de tu tema */
 }
 
 .back-button:hover {
@@ -59,7 +59,7 @@ h2 {
 }
 
 .search-bar mat-icon {
-  color: #ff4081; /* Color del icono de búsqueda */
+  color: #ba005c; /* Color del icono de búsqueda */
   font-size: 24px;
 }
 
@@ -92,7 +92,7 @@ h2 {
 
 .loading-indicator {
   background-color: #e3f2fd;
-  color: #ff4081;
+  color: #ba005c;
 }
 
 .error-message {
@@ -146,13 +146,13 @@ h2 {
 }
 
 .card-header {
-  background-color: #ff4081;
+  background-color: #ba005c;
   color: white;
   padding: 15px 20px;
   text-align: center;
   font-weight: bold;
   font-size: 1.1em;
-  border-bottom: 2px solid #ff00bf;
+  border-bottom: 2px solid #720039;
 }
 
 .service-type {
@@ -192,7 +192,7 @@ h2 {
     font-size: 18px;
     height: 18px;
     width: 18px;
-    color: #ff4081; /* Color del icono en el cuerpo */
+    color: #ba005c; /* Color del icono en el cuerpo */
 }
 
 .provider-name {
