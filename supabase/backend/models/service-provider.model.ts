@@ -1,5 +1,3 @@
-// src/app/domain/models/service-provider.model.ts
-
 export interface ServiceProvider {
   id: string;
   name: string;

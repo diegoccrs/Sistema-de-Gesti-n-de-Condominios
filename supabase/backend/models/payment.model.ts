@@ -1,4 +1,3 @@
-// src/app/core/domain/models/payment.model.ts
 import { Profile } from './profile.model'; // Asegúrate de importar Profile
 
 export interface Payment {

@@ -102,6 +102,12 @@ export const routes: Routes = [
         title: 'Documentos del Condominio',
         loadComponent: () => import('./dashboard/components/documents/documents.component').then(m => m.DocumentsComponent),
         canActivate: [authGuard] // Accesible para cualquier usuario autenticado
+      },
+      {
+        path: 'feedback', // La URL completa será /dashboard/feedback
+        title: 'Reportar Problema',
+        loadComponent: () => import('./feedback/feedback.component').then(m => m.FeedbackComponent),
+        canActivate: [authGuard] // Accesible para cualquier usuario autenticado
       }
     ]
   },
