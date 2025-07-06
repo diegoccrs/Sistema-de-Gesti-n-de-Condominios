@@ -484,4 +484,4 @@ export class SupabaseService {
       return null;
     }
   }
-}9
+}
