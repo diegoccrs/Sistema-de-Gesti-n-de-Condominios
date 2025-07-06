@@ -2,8 +2,8 @@ import { Component, Inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
-import { SupabaseService } from '../../../../../core/infrastructure/supabase/supabase.service';
-import { Profile } from '../../../../../core/domain/models/profile.model';
+import { SupabaseService } from '../../../../../../../supabase/backend/infrastructure/supabase.service';
+import { Profile } from '../../../../../../../supabase/backend/models/profile.model';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatIconModule } from '@angular/material/icon';
@@ -11,8 +11,8 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSelectModule } from '@angular/material/select';
 import { MatOptionModule } from '@angular/material/core';
-import { Building } from '../../../../../core/domain/models/building.model';
-import { Apartment } from '../../../../../core/domain/models/apartment.model';
+import { Building } from '../../../../../../../supabase/backend/models/building.model';
+import { Apartment } from '../../../../../../../supabase/backend/models/apartment.model';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { CommonModule } from '@angular/common'; // Import CommonModule
 

@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Payment } from '../domain/models/payment.model';
+import { Payment } from '../models/payment.model';
 
 @Injectable({
   providedIn: 'root'

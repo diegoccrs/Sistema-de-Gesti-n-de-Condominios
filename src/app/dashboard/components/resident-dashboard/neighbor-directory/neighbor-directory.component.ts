@@ -12,8 +12,8 @@ import { MatToolbarModule } from '@angular/material/toolbar'; // Importar MatToo
 import { MatDividerModule } from '@angular/material/divider'; // Importar MatDividerModule
 import { MatSpinner } from '@angular/material/progress-spinner';
 import { FormsModule } from '@angular/forms';
-import { SupabaseService, ProfileWithApartmentInfo } from '../../../../core/infrastructure/supabase/supabase.service'; // Ajusta esta ruta si es diferente
-import { Profile } from '../../../../core/domain/models/profile.model'; // Ajusta esta ruta si es diferente
+import { SupabaseService, ProfileWithApartmentInfo } from '../../../../../../supabase/backend/infrastructure/supabase.service';
+import { Profile } from '../../../../../../supabase/backend/models/profile.model';
 
 import { debounceTime, distinctUntilChanged, switchMap } from 'rxjs/operators';
 import { Subject } from 'rxjs';

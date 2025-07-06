@@ -1,8 +1,6 @@
-// src/app/core/data/static-condo-rules.ts
+import { CondoRules } from '../models/condo-rules.model';
 
-import { CondoRules } from '../domain/models/condo-rules.model';
-
-export const STATIC_CONDO_RULES: CondoRules[] = [
+export const CONDO_RULES: CondoRules[] = [
   {
     id: 'rule-001',
     title: 'Uso de Áreas Comunes',

@@ -14,8 +14,8 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatToolbarModule } from '@angular/material/toolbar'; // Importar MatToolbarModule
 
-import { ProfileWithApartmentInfo, SupabaseService } from '../../../core/infrastructure/supabase/supabase.service';
-import { Announcement } from '../../../core/domain/models/announcement.model';
+import { SupabaseService, ProfileWithApartmentInfo } from '@backend/infrastructure/supabase.service';
+import { Announcement } from '@backend/models/announcement.model';
 import { AnnouncementFormDialogComponent } from './announcement-form-dialog/announcement-form-dialog.component';
 import { UserProfileButtonComponent } from '../user-profile-button/user-profile-button.component';
 import { Subject, takeUntil } from 'rxjs';
@@ -49,13 +49,9 @@ import { ReminderConfigComponent } from '../../reminder-config/reminder-config.c
     MatProgressBarModule,
     MatProgressSpinnerModule,
     MatToolbarModule, // Añadir MatToolbarModule a los imports
-    // MatPaginator, // Removed MatPaginator
-    CreateResidentFormDialogComponent,
     FormsModule,
     MatFormFieldModule,
-    MatInputModule,
-    EditResidentFormDialogComponent // Re-added
-
+    MatInputModule
   ],
   templateUrl: './admin-dashboard.component.html',
   styleUrls: ['./admin-dashboard.component.css'],

@@ -7,8 +7,17 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatButtonModule } from '@angular/material/button';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { DocumentService } from '../../../core/services/document.service';
-import { DOCUMENT_CATEGORIES } from '../../../core/models/document.model';
+import { DocumentService } from '@backend/services/document.service';
+
+// Define DOCUMENT_CATEGORIES locally
+const DOCUMENT_CATEGORIES = [
+  'Administrativos',
+  'Legales', 
+  'Contables',
+  'Mantenimiento',
+  'Comunicaciones',
+  'Otros'
+];
 import { MatIconModule } from '@angular/material/icon';
 
 @Component({

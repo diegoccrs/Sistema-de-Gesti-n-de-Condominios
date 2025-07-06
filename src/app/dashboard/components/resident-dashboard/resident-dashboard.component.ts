@@ -13,8 +13,8 @@ import { UserProfileButtonComponent } from '../user-profile-button/user-profile-
 
 import { RouterModule } from '@angular/router';
 import { Router } from '@angular/router';
-import { Payment } from '../../../core/domain/models/payment.model';
-import { SupabaseService } from '../../../core/infrastructure/supabase/supabase.service';
+import { SupabaseService } from '@backend/infrastructure/supabase.service';
+import { Payment } from '@backend/models/payment.model';
 import { ReactiveFormsModule, FormBuilder, FormGroup, FormsModule } from '@angular/forms';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
@@ -35,12 +35,12 @@ import { ConectarTelegramComponent } from '../conectar-telegram/conectar-telegra
 
 // Imports proveedores de pago
 
-import { PaymentService } from '../../../core/services/payment.service'; // Import the new service
+import { PaymentService } from '@backend/services/payment.service'; // Import the new service
 import { PaymentMethodDialogComponent } from './payment-method-dialog/payment-method-dialog.component'; // Corrected import path
 
 // import sincronización de Google Calendar
-import { GoogleCalendarService } from 'src/app/core/services/google-calendar.service';
-import { LogicaService } from 'src/app/core/services/logica.service';
+import { GoogleCalendarService } from '@backend/services/google-calendar.service';
+import { LogicaService } from '@backend/services/logica.service';
 
 
 
@@ -66,9 +66,7 @@ import { LogicaService } from 'src/app/core/services/logica.service';
     MatInputModule,
     MatDialogModule,
     MatSnackBarModule,
-    NeighborDirectoryComponent,
-    ConectarTelegramComponent,
-    PaymentMethodDialogComponent
+    NeighborDirectoryComponent
   ],
   templateUrl: './resident-dashboard.component.html',
   styleUrls: ['./resident-dashboard.component.css']

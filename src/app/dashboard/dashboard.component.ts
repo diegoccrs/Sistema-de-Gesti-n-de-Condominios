@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterModule } from '@angular/router'; // Importa Router y RouterModule
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { SupabaseService } from '../core/infrastructure/supabase/supabase.service';
+import { SupabaseService } from '@backend/infrastructure/supabase.service';
 
 @Component({
   selector: 'app-dashboard',

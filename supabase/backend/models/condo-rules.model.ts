@@ -1,4 +1,3 @@
-// src/app/core/domain/models/condo-rules.model.ts
 export interface CondoRules {
   id: string;
   title: string;

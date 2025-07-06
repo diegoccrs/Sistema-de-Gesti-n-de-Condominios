@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { SupabaseService } from './infrastructure/supabase/supabase.service';
+import { SupabaseService } from '@backend/infrastructure/supabase.service';
 
 @NgModule({
   declarations: [],

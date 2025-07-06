@@ -1,15 +1,14 @@
-// src/app/services/supabase.service.ts
 import { Injectable } from '@angular/core';
 import { createClient, SupabaseClient, User } from '@supabase/supabase-js';
-import { environment } from '../../../../environments/environment';
 import { BehaviorSubject } from 'rxjs';
-import { Payment } from '../../domain/models/payment.model';
-import { Profile } from '../../domain/models/profile.model';
-import { Apartment } from '../../domain/models/apartment.model';
-import { Building } from '../../domain/models/building.model';
-import { ProfileApartment } from '../../domain/models/profile-apartment.model';
-import { Announcement } from '../../domain/models/announcement.model';
-import { ServiceProvider } from '../../domain/models/service-provider.model';
+import { environment } from '../../../src/environments/environment';
+import { Payment } from '../models/payment.model';
+import { Profile } from '../models/profile.model';
+import { Apartment } from '../models/apartment.model';
+import { Building } from '../models/building.model';
+import { ProfileApartment } from '../models/profile-apartment.model';
+import { Announcement } from '../models/announcement.model';
+import { ServiceProvider } from '../models/service-provider.model';
 
 
 export interface ProfileWithApartmentInfo extends Profile {

@@ -16,7 +16,7 @@ import { MatProgressBarModule } from '@angular/material/progress-bar'; // Import
 import { SupabaseClient, createClient } from '@supabase/supabase-js'; // Añadir Supabase
 import { environment } from '../../../../../environments/environment'; // Añadir environment
 
-import { Announcement } from '../../../../core/domain/models/announcement.model'; // Importar el modelo Announcement
+import { Announcement } from '@backend/models/announcement.model'; // Importar el modelo Announcement
 
 @Component({
     selector: 'app-announcement-form-dialog',

@@ -1,4 +1,3 @@
-// src/app/domain/models/announcement.model.ts
 export interface Announcement {
   id: string; // uuid
   title: string; // text

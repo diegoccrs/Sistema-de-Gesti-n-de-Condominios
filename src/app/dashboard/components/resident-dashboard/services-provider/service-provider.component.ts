@@ -2,8 +2,8 @@
 
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { SupabaseService } from '../../../../core/infrastructure/supabase/supabase.service'; // Asegúrate de que la ruta sea correcta a tu Facade
-import { ServiceProvider } from '../../../../core/domain/models/service-provider.model'; // Importa el modelo ServiceProvider
+import { SupabaseService } from '../../../../../../supabase/backend/infrastructure/supabase.service';
+import { ServiceProvider } from '../../../../../../supabase/backend/models/service-provider.model';
 import { MatIconModule } from '@angular/material/icon';
 import { FormsModule } from '@angular/forms';
 import { debounceTime, Subject } from 'rxjs';

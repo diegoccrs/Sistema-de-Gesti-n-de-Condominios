@@ -1,6 +1,6 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { SupabaseService } from '../../../../core/infrastructure/supabase/supabase.service';
+import { SupabaseService } from '../../../../../../supabase/backend/infrastructure/supabase.service';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { debounceTime } from 'rxjs/operators';

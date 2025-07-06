@@ -14,10 +14,20 @@ import { MatChipsModule } from '@angular/material/chips';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import { DocumentService } from '../../../core/services/document.service';
-import { Document, DOCUMENT_CATEGORIES } from '../../../core/models/document.model';
+import { DocumentService } from '@backend/services/document.service';
+import { SupabaseService } from '@backend/infrastructure/supabase.service';
+import { Document } from '@backend/models/document.model';
 import { UploadDocumentDialogComponent } from '../upload-document-dialog/upload-document-dialog.component';
-import { SupabaseService } from '../../../core/infrastructure/supabase/supabase.service';
+
+// Import DOCUMENT_CATEGORIES from the moved file
+const DOCUMENT_CATEGORIES = [
+  'Administrativos',
+  'Legales', 
+  'Contables',
+  'Mantenimiento',
+  'Comunicaciones',
+  'Otros'
+];
 
 @Component({
   selector: 'app-documents',

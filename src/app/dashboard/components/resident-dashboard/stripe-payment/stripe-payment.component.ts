@@ -2,7 +2,7 @@
 import { Component, Input, OnInit, Output, EventEmitter, ElementRef, ViewChild } from '@angular/core';
 import { CommonModule, CurrencyPipe } from '@angular/common';
 import { environment } from '../../../../../environments/environment';
-import { SupabaseService } from '../../../../core/infrastructure/supabase/supabase.service';
+import { SupabaseService } from '../../../../../../supabase/backend/infrastructure/supabase.service';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatButtonModule } from '@angular/material/button';
 

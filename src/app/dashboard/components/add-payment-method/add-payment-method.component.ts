@@ -3,8 +3,8 @@ import { CommonModule } from '@angular/common'; // Import CommonModule
 import { MatDialogModule, MatDialogRef } from '@angular/material/dialog'; // Import MatDialogModule
 import { MatButtonModule } from '@angular/material/button'; // Import MatButtonModule
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner'; // Import MatProgressSpinnerModule
-import { SupabaseService } from 'src/app/core/infrastructure/supabase/supabase.service';
-import { environment } from 'src/environments/environment';
+import { SupabaseService } from '../../../../../supabase/backend/infrastructure/supabase.service';
+import { environment } from '../../../../environments/environment';
 
 declare var Stripe: any;
 

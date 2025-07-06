@@ -47,9 +47,17 @@
                 },
                 {
                   "type": "anyComponentStyle",
-                  "maximumWarning": "4kB",
-                  "maximumError": "8kB"
+                  "maximumWarning": "10kB",
+                  "maximumError": "15kB"
                 }
+              ],
+              "allowedCommonJsDependencies": [
+                "pdfmake",
+                "pdfmake/build/pdfmake",
+                "pdfmake/build/vfs_fonts",
+                "whatwg-url",
+                "@supabase/realtime-js",
+                "@supabase/node-fetch"
               ],
               "outputHashing": "all"
             },

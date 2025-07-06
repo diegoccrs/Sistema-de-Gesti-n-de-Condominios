@@ -25,9 +25,19 @@
       ],
       "@core/*": [
         "src/app/core/*"
+      ],
+      "@backend": [
+        "supabase/backend/index.ts"
+      ],
+      "@backend/*": [
+        "supabase/backend/*"
       ]
     }
   },
+  "include": [
+    "src/**/*",
+    "supabase/**/*"
+  ],
   "angularCompilerOptions": {
     "enableI18nLegacyMessageIdFormat": false,
     "strictInjectionParameters": true,

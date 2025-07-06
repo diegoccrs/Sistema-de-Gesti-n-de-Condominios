@@ -3,7 +3,7 @@ import { provideRouter } from '@angular/router';
 
 import { routes } from './app.routes';
 import { provideClientHydration, withEventReplay } from '@angular/platform-browser';
-import { SupabaseService } from './core/infrastructure/supabase/supabase.service';
+import { SupabaseService } from '@backend/infrastructure/supabase.service';
 
 export const appConfig: ApplicationConfig = {
   providers: [

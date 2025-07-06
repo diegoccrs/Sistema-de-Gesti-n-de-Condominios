@@ -14,8 +14,8 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { Router } from '@angular/router'; 
 
-import { CondoRules } from '../../../core/domain/models/condo-rules.model';
-import { STATIC_CONDO_RULES } from '../../../core/data/static-condo-rules'; 
+import { CondoRules } from '@backend/models/condo-rules.model';
+import { CONDO_RULES } from '@backend/data/static-condo-rules';
 
 @Component({
     selector: 'app-condo-rules-page',
@@ -49,7 +49,7 @@ export class CondoRulesPageComponent implements OnInit {
     ngOnInit(): void {
         setTimeout(() => {
             try {
-                this.allCondoRules = STATIC_CONDO_RULES.map(rule => ({
+                this.allCondoRules = CONDO_RULES.map(rule => ({
                     ...rule,
                     content_html: this.sanitizer.bypassSecurityTrustHtml(rule.content_html) as string // Sanitiza el HTML
                 })) as CondoRules[];

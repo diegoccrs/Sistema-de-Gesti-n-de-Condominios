@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { SupabaseService } from '@core/infrastructure/supabase/supabase.service';
+import { SupabaseService } from '../../../../../supabase/backend/infrastructure/supabase.service';
 import { MatDialog } from '@angular/material/dialog';
 import { AddPaymentMethodComponent } from '../../components/add-payment-method/add-payment-method.component';
 import { CommonModule } from '@angular/common';
