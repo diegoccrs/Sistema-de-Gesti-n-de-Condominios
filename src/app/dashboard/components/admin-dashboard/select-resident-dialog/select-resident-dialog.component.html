@@ -1,0 +1,46 @@
+<div class="dialog-container">
+  <div class="dialog-header">
+    <h2><i class="fas fa-user-friends"></i> Seleccionar Residente</h2>
+    <p>Busque y seleccione un residente de la lista</p>
+  </div>
+
+  <div class="search-container">
+    <i class="fas fa-search search-icon"></i>
+    <input
+      type="text"
+      [formControl]="searchControl"
+      placeholder="Buscar por nombre o apellido..."
+      aria-label="Buscar residente"
+      class="search-input"
+    />
+  </div>
+
+  <div class="resident-list-container">
+    <ul class="resident-list">
+      <li *ngFor="let resident of filteredResidents" 
+          (click)="selectResident(resident)"
+          class="resident-item">
+        <div class="resident-info">
+          <div class="avatar" [style.background]="getRandomColor(resident.id)">
+            {{ resident.first_name.charAt(0) }}{{ resident.last_name.charAt(0) }}
+          </div>
+          <div class="resident-text">
+            <span class="name">{{ resident.first_name }} {{ resident.last_name }}</span>
+            <span class="details">
+              <span class="id"><i class="fas fa-id-card"></i> ID: {{ resident.id }}</span>
+              <span class="unit" *ngIf="resident.unit"><i class="fas fa-home"></i> Unidad: {{ resident.unit }}</span>
+            </span>
+          </div>
+        </div>
+        <i class="fas fa-chevron-right arrow-icon"></i>
+      </li>
+    </ul>
+  </div>
+
+  <div class="dialog-actions">
+    <button class="cancel-btn" (click)="close()">
+      <i class="fas fa-times"></i> Cancelar
+    </button>
+  </div>
+</div>
+

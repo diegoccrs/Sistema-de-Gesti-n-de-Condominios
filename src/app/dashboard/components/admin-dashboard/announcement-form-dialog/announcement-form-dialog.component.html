@@ -1,0 +1,85 @@
+<h2 mat-dialog-title>{{ isEditMode ? 'Editar Anuncio' : 'Crear Nuevo Anuncio' }}</h2>
+
+<form [formGroup]="announcementForm" (ngSubmit)="onSubmit()">
+  <mat-dialog-content class="dialog-content">
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Título</mat-label>
+      <input matInput formControlName="title" required />
+      <mat-error *ngIf="announcementForm.get('title')?.hasError('required') && announcementForm.get('title')?.touched">
+        El título es obligatorio.
+      </mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Contenido (Opcional)</mat-label>
+      <textarea matInput formControlName="content" rows="4"></textarea>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Fecha de expiración (Opcional)</mat-label>
+      <input matInput [matDatepicker]="picker" formControlName="expiration_date" />
+      <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+      <mat-datepicker #picker></mat-datepicker>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Prioridad</mat-label>
+      <mat-select formControlName="priority" required>
+        <mat-option [value]="1">Alta (1)</mat-option>
+        <mat-option [value]="2">Media (2)</mat-option>
+        <mat-option [value]="3">Baja (3)</mat-option>
+      </mat-select>
+      <mat-error
+        *ngIf="announcementForm.get('priority')?.hasError('required') && announcementForm.get('priority')?.touched">
+        La prioridad es obligatoria.
+      </mat-error>
+      <mat-error *ngIf="announcementForm.get('priority')?.hasError('min') && announcementForm.get('priority')?.touched">
+        La prioridad debe ser al menos 1.
+      </mat-error>
+      <mat-error *ngIf="announcementForm.get('priority')?.hasError('max') && announcementForm.get('priority')?.touched">
+        La prioridad no puede ser mayor a 3.
+      </mat-error>
+    </mat-form-field>
+
+    <div class="file-upload full-width">
+      <label for="fileInput">
+        <mat-icon color="primary" class="upload-icon">cloud_upload</mat-icon>
+        Subir archivo adjunto (opcional)
+      </label>
+      <input id="fileInput" type="file" (change)="onFileSelected($event)"
+        accept=".pdf, .doc, .docx, .xls, .xlsx, .jpg, .jpeg, .png" style="display: none;" />
+
+      <div *ngIf="selectedFile || existingAttachmentUrl" class="file-info">
+        <span *ngIf="selectedFile">
+          📎 {{ selectedFile.name }}
+        </span>
+        <span *ngIf="!selectedFile && existingAttachmentUrl">
+          🔗 <a [href]="existingAttachmentUrl" target="_blank">{{ getFileNameFromUrl(existingAttachmentUrl) }}</a>
+        </span>
+        <button mat-icon-button (click)="removeAttachment()" type="button" aria-label="Remover archivo">
+          <mat-icon color="warn">close</mat-icon>
+        </button>
+      </div>
+      <p class="file-hint">Formatos soportados: PDF, DOC, DOCX, XLS, XLSX, JPG, JPEG, PNG.</p>
+    </div>
+
+    <mat-checkbox formControlName="is_published" class="publish-checkbox">
+      Publicar anuncio ahora
+    </mat-checkbox>
+
+
+
+    <div *ngIf="errorMessage" class="alert-message error-message animated-fade-in">
+      <mat-icon>error_outline</mat-icon> {{ errorMessage }}
+    </div>
+
+  </mat-dialog-content>
+
+  <mat-dialog-actions align="end">
+    <button mat-button (click)="onNoClick()" [disabled]="isLoading">Cancelar</button>
+    <button mat-flat-button color="primary" type="submit" [disabled]="announcementForm.invalid || isLoading">
+      <mat-spinner *ngIf="isLoading" diameter="20" color="accent"></mat-spinner>
+      <span *ngIf="!isLoading">{{ isEditMode ? 'Guardar Cambios' : 'Crear Anuncio' }}</span>
+    </button>
+  </mat-dialog-actions>
+</form>

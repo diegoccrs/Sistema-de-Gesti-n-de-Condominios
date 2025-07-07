@@ -1,0 +1,35 @@
+<div class="manage-payments-container">
+  <mat-card>
+    <mat-card-header>
+      <mat-card-title>Gestionar métodos de pago</mat-card-title>
+      <mat-card-subtitle>Ve y administra tus métodos de pago guardados</mat-card-subtitle>
+    </mat-card-header>
+    <mat-card-content>
+      <div *ngIf="paymentMethods.length > 0; else noPaymentMethods">
+        <mat-list>
+          <mat-list-item *ngFor="let method of paymentMethods">
+            <mat-icon matListItemIcon>credit_card</mat-icon>
+            <div matListItemTitle>**** **** **** {{ method.card.last4 }}</div>
+            <div matListItemLine>{{ method.card.brand | titlecase }} - Expires: {{ method.card.exp_month }}/{{
+              method.card.exp_year }}</div>
+            <button mat-icon-button color="warn" (click)="deletePaymentMethod(method.id)" matListItemMeta>
+              <mat-icon>delete</mat-icon>
+            </button>
+          </mat-list-item>
+        </mat-list>
+      </div>
+
+      <ng-template #noPaymentMethods>
+        <div class="no-methods-placeholder">
+          <mat-icon>payment</mat-icon>
+          <p>No hay metodos de pago guardados</p>
+        </div>
+      </ng-template>
+    </mat-card-content>
+    <mat-card-actions>
+      <button mat-flat-button color="primary" (click)="openAddPaymentMethodDialog()">Añadir nuevo metodo de
+        pago</button>
+      <button mat-stroked-button (click)="returnToDashboard()">Regresar</button>
+    </mat-card-actions>
+  </mat-card>
+</div>

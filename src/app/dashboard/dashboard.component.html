@@ -1,0 +1,11 @@
+<div class="dashboard-wrapper">
+  <div *ngIf="isLoading" style="text-align: center; margin-top: 50px;">
+    <mat-spinner diameter="50"></mat-spinner>
+    <p>Cargando panel...</p>
+  </div>
+
+  <div *ngIf="!isLoading" class="dashboard-content-area">
+    <router-outlet></router-outlet>
+  </div>
+
+  </div>

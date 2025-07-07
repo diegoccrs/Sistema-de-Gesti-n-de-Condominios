@@ -1,0 +1,29 @@
+<mat-card>
+    <h2>Configuración de Recordatorios</h2>
+
+    <form [formGroup]="form" (ngSubmit)="save()">
+        <mat-form-field appearance="outline">
+            <mat-label>Días de atraso</mat-label>
+            <input matInput type="number" formControlName="days_late" required />
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+            <mat-label>Hora de envío</mat-label>
+            <input matInput type="time" formControlName="send_time" required />
+        </mat-form-field>
+
+        <mat-checkbox formControlName="active">Activo</mat-checkbox>
+
+        <div class="button-row">
+            <button mat-stroked-button color="warn" type="submit" [disabled]="form.invalid">
+                Guardar
+            </button>
+
+            <button mat-stroked-button color="warn" type="button" (click)="cancel()">
+                Cancelar
+            </button>
+        </div>
+
+        <p *ngIf="success" class="success">Configuración guardada exitosamente.</p>
+    </form>
+</mat-card>

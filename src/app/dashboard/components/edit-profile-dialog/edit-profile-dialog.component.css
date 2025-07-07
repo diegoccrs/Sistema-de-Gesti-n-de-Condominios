@@ -1,0 +1,42 @@
+:host {
+    display: block;
+    padding: 24px;
+    max-width: 500px;
+    background: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+h2 {
+    margin-bottom: 24px;
+    font-size: 1.5rem;
+    color: #2c3e50;
+    border-bottom: 2px solid #ff4081;
+    padding-bottom: 8px;
+}
+
+.full-width {
+    width: 100%;
+    margin-bottom: 20px;
+}
+
+.actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-top: 10px;
+}
+
+button[mat-button] {
+    color: #7f8c8d;
+}
+
+button[mat-raised-button] {
+    background-color: #ff4081;
+    color: white;
+    transition: background-color 0.3s ease;
+}
+
+button[mat-raised-button]:hover {
+    background-color: #ff4081;
+}

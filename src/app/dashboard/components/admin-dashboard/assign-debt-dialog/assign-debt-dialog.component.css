@@ -1,0 +1,79 @@
+/* Contenedor del formulario compacto */
+.form-inner-container {
+  width: 100%;
+  max-width: 439px;
+  background: white;
+  border-radius: 12px;
+  padding: 30px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  margin: auto;
+}
+
+/* Estilos de texto */
+.form-title {
+  font-size: 1.5rem;
+  font-weight: 500;
+  color: #333;
+  margin-bottom: 8px;
+  text-align: center;
+}
+
+.form-description {
+  font-size: 0.9rem;
+  color: #666;
+  text-align: center;
+  margin-bottom: 25px;
+}
+
+/* Formulario compacto */
+.compact-form {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.compact-row {
+  display: flex;
+  gap: 15px;
+}
+
+.compact-field {
+  width: 100%;
+  font-size: 0.9rem;
+}
+
+.compact-field.amount {
+  flex: 2;
+}
+
+.compact-field.currency {
+  flex: 1;
+}
+
+/* Grupo de botones compactos */
+.button-group {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 20px;
+}
+
+/* Responsive para móviles */
+@media (max-width: 600px) {
+  .form-inner-container {
+    padding: 20px;
+  }
+
+  .compact-row {
+    flex-direction: column;
+    gap: 18px;
+  }
+
+  .button-group {
+    flex-direction: column;
+  }
+
+  .button-group button {
+    width: 100%;
+  }
+}

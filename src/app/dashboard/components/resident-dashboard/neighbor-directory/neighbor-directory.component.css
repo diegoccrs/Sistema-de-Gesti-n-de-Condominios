@@ -1,0 +1,178 @@
+:root {
+  --primary-color: #5a287d;
+  --primary-light: #8c005f;
+  --accent-color: #8c005f;
+  --success-color: #4caf50;
+  --warning-color: #ff9800;
+  --danger-color: #d32f2f;
+  --light-bg: #f9f9f9;
+  --card-bg: #ffffff;
+  --text-primary: #333;
+  --text-secondary: #666;
+  --border-color: rgba(0, 0, 0, 0.08);
+  --shadow-light: 0 4px 15px rgba(0, 0, 0, 0.1);
+  --shadow-medium: 0 6px 15px rgba(0, 0, 0, 0.1);
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --transition: all 0.3s ease;
+}
+.directory-container {
+  max-width: 900px;
+  margin: 2rem auto;
+  padding: 1.5rem;
+  background-color: var(--primary-light);
+  border-radius: 12px;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+  font-family: 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+  
+}
+
+.search-card {
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  background-color: #ffffff;
+}
+
+.full-width {
+  width: 100%;
+}
+
+.error-message {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 1rem;
+  margin-bottom: 1.5rem;
+  background-color: #fff8f8;
+  color: #d32f2f;
+  border-radius: 8px;
+  border-left: 4px solid #d32f2f;
+  font-weight: 500;
+}
+
+.neighbors-list-card {
+  overflow: hidden;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+  background-color: #ffffff;
+}
+
+.apartment-info {
+  font-size: 0.85rem;
+  color: #666;
+  font-weight: 400;
+  margin-left: 0.5rem;
+}
+
+.loading-more {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 1.5rem;
+  color: #666;
+}
+
+.loading-more p {
+  margin-top: 0.8rem;
+  font-size: 0.9rem;
+}
+
+/* Toolbar styles */
+.toolbar-content {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0 1rem;
+}
+
+.toolbar-content mat-icon {
+  font-size: 1.8rem;
+  height: 1.8rem;
+  width: 1.8rem;
+}
+
+/* SOLUCIONES PARA EVITAR CORTE DE TEXTO */
+mat-list {
+  padding: 0;
+  min-height: 300px; /* Altura mínima para evitar corte */
+}
+
+mat-list-item {
+  padding: 1rem 1.5rem;
+  transition: background-color 0.2s ease;
+  height: auto !important; /* Permite altura flexible */
+  min-height: 72px; /* Altura mínima por elemento */
+  align-items: flex-start; /* Alinea contenido al inicio */
+}
+
+mat-list-item .mat-list-item-content {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: 8px 0; /* Espacio interno adicional */
+}
+
+mat-list-item div[matListItemTitle] {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  line-height: 1.4; /* Espaciado entre líneas */
+  margin-bottom: 4px; /* Separación del elemento inferior */
+}
+
+mat-list-item div[matListItemLine] {
+  line-height: 1.4;
+}
+
+mat-list-item:hover {
+  background-color: #f9f9f9;
+}
+
+mat-list-item mat-icon {
+  color: #5c6bc0;
+  margin-top: 4px; /* Alinea mejor el ícono con el texto */
+}
+
+mat-divider {
+  margin: 0 1.5rem;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .directory-container {
+    padding: 1rem;
+    margin: 1rem;
+  }
+  
+  mat-list-item {
+    padding: 0.8rem 1rem;
+    min-height: 64px; /* Altura mínima reducida en móviles */
+  }
+}
+
+@media (max-width: 480px) {
+  .toolbar-content span {
+    font-size: 1.1rem;
+  }
+  
+  mat-list-item {
+    flex-direction: column;
+    align-items: flex-start;
+    height: auto;
+    padding: 1rem;
+  }
+  
+  mat-list-item div[matListItemTitle] {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .apartment-info {
+    margin-left: 0;
+    margin-top: 4px;
+  }
+  
+  mat-divider {
+    margin: 0.5rem 0;
+  }
+}

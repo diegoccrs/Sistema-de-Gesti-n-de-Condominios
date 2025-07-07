@@ -1,0 +1,177 @@
+<div class="feedback-detail-dialog">
+  <!-- Dialog Header -->
+  <div mat-dialog-title class="dialog-header">
+    <div class="header-content">
+      <mat-icon>feedback</mat-icon>
+      <h2>Detalles del Reporte</h2>
+    </div>
+    <button mat-icon-button (click)="close()">
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+
+  <!-- Dialog Content -->
+  <div mat-dialog-content class="dialog-content">
+    
+    <!-- Feedback Header Info -->
+    <div class="feedback-header">
+      <div class="feedback-meta">
+        <div class="meta-item">
+          <strong>ID:</strong> 
+          <code class="feedback-id">{{ feedback.id }}</code>
+        </div>
+        <div class="meta-item">
+          <strong>Fecha:</strong> 
+          {{ feedback.created_at | date:'medium' }}
+        </div>
+      </div>
+      
+      <div class="status-urgency-chips">
+        <mat-chip [color]="getStatusColor(feedback.status)" selected>
+          <mat-icon>{{ getStatusIcon(feedback.status) }}</mat-icon>
+          {{ getStatusLabel(feedback.status) }}
+        </mat-chip>
+        <mat-chip [color]="getUrgencyColor(feedback.urgency)" selected>
+          {{ getUrgencyLabel(feedback.urgency) }}
+        </mat-chip>
+      </div>
+    </div>
+
+    <!-- Main Content Grid -->
+    <div class="content-grid">
+      
+      <!-- Left Column - Report Details -->
+      <div class="details-section">
+        <h3>
+          <mat-icon>description</mat-icon>
+          Información del Reporte
+        </h3>
+        
+        <div class="detail-item">
+          <label>Título:</label>
+          <p class="title">{{ feedback.title }}</p>
+        </div>
+
+        <div class="detail-item">
+          <label>Categoría:</label>
+          <mat-chip>{{ feedback.category }}</mat-chip>
+        </div>
+
+        <div class="detail-item">
+          <label>Descripción:</label>
+          <div class="description-box">
+            {{ feedback.description }}
+          </div>
+        </div>
+
+        <div class="detail-item" *ngIf="feedback.location">
+          <label>Ubicación:</label>
+          <p>{{ feedback.location }}</p>
+        </div>
+
+        <div class="detail-item" *ngIf="feedback.contact_info">
+          <label>Información de Contacto:</label>
+          <p>{{ feedback.contact_info }}</p>
+        </div>
+
+        <!-- Images Section -->
+        <div class="detail-item" *ngIf="feedback.image_urls && feedback.image_urls.length > 0">
+          <label>Imágenes Adjuntas:</label>
+          <div class="images-grid">
+            <div *ngFor="let imageUrl of feedback.image_urls" class="image-container">
+              <img [src]="imageUrl" [alt]="'Imagen del reporte ' + feedback.title" 
+                   (click)="openImageModal(imageUrl)">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Column - Admin Management -->
+      <div class="management-section">
+        <h3>
+          <mat-icon>admin_panel_settings</mat-icon>
+          Gestión Administrativa
+        </h3>
+
+        <!-- Status Management -->
+        <div class="form-section">
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Estado del Reporte</mat-label>
+            <mat-select [(value)]="feedback.status">
+              <mat-option *ngFor="let option of statusOptions" [value]="option.value">
+                <div class="status-option">
+                  <mat-icon>{{ option.icon }}</mat-icon>
+                  {{ option.label }}
+                </div>
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+
+        <!-- Admin Notes -->
+        <div class="form-section">
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Notas del Administrador</mat-label>
+            <textarea matInput 
+                      [(ngModel)]="adminNotes"
+                      placeholder="Agregar notas internas sobre el reporte..."
+                      rows="4">
+            </textarea>
+            <mat-hint>Estas notas son visibles solo para administradores</mat-hint>
+          </mat-form-field>
+        </div>
+
+        <!-- Timeline/History -->
+        <div class="timeline-section" *ngIf="feedback.updated_at || feedback.resolution_date">
+          <h4>Historial</h4>
+          <div class="timeline">
+            <div class="timeline-item">
+              <mat-icon>create</mat-icon>
+              <div class="timeline-content">
+                <strong>Reporte creado</strong>
+                <small>{{ feedback.created_at | date:'medium' }}</small>
+              </div>
+            </div>
+            <div class="timeline-item" *ngIf="feedback.updated_at">
+              <mat-icon>edit</mat-icon>
+              <div class="timeline-content">
+                <strong>Última actualización</strong>
+                <small>{{ feedback.updated_at | date:'medium' }}</small>
+              </div>
+            </div>
+            <div class="timeline-item" *ngIf="feedback.resolution_date">
+              <mat-icon>check_circle</mat-icon>
+              <div class="timeline-content">
+                <strong>Resuelto</strong>
+                <small>{{ feedback.resolution_date | date:'medium' }}</small>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Existing Admin Notes (if any) -->
+        <div class="existing-notes" *ngIf="data.feedback.admin_notes">
+          <h4>Notas Existentes</h4>
+          <div class="notes-box">
+            {{ data.feedback.admin_notes }}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Dialog Actions -->
+  <div mat-dialog-actions class="dialog-actions">
+    <button mat-button (click)="close()" [disabled]="isUpdating">
+      Cancelar
+    </button>
+    <button mat-flat-button 
+            color="primary" 
+            (click)="updateFeedbackStatus()"
+            [disabled]="!hasChanges() || isUpdating">
+      <mat-icon *ngIf="!isUpdating">save</mat-icon>
+      <mat-icon *ngIf="isUpdating" class="rotating">sync</mat-icon>
+      {{ isUpdating ? 'Guardando...' : 'Guardar Cambios' }}
+    </button>
+  </div>
+</div>

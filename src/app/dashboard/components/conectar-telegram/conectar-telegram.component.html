@@ -1,0 +1,13 @@
+<button
+  mat-flat-button
+  color="accent"
+  class="action-button"
+  (click)="conectarConTelegram()"
+>
+  Conectar con Telegram
+</button>
+
+<div *ngIf="telegramUrl" class="telegram-link">
+  <p>Haz clic para abrir Telegram y conectar tu cuenta:</p>
+  <a [href]="telegramUrl" target="_blank">{{ telegramUrl }}</a>
+</div>
