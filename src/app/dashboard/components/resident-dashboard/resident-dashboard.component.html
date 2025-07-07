@@ -18,10 +18,11 @@
 
 
 
-            <button mat-flat-button  (click)="syncWithCalendar()" class="action-button">
+            <button mat-flat-button (click)="syncWithCalendar()" class="action-button">
                 <mat-icon>event</mat-icon>
                 <span>Sincronizar con Google Calendar</span>
             </button>
+
 
 
             <button mat-flat-button (click)="openPaymentRegisterDialog()" class="action-button">
@@ -48,7 +49,10 @@
                 <span>Proveedores de Servicios</span>
             </button>
             <!-- <app-conectar-telegram></app-conectar-telegram> -->
+
         </div>
+        <!--<app-dropdown-menu menuTitle="Más acciones" [items]="adminMenuItems" buttonClass="admin" mat-flat-button
+            class="action-button" (itemSelected)="onMenuItemSelected($event)"></app-dropdown-menu>-->
     </section>
 
     <div *ngIf="errorMessage && !isLoading" class="error-message mat-elevation-z2 animated-fade-in">

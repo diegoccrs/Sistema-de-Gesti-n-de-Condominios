@@ -54,44 +54,47 @@
           <mat-icon>campaign</mat-icon>
           Publicar Anuncio
         </button>
-        <button mat-flat-button color="primary" class="action-button" (click)="openAssignDebtDialog()">
+       <!-- <button mat-flat-button color="primary" class="action-button" (click)="openAssignDebtDialog()">
           <mat-icon>payment</mat-icon>
           Asignar Deudas
-        </button>
-        <button mat-flat-button color="primary" class="action-button" (click)="openCreateResidentDialog()">
+        </button>-->
+
+      <!--  <button mat-flat-button color="primary" class="action-button" (click)="openCreateResidentDialog()">
           <mat-icon>person_add</mat-icon>
           Crear Residente
-        </button>
+        </button>-->
         <button mat-flat-button color="primary" class="action-button" (click)="goToReviewProofs('comprobantes')">
           <mat-icon>receipt_long</mat-icon>
           Ver Comprobantes
         </button>
 
-        <button mat-flat-button color="primary" class="action-button" (click)="openReminderConfigDialog()">
+      <!--  <button mat-flat-button color="primary" class="action-button" (click)="openReminderConfigDialog()">
           <mat-icon>alarm</mat-icon>
           Enviar Recordatorio
-        </button>
+        </button>-->
 
         <button mat-flat-button color="primary" class="action-button" (click)="goToReviewProofs('deudas')">
           <mat-icon>receipt_long</mat-icon>
           Ver Deudas
         </button>
 
-        <button mat-flat-button color="primary" class="action-button" (click)="generarReporte()">
+       <!-- <button mat-flat-button color="primary" class="action-button" (click)="generarReporte()">
           <mat-icon>receipt_long</mat-icon>
           Reporte de Pagos Confirmados
-        </button>
+        </button>-->
 
-        <button mat-flat-button color="primary" class="action-button" (click)="goToManageDocuments()">
+      <!-- <button mat-flat-button color="primary" class="action-button" (click)="goToManageDocuments()">
           <mat-icon>folder_open</mat-icon>
           Documentos Comunes
-        </button>
+        </button>--> 
 
-        <button mat-flat-button color="primary" class="action-button" (click)="goToFeedbackManagement()">
+       <!--<button mat-flat-button color="primary" class="action-button" (click)="goToFeedbackManagement()">
           <mat-icon>feedback</mat-icon>
           Gestionar Reportes
-        </button>
+        </button>-->
 
+        <app-dropdown-menu menuTitle="Más acciones" [items]="adminMenuItems" buttonClass="admin"
+          (itemSelected)="onMenuItemSelected($event)"></app-dropdown-menu>
       </div>
 
       <!-- Agregar encima de la sección de Residentes Recientes -->

@@ -33,6 +33,8 @@ import { AssignDebtDialogComponent } from './assign-debt-dialog/assign-debt-dial
 import { SelectResidentDialogComponent } from './select-resident-dialog/select-resident-dialog.component';
 import { ReminderConfigComponent } from '../../reminder-config/reminder-config.component';
 
+import { DropdownMenuComponent } from '../dropdown-menu/dropdown-menu.component';
+
 @Component({
   selector: 'app-admin-dashboard',
   standalone: true,
@@ -48,10 +50,11 @@ import { ReminderConfigComponent } from '../../reminder-config/reminder-config.c
     UserProfileButtonComponent,
     MatProgressBarModule,
     MatProgressSpinnerModule,
-    MatToolbarModule, // Añadir MatToolbarModule a los imports
+    MatToolbarModule, 
     FormsModule,
     MatFormFieldModule,
-    MatInputModule
+    MatInputModule,
+    DropdownMenuComponent
   ],
   templateUrl: './admin-dashboard.component.html',
   styleUrls: ['./admin-dashboard.component.css'],
@@ -77,6 +80,15 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
   isLoadingResidents = false;
   private destroy$ = new Subject<void>();
 
+  adminMenuItems = [
+  { label: 'Crear residentes', action: 'create_resident',  },
+  { label: 'Documentos comunes', action: 'documents', },
+  { label: 'Enviar recordatorio', action: 'send_reminder',  },
+  {label: 'Asignar deudas', action: 'assign_debt',  },
+  {label: "Reportes de pagos confirmados", action: 'generate_report',  },
+  {label: "Gestionar reportes", action: 'goToGenerateReports',  },
+];
+
   constructor(
     private supabaseService: SupabaseService,
     public dialog: MatDialog,
@@ -84,6 +96,29 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
     private datePipe: DatePipe,
     private snackBar: MatSnackBar
   ) { }
+
+  onMenuItemSelected(action: string): void {
+    switch (action) {
+      case 'create_resident':
+        this.openCreateResidentDialog();
+      break;
+    case 'documents':
+      this.goToManageDocuments();
+      break;
+    case 'send_reminder':
+      this.openReminderConfigDialog();
+      break;
+    case 'assign_debt':
+      this.openAssignDebtDialog();
+      break;
+    case 'generate_report':
+      this.generarReporte();
+      break;
+    case 'goToGenerateReports':
+      this.goToFeedbackManagement();
+      break;
+  }
+}
 
   async ngOnInit(): Promise<void> {
     await this.loadAdminData();

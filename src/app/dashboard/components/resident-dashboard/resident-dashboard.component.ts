@@ -42,7 +42,7 @@ import { PaymentMethodDialogComponent } from './payment-method-dialog/payment-me
 import { GoogleCalendarService } from '@backend/services/google-calendar.service';
 import { LogicaService } from '@backend/services/logica.service';
 
-
+import { DropdownMenuComponent } from '../dropdown-menu/dropdown-menu.component';
 
 @Component({
   selector: 'app-resident-dashboard',
@@ -66,7 +66,7 @@ import { LogicaService } from '@backend/services/logica.service';
     MatInputModule,
     MatDialogModule,
     MatSnackBarModule,
-    NeighborDirectoryComponent
+    NeighborDirectoryComponent, DropdownMenuComponent
   ],
   templateUrl: './resident-dashboard.component.html',
   styleUrls: ['./resident-dashboard.component.css']
@@ -88,6 +88,12 @@ export class ResidentDashboardComponent implements OnInit {
   displayedPaymentHistoryColumns: string[] = ['concept', 'payment_date', 'amount', 'currency', 'status', 'proof_url'];
   dateFilterForm: FormGroup;
 
+  /*adminMenuItems = [
+    { label: 'Conectar con Telegram', action: 'telegram', },
+    {label: 'Sincronizar con Google Calendar', action: 'calendar'},
+
+  ];*/
+
   constructor(
     private router: Router,
     private supabaseService: SupabaseService,
@@ -107,28 +113,39 @@ export class ResidentDashboardComponent implements OnInit {
 
   telegramUrl: string | null = null;
 
-async conectarConTelegram() {
-  const user = await this.supabaseService.getCurrentUser();
-  if (!user?.id) {
-    console.error('Usuario no autenticado.');
-    return;
+  /*onMenuItemSelected(action: string): void {
+    switch (action) {
+      case 'telegram':
+        this.conectarConTelegram();
+        break;
+      case 'calendar':
+        this.syncWithCalendar();
+        break;
+    }
+  }*/
+
+  async conectarConTelegram() {
+    const user = await this.supabaseService.getCurrentUser();
+    if (!user?.id) {
+      console.error('Usuario no autenticado.');
+      return;
+    }
+
+    const token = crypto.randomUUID(); // Ya que estás en un proyecto moderno, puedes usar esto
+
+    const { error } = await this.supabaseService.supabase
+      .from('profiles')
+      .update({ login_token: token })
+      .eq('id', user.id);
+
+    if (error) {
+      console.error('Error guardando el token:', error);
+      return;
+    }
+
+    this.telegramUrl = `https://t.me/notificacionesCDBot?start=${token}`;
+    window.open(this.telegramUrl, '_blank');
   }
-
-  const token = crypto.randomUUID(); // Ya que estás en un proyecto moderno, puedes usar esto
-
-  const { error } = await this.supabaseService.supabase
-    .from('profiles')
-    .update({ login_token: token })
-    .eq('id', user.id);
-
-  if (error) {
-    console.error('Error guardando el token:', error);
-    return;
-  }
-
-  this.telegramUrl = `https://t.me/notificacionesCDBot?start=${token}`;
-  window.open(this.telegramUrl, '_blank');
-}
 
   async ngOnInit() {
     this.isLoading = true;
@@ -389,32 +406,32 @@ async conectarConTelegram() {
       this.snackBar.open('Ocurrió un error inesperado al subir el comprobante.', 'Cerrar', { duration: 3000 });
     }
   }
- async syncWithCalendar() {
-  try {
-    const userId = await this.logicaService.getUserId();
+  async syncWithCalendar() {
+    try {
+      const userId = await this.logicaService.getUserId();
 
-    if (!userId) throw new Error('No se encontró el ID del residente');
+      if (!userId) throw new Error('No se encontró el ID del residente');
 
-    await this.calendarService.initClient();  // 🔧 Inicia el cliente
-    await this.calendarService.signIn();      // 🔐 Pide permisos
+      await this.calendarService.initClient();  // 🔧 Inicia el cliente
+      await this.calendarService.signIn();      // 🔐 Pide permisos
 
-    const pagos = await this.logicaService.getPagosPendientesConVencimiento(userId);
+      const pagos = await this.logicaService.getPagosPendientesConVencimiento(userId);
 
-    for (const pago of pagos) {
-      const fecha = pago.expiration_date.split('T')[0]; // 🗓️ Solo la fechax`
-      await this.calendarService.createEvent(
-        `Pago pendiente: ${pago.concept}`,
-        `Monto: $${pago.amount}\nRecuerda pagar antes de la fecha límite.`,
-        fecha
-      );
+      for (const pago of pagos) {
+        const fecha = pago.expiration_date.split('T')[0]; // 🗓️ Solo la fechax`
+        await this.calendarService.createEvent(
+          `Pago pendiente: ${pago.concept}`,
+          `Monto: $${pago.amount}\nRecuerda pagar antes de la fecha límite.`,
+          fecha
+        );
+      }
+
+      alert('✅ Todos los eventos han sido creados en Google Calendar');
+    } catch (error) {
+      console.error('Error completo:', error);
+      alert('❌ Error al sincronizar con Google Calendar');
     }
-
-    alert('✅ Todos los eventos han sido creados en Google Calendar');
-  } catch (error) {
-    console.error('Error completo:', error);
-    alert('❌ Error al sincronizar con Google Calendar');
   }
-}
 
 
 
@@ -433,7 +450,8 @@ async conectarConTelegram() {
 
   goToNormas() {
     console.log('Navegar a las normas del condominio');
-    this.router.navigate(['./dashboard/normas']);  }
+    this.router.navigate(['./dashboard/normas']);
+  }
 
   goToServiceProviders() {
     console.log('Navegar a proveedores de servicios');

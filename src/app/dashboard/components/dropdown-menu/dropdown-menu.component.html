@@ -1,0 +1,29 @@
+<div class="dropdown">
+  <button 
+    class="dropdown-toggle {{buttonClass}}" 
+    (click)="toggleMenu()"
+    [attr.aria-expanded]="isOpen"
+  >
+    {{menuTitle}}
+    <span class="dropdown-arrow" *ngIf="showArrow">▼</span>
+  </button>
+  
+  <ul 
+    class="dropdown-menu" 
+    [class.show]="isOpen" 
+    (mouseleave)="closeMenu()"
+  >
+    <ng-container *ngFor="let item of items">
+      <li *ngIf="!item.divider" class="dropdown-item">
+        <a 
+          (click)="handleClick(item.action)"
+          [class.disabled]="item.disabled"
+        >
+          <span class="menu-icon" *ngIf="item.icon">{{item.icon}}</span>
+          {{item.label}}
+        </a>
+      </li>
+      <li *ngIf="item.divider" class="divider"></li>
+    </ng-container>
+  </ul>
+</div>
