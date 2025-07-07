@@ -121,7 +121,8 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
   }
 
   async ngOnInit(): Promise<void> {
-    await this.loadRecentResidents()
+    await this.loadAdminData();
+    await this.loadRecentResidents();
     this.listenForAnnouncementsChanges();
   }
 
@@ -214,12 +215,13 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
           // Load feedback metrics
           const allFeedback = await this.supabaseService.getFeedback();
           this.pendingFeedbackCount = allFeedback.filter(f => f.status === 'pending').length;
+          console.log("HECARGADOTIO")
         }
       }
     } catch (error: any) {
       console.error('Error al cargar datos del administrador:', error);
       this.errorMessage = `Error al cargar datos: ${error.message || error}`;
-    } finally { }
+    } finally { this.isLoading = false; }
   }
 
   async loadAnnouncements(): Promise<void> {
