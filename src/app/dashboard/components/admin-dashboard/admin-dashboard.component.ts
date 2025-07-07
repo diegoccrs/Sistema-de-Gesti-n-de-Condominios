@@ -50,7 +50,7 @@ import { DropdownMenuComponent } from '../dropdown-menu/dropdown-menu.component'
     UserProfileButtonComponent,
     MatProgressBarModule,
     MatProgressSpinnerModule,
-    MatToolbarModule, 
+    MatToolbarModule,
     FormsModule,
     MatFormFieldModule,
     MatInputModule,
@@ -81,13 +81,13 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
 
   adminMenuItems = [
-  { label: 'Crear residentes', action: 'create_resident',  },
-  { label: 'Documentos comunes', action: 'documents', },
-  { label: 'Enviar recordatorio', action: 'send_reminder',  },
-  {label: 'Asignar deudas', action: 'assign_debt',  },
-  {label: "Reportes de pagos confirmados", action: 'generate_report',  },
-  {label: "Gestionar reportes", action: 'goToGenerateReports',  },
-];
+    { label: 'Crear residentes', action: 'create_resident', },
+    { label: 'Documentos comunes', action: 'documents', },
+    { label: 'Enviar recordatorio', action: 'send_reminder', },
+    { label: 'Asignar deudas', action: 'assign_debt', },
+    { label: "Reportes de pagos confirmados", action: 'generate_report', },
+    { label: "Gestionar reportes", action: 'goToGenerateReports', },
+  ];
 
   constructor(
     private supabaseService: SupabaseService,
@@ -101,28 +101,26 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
     switch (action) {
       case 'create_resident':
         this.openCreateResidentDialog();
-      break;
-    case 'documents':
-      this.goToManageDocuments();
-      break;
-    case 'send_reminder':
-      this.openReminderConfigDialog();
-      break;
-    case 'assign_debt':
-      this.openAssignDebtDialog();
-      break;
-    case 'generate_report':
-      this.generarReporte();
-      break;
-    case 'goToGenerateReports':
-      this.goToFeedbackManagement();
-      break;
+        break;
+      case 'documents':
+        this.goToManageDocuments();
+        break;
+      case 'send_reminder':
+        this.openReminderConfigDialog();
+        break;
+      case 'assign_debt':
+        this.openAssignDebtDialog();
+        break;
+      case 'generate_report':
+        this.generarReporte();
+        break;
+      case 'goToGenerateReports':
+        this.goToFeedbackManagement();
+        break;
+    }
   }
-}
 
   async ngOnInit(): Promise<void> {
-    await this.loadAdminData();
-    await this.loadAnnouncements();
     await this.loadRecentResidents()
     this.listenForAnnouncementsChanges();
   }
@@ -212,7 +210,7 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
 
           const allProfiles = await this.supabaseService.searchProfiles('');
           this.activeResidentsCount = allProfiles.filter(p => p.role === 'resident').length;
-          
+
           // Load feedback metrics
           const allFeedback = await this.supabaseService.getFeedback();
           this.pendingFeedbackCount = allFeedback.filter(f => f.status === 'pending').length;
