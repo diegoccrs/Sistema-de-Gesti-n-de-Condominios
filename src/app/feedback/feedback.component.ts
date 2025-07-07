@@ -12,6 +12,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { SupabaseService } from '@backend/infrastructure/supabase.service';
+import { CreateFeedbackRequest } from '@backend/models/feedback.model';
 
 const FEEDBACK_CATEGORIES = [
   'Problema Técnico',
@@ -57,6 +58,9 @@ export class FeedbackComponent implements OnInit {
   isAdmin = false;
   categories = FEEDBACK_CATEGORIES;
   urgencyLevels = URGENCY_LEVELS;
+  selectedFiles: File[] = [];
+  maxFiles = 3;
+  maxFileSize = 5 * 1024 * 1024; // 5MB
 
   constructor(
     private fb: FormBuilder,
@@ -101,34 +105,43 @@ export class FeedbackComponent implements OnInit {
           throw new Error('Usuario no autenticado');
         }
 
-        const feedbackData = {
-          ...this.feedbackForm.value,
-          user_id: user.id,
-          status: 'pending',
-          created_at: new Date().toISOString()
+        const feedbackRequest: CreateFeedbackRequest = {
+          title: this.feedbackForm.value.title,
+          description: this.feedbackForm.value.description,
+          category: this.feedbackForm.value.category,
+          urgency: this.feedbackForm.value.urgency,
+          location: this.feedbackForm.value.location,
+          contact_info: this.feedbackForm.value.contactInfo,
+          image_files: this.selectedFiles.length > 0 ? this.selectedFiles : undefined
         };
 
-        // Here you would typically save to a feedback table in your database
-        // For now, we'll just show a success message
-        console.log('Feedback data to save:', feedbackData);
+        // Save to database
+        const savedFeedback = await this.supabaseService.createFeedback(feedbackRequest, user.id);
+        
+        console.log('Feedback saved successfully:', savedFeedback);
 
-        // Simulate API call
-        await new Promise(resolve => setTimeout(resolve, 1000));
+        this.snackBar.open(
+          `Reporte enviado exitosamente. ID de seguimiento: ${savedFeedback.id.slice(0, 8)}...`, 
+          'Cerrar', 
+          {
+            duration: 5000,
+            panelClass: ['snackbar-success']
+          }
+        );
 
-        this.snackBar.open('Reporte enviado exitosamente', 'Cerrar', {
-          duration: 3000,
-          panelClass: ['snackbar-success']
-        });
+        this.resetForm();
+        this.selectedFiles = [];
 
-        this.feedbackForm.reset();
-        this.feedbackForm.patchValue({ urgency: 'medium' });
-
-      } catch (error) {
+      } catch (error: any) {
         console.error('Error submitting feedback:', error);
-        this.snackBar.open('Error al enviar el reporte', 'Cerrar', {
-          duration: 3000,
-          panelClass: ['snackbar-error']
-        });
+        this.snackBar.open(
+          `Error al enviar el reporte: ${error.message || 'Error desconocido'}`, 
+          'Cerrar', 
+          {
+            duration: 5000,
+            panelClass: ['snackbar-error']
+          }
+        );
       } finally {
         this.isLoading = false;
       }
@@ -160,6 +173,61 @@ export class FeedbackComponent implements OnInit {
   resetForm(): void {
     this.feedbackForm.reset();
     this.feedbackForm.patchValue({ urgency: 'medium' });
+    this.selectedFiles = [];
+  }
+
+  onFileSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    if (input.files) {
+      const files = Array.from(input.files);
+      
+      // Validate file count
+      if (this.selectedFiles.length + files.length > this.maxFiles) {
+        this.snackBar.open(
+          `Máximo ${this.maxFiles} imágenes permitidas`, 
+          'Cerrar', 
+          { duration: 3000, panelClass: ['snackbar-error'] }
+        );
+        return;
+      }
+      
+      // Validate file types and sizes
+      const validFiles: File[] = [];
+      for (const file of files) {
+        if (!file.type.startsWith('image/')) {
+          this.snackBar.open(
+            `${file.name} no es una imagen válida`, 
+            'Cerrar', 
+            { duration: 3000, panelClass: ['snackbar-error'] }
+          );
+          continue;
+        }
+        
+        if (file.size > this.maxFileSize) {
+          this.snackBar.open(
+            `${file.name} es muy grande (máximo 5MB)`, 
+            'Cerrar', 
+            { duration: 3000, panelClass: ['snackbar-error'] }
+          );
+          continue;
+        }
+        
+        validFiles.push(file);
+      }
+      
+      this.selectedFiles.push(...validFiles);
+      
+      // Clear the input
+      input.value = '';
+    }
+  }
+
+  removeFile(index: number): void {
+    this.selectedFiles.splice(index, 1);
+  }
+
+  getFilePreview(file: File): string {
+    return URL.createObjectURL(file);
   }
 
   goBack(): void {

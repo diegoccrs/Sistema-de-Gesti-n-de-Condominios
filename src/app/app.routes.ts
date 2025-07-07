@@ -108,6 +108,12 @@ export const routes: Routes = [
         title: 'Reportar Problema',
         loadComponent: () => import('./feedback/feedback.component').then(m => m.FeedbackComponent),
         canActivate: [authGuard] // Accesible para cualquier usuario autenticado
+      },
+      {
+        path: 'feedback-management', // La URL completa será /dashboard/feedback-management
+        title: 'Gestión de Reportes',
+        loadComponent: () => import('./feedback-management/feedback-management.component').then(m => m.FeedbackManagementComponent),
+        canActivate: [isAdminGuard] // Solo administradores pueden acceder
       }
     ]
   },

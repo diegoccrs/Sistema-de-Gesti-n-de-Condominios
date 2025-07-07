@@ -21,6 +21,7 @@ export type { ProfileApartment } from './models/profile-apartment.model';
 export type { Profile } from './models/profile.model';
 export type { ServiceProvider } from './models/service-provider.model';
 export type { Document } from './models/document.model';
+export type { Feedback, CreateFeedbackRequest, FeedbackFilters } from './models/feedback.model';
 
 // Data
 export { CONDO_RULES } from './data/static-condo-rules';

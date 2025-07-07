@@ -423,7 +423,7 @@ async conectarConTelegram() {
 
   reportIssue() {
     console.log('Navegar a reportar problema');
-    this.errorMessage = 'Funcionalidad "Reportar Problema" en desarrollo. ¡Próximamente!';
+    this.router.navigate(['/dashboard/feedback']);
   }
 
   goToDocuments() {

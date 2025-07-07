@@ -64,6 +64,7 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
   activeResidentsCount: number = 0;
   activeAnnouncementsCount: number = 0;
   pendingProofCount: number = 0;
+  pendingFeedbackCount: number = 0;
   searchQuery: string = '';
   searchResults: ProfileWithApartmentInfo[] = [];
   isSearching: boolean = false;
@@ -176,6 +177,10 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
 
           const allProfiles = await this.supabaseService.searchProfiles('');
           this.activeResidentsCount = allProfiles.filter(p => p.role === 'resident').length;
+          
+          // Load feedback metrics
+          const allFeedback = await this.supabaseService.getFeedback();
+          this.pendingFeedbackCount = allFeedback.filter(f => f.status === 'pending').length;
         }
       }
     } catch (error: any) {
@@ -332,6 +337,10 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
 
   goToManageDocuments(): void {
     this.router.navigate(['/dashboard/documents']);
+  }
+
+  goToFeedbackManagement(): void {
+    this.router.navigate(['/dashboard/feedback-management']);
   }
 
   goToManageAnnouncements(): void {

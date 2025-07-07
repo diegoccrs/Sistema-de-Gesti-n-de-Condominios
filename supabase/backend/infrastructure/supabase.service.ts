@@ -9,6 +9,7 @@ import { Building } from '../models/building.model';
 import { ProfileApartment } from '../models/profile-apartment.model';
 import { Announcement } from '../models/announcement.model';
 import { ServiceProvider } from '../models/service-provider.model';
+import { Feedback, CreateFeedbackRequest } from '../models/feedback.model';
 
 
 export interface ProfileWithApartmentInfo extends Profile {
@@ -481,6 +482,155 @@ export class SupabaseService {
     } catch (error) {
       console.error('Unexpected error in getServiceProviders:', error);
       return null;
+    }
+  }
+
+  // ========================
+  // FEEDBACK/REPORTS METHODS
+  // ========================
+
+  /**
+   * Creates a new feedback/report in the database
+   * @param feedbackData The feedback data to create
+   * @returns Promise with the created feedback
+   */
+  async createFeedback(feedbackData: CreateFeedbackRequest, userId: string): Promise<Feedback> {
+    try {
+      // Upload images first if any
+      let imageUrls: string[] = [];
+      if (feedbackData.image_files && feedbackData.image_files.length > 0) {
+        imageUrls = await this.uploadFeedbackImages(feedbackData.image_files, userId);
+      }
+
+      const feedbackToInsert = {
+        user_id: userId,
+        title: feedbackData.title,
+        description: feedbackData.description,
+        category: feedbackData.category,
+        urgency: feedbackData.urgency,
+        location: feedbackData.location || null,
+        contact_info: feedbackData.contact_info || null,
+        status: 'pending',
+        image_urls: imageUrls.length > 0 ? imageUrls : null,
+        created_at: new Date().toISOString()
+      };
+
+      const { data, error } = await this.supabase
+        .from('feedback')
+        .insert(feedbackToInsert)
+        .select()
+        .single();
+
+      if (error) throw error;
+      return data as Feedback;
+    } catch (error) {
+      console.error('Error creating feedback:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Uploads multiple images for feedback reports
+   * @param files Array of image files to upload
+   * @param userId User ID for organizing files
+   * @returns Promise with array of public URLs
+   */
+  private async uploadFeedbackImages(files: File[], userId: string): Promise<string[]> {
+    const uploadPromises = files.map(async (file) => {
+      const timestamp = Date.now();
+      const fileName = `${timestamp}_${file.name}`;
+      const filePath = `${userId}/${fileName}`;
+      
+      const { data, error } = await this.supabase.storage
+        .from('feedback-attachments')
+        .upload(filePath, file);
+      
+      if (error) throw error;
+      return this.getPublicUrl('feedback-attachments', data.path);
+    });
+
+    return Promise.all(uploadPromises);
+  }
+
+  /**
+   * Gets feedback reports with optional filters
+   * @param filters Optional filters for the query
+   * @returns Promise with array of feedback reports
+   */
+  async getFeedback(filters?: { user_id?: string; status?: string; limit?: number }): Promise<Feedback[]> {
+    try {
+      let query = this.supabase
+        .from('feedback')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      if (filters?.user_id) {
+        query = query.eq('user_id', filters.user_id);
+      }
+      
+      if (filters?.status) {
+        query = query.eq('status', filters.status);
+      }
+      
+      if (filters?.limit) {
+        query = query.limit(filters.limit);
+      }
+
+      const { data, error } = await query;
+      if (error) throw error;
+      return data as Feedback[];
+    } catch (error) {
+      console.error('Error fetching feedback:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Gets a single feedback report by ID
+   * @param id The feedback ID
+   * @returns Promise with the feedback report
+   */
+  async getFeedbackById(id: string): Promise<Feedback | null> {
+    try {
+      const { data, error } = await this.supabase
+        .from('feedback')
+        .select('*')
+        .eq('id', id)
+        .single();
+      
+      if (error) throw error;
+      return data as Feedback;
+    } catch (error) {
+      console.error('Error fetching feedback by ID:', error);
+      return null;
+    }
+  }
+
+  /**
+   * Updates feedback status and admin notes
+   * @param id Feedback ID
+   * @param updates Updates to apply
+   * @returns Promise with updated feedback
+   */
+  async updateFeedback(id: string, updates: Partial<Feedback>): Promise<Feedback> {
+    try {
+      const updateData = {
+        ...updates,
+        updated_at: new Date().toISOString()
+      };
+
+      const { data, error } = await this.supabase
+        .from('feedback')
+        .update(updateData)
+        .eq('id', id)
+        .select()
+        .single();
+      
+      if (error) throw error;
+      return data as Feedback;
+    } catch (error) {
+      console.error('Error updating feedback:', error);
+      throw error;
     }
   }
 }

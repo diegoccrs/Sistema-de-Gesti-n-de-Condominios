@@ -100,6 +100,50 @@
           </mat-error>
         </mat-form-field>
 
+        <!-- Image Upload Section -->
+        <div class="image-upload-section">
+          <h3 class="section-title">
+            <mat-icon>photo_camera</mat-icon>
+            Adjuntar Imágenes (Opcional)
+          </h3>
+          <p class="section-subtitle">Máximo {{ maxFiles }} imágenes, 5MB cada una</p>
+          
+          <!-- File Input -->
+          <div class="file-input-container">
+            <input type="file" 
+                   #fileInput 
+                   (change)="onFileSelected($event)" 
+                   accept="image/*" 
+                   multiple 
+                   style="display: none;">
+            <button mat-stroked-button 
+                    type="button"
+                    (click)="fileInput.click()"
+                    [disabled]="selectedFiles.length >= maxFiles || isLoading"
+                    class="upload-button">
+              <mat-icon>add_photo_alternate</mat-icon>
+              Seleccionar Imágenes
+            </button>
+          </div>
+
+          <!-- Selected Files Preview -->
+          <div class="selected-files" *ngIf="selectedFiles.length > 0">
+            <div class="file-preview" *ngFor="let file of selectedFiles; let i = index">
+              <div class="image-container">
+                <img [src]="getFilePreview(file)" [alt]="file.name" class="preview-image">
+                <button mat-icon-button 
+                        type="button"
+                        (click)="removeFile(i)"
+                        class="remove-button"
+                        matTooltip="Eliminar imagen">
+                  <mat-icon>close</mat-icon>
+                </button>
+              </div>
+              <p class="file-name">{{ file.name }}</p>
+            </div>
+          </div>
+        </div>
+
         <!-- Form Actions -->
         <div class="form-actions">
           <button mat-stroked-button 

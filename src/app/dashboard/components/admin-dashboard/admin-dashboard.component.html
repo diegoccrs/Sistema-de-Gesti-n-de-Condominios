@@ -39,6 +39,11 @@
           <h3>Anuncios Activos</h3>
           <p>{{ activeAnnouncementsCount }}</p>
         </mat-card>
+        <mat-card class="metric-card mat-elevation-z2">
+          <mat-icon color="warn">feedback</mat-icon>
+          <h3>Reportes Pendientes</h3>
+          <p>{{ pendingFeedbackCount }}</p>
+        </mat-card>
       </div>
 
       <mat-divider></mat-divider>
@@ -80,6 +85,11 @@
         <button mat-flat-button color="primary" class="action-button" (click)="goToManageDocuments()">
           <mat-icon>folder_open</mat-icon>
           Documentos Comunes
+        </button>
+
+        <button mat-flat-button color="primary" class="action-button" (click)="goToFeedbackManagement()">
+          <mat-icon>feedback</mat-icon>
+          Gestionar Reportes
         </button>
 
       </div>
@@ -278,7 +288,7 @@
           <mat-icon>admin_panel_settings</mat-icon> Gestión de Usuarios y Roles
         </button>
       </div>
--->
+      -->
     </mat-card-content>
     <mat-divider></mat-divider>
     <div class="copyright-section" style="text-align:center; margin-top: 16px; color: #888;">
