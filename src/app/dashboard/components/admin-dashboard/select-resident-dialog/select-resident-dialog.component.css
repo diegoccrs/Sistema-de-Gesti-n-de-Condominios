@@ -1,0 +1,194 @@
+/* Estilos mejorados */
+.dialog-container {
+  max-width: 600px;
+  width: 90%;
+  margin: 0.5rem auto;
+  padding: 0;
+  /* Eliminamos el padding del contenedor principal */
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  /* Añadido para contener elementos hijos */
+  display: flex;
+  flex-direction: column;
+}
+
+.dialog-header {
+  padding: 15px 20px;
+  text-align: center;
+  background: linear-gradient(135deg, #520a42, #f71da4);
+  color: white;
+}
+
+.dialog-header h2 {
+  margin: 0;
+  font-size: 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* Añadido para centrar el título */
+  gap: 10px;
+}
+
+.dialog-header p {
+  margin: 5px 0 0;
+  font-size: 0.9rem;
+  opacity: 0.9;
+}
+
+.search-container {
+  padding: 15px 25px;
+  /* Mismo padding que el header */
+  position: relative;
+  background: white;
+  /* Fondo blanco para coincidir */
+}
+
+.search-icon {
+  position: absolute;
+  left: 35px;
+  /* Ajuste fino de posición */
+  top: 50%;
+  transform: translateY(-50%);
+  color: #aaa;
+  pointer-events: none;
+  /* Permite hacer clic a través del icono */
+}
+
+.search-input {
+  width: calc(100% - 40px);
+  /* Ajuste para el icono */
+  padding: 12px 20px 12px 40px;
+  margin: 0;
+  /* Eliminar márgenes por defecto */
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  box-sizing: border-box;
+  /* Incluye padding en el ancho */
+}
+
+.search-input:focus {
+  outline: none;
+  border-color: #a777e3;
+  box-shadow: 0 0 0 2px rgba(167, 119, 227, 0.2);
+}
+
+.resident-list-container {
+  max-height: 250px;
+  overflow-y: auto;
+}
+
+.resident-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.resident-item {
+  padding: 15px 25px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid #f5f5f5;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.resident-item:hover {
+  background: #f9f9f9;
+}
+
+.resident-info {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.avatar {
+  width: 45px;
+  height: 45px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: rgb(215, 27, 178);
+  font-weight: bold;
+  font-size: 1.1rem;
+}
+
+.resident-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.name {
+  font-weight: 600;
+  font-size: 1rem;
+  color: #333;
+}
+
+.details {
+  display: flex;
+  gap: 15px;
+  margin-top: 5px;
+}
+
+.id,
+.unit {
+  font-size: 0.85rem;
+  color: #666;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.arrow-icon {
+  color: #ccc;
+  font-size: 0.9rem;
+}
+
+.dialog-actions {
+  padding: 15px 25px;
+  display: flex;
+  justify-content: flex-end;
+  border-top: 1px solid #f0f0f0;
+}
+
+.cancel-btn {
+  padding: 10px 20px;
+  background: rgb(167, 7, 95);
+  border: 1px solid #e0e0e0;
+  border-radius: 6px;
+  color: #f5f5f5;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.cancel-btn:hover {
+  background: #f5f5f5;
+  color: #333;
+}
+
+/* Scrollbar styling */
+.resident-list-container::-webkit-scrollbar {
+  width: 8px;
+}
+
+.resident-list-container::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+.resident-list-container::-webkit-scrollbar-thumb {
+  background: #f1f1f1;
+  border-radius: 4px;
+}
+
+.resident-list-container::-webkit-scrollbar-thumb:hover {
+  background: #a777e3;
+}

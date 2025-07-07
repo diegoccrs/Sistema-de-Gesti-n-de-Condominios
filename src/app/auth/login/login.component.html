@@ -1,0 +1,53 @@
+<div class="login-container">
+    <mat-card class="login-card mat-elevation-z8 animated-fade-in-up">
+        <mat-card-header class="login-card-header">
+
+            <mat-card-title class="mat-headline-5">Iniciar Sesión</mat-card-title>
+            <mat-card-subtitle>Accede a la gestión inteligente de tu condominio.</mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content>
+            <form [formGroup]="loginForm" (ngSubmit)="login()">
+                <mat-form-field appearance="outline" class="full-width-input animated-fade-in-up delay-1">
+                    <mat-label>Correo Electrónico</mat-label>
+                    <input matInput formControlName="email" type="email" required autocomplete="username">
+                    <mat-error
+                        *ngIf="loginForm.controls['email'].hasError('required') && loginForm.controls['email'].touched">
+                        El correo electrónico es requerido.
+                    </mat-error>
+                    <mat-error
+                        *ngIf="loginForm.controls['email'].hasError('email') && loginForm.controls['email'].touched">
+                        Ingrese un correo electrónico válido.
+                    </mat-error>
+                </mat-form-field>
+
+                <mat-form-field appearance="outline" class="full-width-input animated-fade-in-up delay-2">
+                    <mat-label>Contraseña</mat-label>
+                    <input matInput formControlName="password" type="password" required autocomplete="current-password">
+                    <mat-error
+                        *ngIf="loginForm.controls['password'].hasError('required') && loginForm.controls['password'].touched">
+                        La contraseña es requerida.
+                    </mat-error>
+                </mat-form-field>
+
+                <button mat-raised-button color="primary" type="submit"
+                    class="full-width-button animated-fade-in-up delay-3" [disabled]="loginForm.invalid || isLoading">
+                    <span *ngIf="!isLoading">Iniciar Sesión</span>
+                    <mat-progress-spinner *ngIf="isLoading" color="accent" mode="indeterminate"
+                        [diameter]="24"></mat-progress-spinner>
+                </button>
+
+                <div class="forgot-password animated-fade-in-up delay-4">
+                    <a routerLink="/auth/forgot-password">¿Olvidaste tu contraseña?</a>
+                </div>
+
+                <div *ngIf="errorMessage" class="error-message animated-fade-in delay-5">
+                    <mat-icon class="error-icon">error_outline</mat-icon>
+                    {{ errorMessage }}
+                </div>
+            </form>
+        </mat-card-content>
+        <mat-card-footer class="login-card-footer animated-fade-in delay-6">
+            <p>&copy; {{ currentYear }} Mi Condominio Digital. Todos los derechos reservados.</p>
+        </mat-card-footer>
+    </mat-card>
+</div>

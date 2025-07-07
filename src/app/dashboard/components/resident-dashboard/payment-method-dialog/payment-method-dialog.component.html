@@ -1,0 +1,36 @@
+<h2 mat-dialog-title>Selecciona un metodo de pago</h2>
+
+<mat-dialog-content class="payment-dialog-content">
+    <div class="payment-details">
+        <p><strong>Concepto:</strong> {{ payment.concept }}</p>
+        <p><strong>Monto:</strong> {{ payment.amount | currency:payment.currency }}</p>
+    </div>
+
+    <div class="payment-methods" *ngIf="!showStripeForm">
+        <div *ngIf="isPayPalSupported; else notSupported">
+            <div id="paypal-button-container"></div>
+        </div>
+        <ng-template #notSupported>
+            <div class="not-supported-message">
+                <mat-icon>Advertencia</mat-icon>
+                <span>Este metodo de pago no esta disponible para la moneda{{ payment.currency }}.</span>
+            </div>
+        </ng-template>
+        <div class="payment-method-card" (click)="selectMethod('stripe')">
+            <img src="/assets/icons/stripe.png" alt="Stripe" class="payment-icon" />
+            <div class="payment-method-info">
+                <span class="payment-method-title">Tarjeta de Credito o Debito</span>
+                <span class="payment-method-subtitle">Powered by Stripe</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="stripe-form-container" *ngIf="showStripeForm">
+        <app-stripe-payment [amount]="payment.amount" [currency]="payment.currency"
+            (paymentResult)="handleStripePaymentResult($event)"></app-stripe-payment>
+    </div>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+    <button mat-button (click)="dialogRef.close()">Cancelar</button>
+</mat-dialog-actions>

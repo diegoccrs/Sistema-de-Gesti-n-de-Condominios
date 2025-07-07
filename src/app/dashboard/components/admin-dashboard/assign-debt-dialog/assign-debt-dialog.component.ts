@@ -1,0 +1,81 @@
+import { Component, Inject } from '@angular/core';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatSelectModule } from '@angular/material/select';
+import { MatButtonModule } from '@angular/material/button';
+import { CommonModule } from '@angular/common';
+
+@Component({
+  selector: 'app-assign-debt-dialog',
+  standalone: true,
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatSelectModule,
+    MatButtonModule
+  ],
+  templateUrl: './assign-debt-dialog.component.html',
+  styleUrls: ['./assign-debt-dialog.component.css']
+})
+export class AssignDebtDialogComponent {
+  form: FormGroup;
+
+  constructor(
+    private fb: FormBuilder,
+    private dialogRef: MatDialogRef<AssignDebtDialogComponent>,
+    @Inject(MAT_DIALOG_DATA) public data: { residentId: string }
+  ) {
+    this.form = this.fb.group({
+      concept: ['', Validators.required],
+      amount: [0, [Validators.required, Validators.min(0.01)]],
+      currency: ['VES', Validators.required],
+      payment_date: [this.getCurrentDateFormatted(), Validators.required],
+      months_duration: [1, [Validators.required, Validators.min(1)]]
+    });
+  }
+
+  private getCurrentDateFormatted(): string {
+    const today = new Date();
+    return today.toISOString().split('T')[0];
+  }
+
+  private convertToTimestampTz(dateString: string): string {
+    const date = new Date(dateString);
+    date.setUTCHours(12, 0, 0, 0);
+    return date.toISOString();
+  }
+
+  private addMonths(dateString: string, months: number): string {
+    const date = new Date(dateString);
+    date.setUTCMonth(date.getUTCMonth() + months);
+    date.setUTCHours(12, 0, 0, 0);
+    return date.toISOString();
+  }
+
+  submit(): void {
+    if (this.form.valid) {
+      const paymentDateIso = this.convertToTimestampTz(this.form.value.payment_date);
+      const expirationDateIso = this.addMonths(this.form.value.payment_date, this.form.value.months_duration);
+
+      const formValue = {
+        concept: this.form.value.concept,
+        amount: this.form.value.amount,
+        currency: this.form.value.currency,
+        payment_date: paymentDateIso,
+        expiration_date: expirationDateIso,
+        resident_id: this.data.residentId
+      };
+
+      console.log('📤 Enviando a Supabase:', formValue);
+      this.dialogRef.close(formValue);
+    }
+  }
+
+  cancel(): void {
+    this.dialogRef.close();
+  }
+}

@@ -1,0 +1,61 @@
+<div class="service-providers-container">
+    <h2>Proveedores de Servicios de la Comunidad</h2>
+    <button mat-icon-button class="back-button" (click)="goBack()" aria-label="Regresar">
+        <mat-icon>arrow_back</mat-icon>
+    </button>
+
+    <div class="search-bar">
+        <mat-icon>search</mat-icon>
+        <input 
+            type="text" 
+            [(ngModel)]="searchTerm" 
+            (input)="onSearchTermChange($event)" 
+            placeholder="Buscar por nombre, tipo de servicio o descripción..."
+            aria-label="Buscar proveedores"
+        >
+    </div>
+
+    <div *ngIf="isLoading" class="loading-indicator">
+        <mat-icon>hourglass_empty</mat-icon>
+        Cargando proveedores de servicios...
+    </div>
+
+    <div *ngIf="errorMessage" class="error-message">
+        <mat-icon color="warn">error</mat-icon>
+        <p>{{ errorMessage }}</p>
+        <button mat-raised-button color="primary" (click)="loadServiceProviders()">
+            <mat-icon>refresh</mat-icon>
+            Reintentar
+        </button>
+    </div>
+
+    <div *ngIf="!isLoading && filteredServiceProviders.length === 0 && !errorMessage" class="no-data-message">
+        <mat-icon>info</mat-icon>
+        <p>No hay proveedores de servicios que coincidan con tu búsqueda.</p>
+    </div>
+
+    <div *ngIf="!isLoading && filteredServiceProviders.length > 0" class="providers-grid">
+        <div *ngFor="let provider of filteredServiceProviders" class="provider-card">
+            <div class="card-header">
+                <h3 class="service-type">
+                    <mat-icon>business</mat-icon>
+                    {{ provider.service_type }}
+                </h3>
+            </div>
+            <div class="card-body">
+                <p class="provider-name">
+                    <mat-icon>person</mat-icon>
+                    <strong>{{ provider.name }}</strong>
+                </p>
+                <p class="provider-contact">
+                    <mat-icon>phone</mat-icon>
+                    Contacto: {{ provider.contact_info }}
+                </p>
+                <p *ngIf="provider.description" class="provider-description">
+                    <mat-icon>description</mat-icon>
+                    <small>{{ provider.description }}</small>
+                </p>
+            </div>
+        </div>
+    </div>
+</div>

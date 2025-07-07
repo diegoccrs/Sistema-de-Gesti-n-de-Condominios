@@ -1,0 +1,94 @@
+<h2 mat-dialog-title>
+  Crear Nuevo Residente
+  <button mat-icon-button class="close-button" (click)="onNoClick()" aria-label="Cerrar diálogo">
+    <mat-icon>close</mat-icon>
+  </button>
+</h2>
+
+<mat-dialog-content class="mat-typography">
+  <form [formGroup]="createResidentForm" (ngSubmit)="onSubmit()">
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Nombre</mat-label>
+      <input matInput formControlName="firstName" required>
+      <mat-error *ngIf="createResidentForm.get('firstName')?.hasError('required') && createResidentForm.get('firstName')?.touched">
+        El nombre es requerido.
+      </mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Apellido</mat-label>
+      <input matInput formControlName="lastName" required>
+      <mat-error *ngIf="createResidentForm.get('lastName')?.hasError('required') && createResidentForm.get('lastName')?.touched">
+        El apellido es requerido.
+      </mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Correo Electrónico</mat-label>
+      <input matInput formControlName="email" type="email" required>
+      <mat-error *ngIf="createResidentForm.get('email')?.hasError('required') && createResidentForm.get('email')?.touched">
+        El correo electrónico es requerido.
+      </mat-error>
+      <mat-error *ngIf="createResidentForm.get('email')?.hasError('email') && createResidentForm.get('email')?.touched">
+        Formato de correo electrónico inválido.
+      </mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Contraseña</mat-label>
+      <input matInput formControlName="password" type="password" required>
+      <mat-hint>Mínimo 8 caracteres.</mat-hint>
+      <mat-error *ngIf="createResidentForm.get('password')?.hasError('required') && createResidentForm.get('password')?.touched">
+        La contraseña es requerida.
+      </mat-error>
+      <mat-error *ngIf="createResidentForm.get('password')?.hasError('minlength') && createResidentForm.get('password')?.touched">
+        La contraseña debe tener al menos 8 caracteres.
+      </mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Edificio(s)</mat-label>
+      <mat-select formControlName="selectedBuildingIds" multiple required>
+        <mat-option *ngFor="let building of buildings" [value]="building.id">
+          {{ building.name }}
+        </mat-option>
+      </mat-select>
+      <mat-error *ngIf="createResidentForm.get('selectedBuildingIds')?.hasError('required') && createResidentForm.get('selectedBuildingIds')?.touched">
+        Seleccione al menos un edificio.
+      </mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Apartamento(s)</mat-label>
+      <mat-select formControlName="selectedApartmentIds" multiple required
+                  [disabled]="!createResidentForm.get('selectedBuildingIds')?.value?.length || filteredApartments.length === 0">
+        <mat-option *ngFor="let apartment of filteredApartments" [value]="apartment.id">
+          {{ apartment.apartment_number }} (Piso {{ apartment.floor || 'N/A' }})
+        </mat-option>
+      </mat-select>
+      <mat-error *ngIf="createResidentForm.get('selectedApartmentIds')?.hasError('required') && createResidentForm.get('selectedApartmentIds')?.touched">
+        Seleccione al menos un apartamento.
+      </mat-error>
+      <mat-hint *ngIf="createResidentForm.get('selectedBuildingIds')?.value?.length && filteredApartments.length === 0">
+        No hay apartamentos disponibles en el/los edificio(s) seleccionado(s).
+      </mat-hint>
+      <mat-hint *ngIf="createResidentForm.get('selectedBuildingIds')?.value?.length === 0">
+        Seleccione uno o varios edificios para ver los apartamentos.
+      </mat-hint>
+    </mat-form-field>
+
+    <div *ngIf="errorMessage" class="alert-message error-message animated-fade-in">
+      <mat-icon>error_outline</mat-icon>
+      {{ errorMessage }}
+    </div>
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="onNoClick()" [disabled]="isLoading">Cancelar</button>
+
+  <button mat-raised-button color="primary" (click)="onSubmit()" [disabled]="createResidentForm.invalid || isLoading">
+    <span *ngIf="!isLoading">Crear Residente</span>
+    <mat-spinner *ngIf="isLoading" diameter="20"></mat-spinner>
+  </button>
+</mat-dialog-actions>
