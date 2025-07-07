@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # Sistema-de-Gesti-n-de-Condominios
 Proyecto Ingenieria de Software
 
@@ -11,8 +10,8 @@ Gianfranco Mongiello
 Santiago Lanz
 
 Adolfo Barberi
-=======
-# CondoGest
+
+# MiCondominioDigital
 
 This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 19.2.12.
 
