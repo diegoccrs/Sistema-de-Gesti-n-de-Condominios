@@ -1,78 +1,84 @@
 
+:root {
+    --primary-font: 'Raleway', sans-serif;
+    --background-color: #f9f9f9;
+    --text-color: #333;
+    --header-bg: #ffffff;
+    --header-border: #e0e0e0;
+    --card-bg: #ffffff;
+    --card-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
+    --title-color: #2c3e50;
+    --text-muted: #546e7a;
+    --footer-bg: #ffffff;
+    --footer-text: #666;
+    --icon-container-bg: #e3f2fd;
+    --icon-color: #1976d2;
+}
+
 :host {
-    font-family: 'Raleway', sans-serif;
+    font-family: var(--primary-font);
 }
 
-html,
-body {
-    font-family: 'Raleway', sans-serif;
-    margin: 0;
-    padding: 0;
-    background-color: #f9f9f9;
-    color: #333;
-    line-height: 1.6; /* Mejora la legibilidad del texto base */
-}
-
-.mat-typography,
-.mat-card,
-.mat-button {
-    font-family: 'Raleway', sans-serif !important;
-}
-
-/* LAYOUT base */
 .landing-page {
     display: flex;
     flex-direction: column;
     min-height: 100vh;
+    background-color: var(--background-color);
 }
 
-/* HEADER base */
+/* Header */
 .header {
     display: flex;
-    justify-content: space-between;
+    flex-direction: column; /* Mobile first */
     align-items: center;
-    padding: 20px 40px;
-    background-color: #ffffff;
-    border-bottom: 1px solid #e0e0e0;
-    flex-wrap: wrap; /* Permite que los elementos se envuelvan en pantallas pequeñas */
+    gap: 15px;
+    padding: 15px 20px;
+    background-color: var(--header-bg);
+    border-bottom: 1px solid var(--header-border);
 }
 
 .logo h2 {
     margin: 0;
     font-weight: 600;
     font-size: 1.5rem;
+    text-align: center;
+}
+
+.actions {
+    width: 100%;
 }
 
 .actions button {
     font-weight: 600;
-    /* Considera añadir un padding mínimo o altura para botones en diferentes tamaños */
+    width: 100%;
 }
 
-/* MAIN base */
+/* Main Content */
 .main-content {
     flex-grow: 1;
-    padding: 40px 20px;
+    padding: 30px 20px;
+    width: 100%;
     max-width: 1200px;
     margin: 0 auto;
+    box-sizing: border-box;
 }
 
-/* HERO SECTION base */
+/* Hero Section */
 .hero {
     position: relative;
     text-align: center;
-    padding: 100px 20px;
+    padding: 60px 20px;
     border-radius: 12px;
     margin-bottom: 40px;
     color: white;
     background-image: url('/assets/condo.jpg');
     background-size: cover;
     background-position: center;
-    background-repeat: no-repeat;
     overflow: hidden;
-    display: flex; /* Usar flex para centrar el contenido verticalmente */
+    display: flex;
     align-items: center;
     justify-content: center;
-    min-height: 400px; /* Altura mínima para el hero */
+    min-height: 350px;
 }
 
 .hero::before {
@@ -87,76 +93,72 @@ body {
     position: relative;
     z-index: 2;
     max-width: 700px;
-    margin: 0 auto;
-    padding: 15px; /* Añadir padding interno para evitar que el texto toque los bordes */
+    padding: 15px;
 }
 
 .hero h1 {
-    font-size: 2.8rem;
+    font-size: 2rem;
     margin-bottom: 20px;
     font-weight: 700;
-    line-height: 1.2; /* Mejora la legibilidad de títulos grandes */
+    line-height: 1.2;
 }
 
 .hero p {
-    font-size: 1.2rem;
+    font-size: 1.1rem;
     margin-bottom: 30px;
 }
 
-/* MISSION & VISION base */
+/* Mission & Vision */
 .mission-vision {
     display: flex;
-    flex-direction: column; /* Predeterminado a columna para móviles */
+    flex-direction: column;
     gap: 20px;
-    margin-bottom: 60px;
+    margin-bottom: 50px;
 }
 
 .mission-vision .card {
-    background: #ffffff;
+    background: var(--card-bg);
     padding: 24px;
     border-radius: 12px;
-    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
-    flex: 1;
-    text-align: left; /* Asegura que el texto esté alineado a la izquierda por defecto */
+    box-shadow: var(--card-shadow);
 }
 
 .mission-vision h2 {
     font-size: 1.5rem;
     margin-bottom: 10px;
-    color: #2c3e50; /* Color consistente para los títulos */
+    color: var(--title-color);
 }
 
-/* FEATURES SECTION base */
+/* Features Section */
 .features {
-    padding: 3rem 2rem; /* Aumenta el padding vertical */
-    background-color: #ffffff;
+    padding: 3rem 1rem;
+    background-color: var(--card-bg);
     text-align: center;
 }
 
 .features h2 {
-    margin-bottom: 2.5rem; /* Más espacio debajo del título */
-    color: #2c3e50;
-    font-size: 2rem;
+    margin-bottom: 2.5rem;
+    color: var(--title-color);
+    font-size: 1.8rem;
 }
 
 .feature-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); /* Min-width ligeramente mayor */
+    grid-template-columns: 1fr;
     gap: 1.5rem;
     max-width: 1200px;
     margin: 0 auto;
 }
 
 .feature-card {
-    background: white !important;
+    background: var(--card-bg) !important;
     border-radius: 8px !important;
     padding: 1.5rem;
     transition: transform 0.3s ease, box-shadow 0.3s ease;
-    height: 100%;
     display: flex;
     flex-direction: column;
-    text-align: left; /* Alinea el contenido de la tarjeta a la izquierda */
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05); /* Sombra por defecto más sutil */
+    text-align: left;
+    box-shadow: var(--card-shadow);
 }
 
 .feature-card:hover {
@@ -165,22 +167,20 @@ body {
 }
 
 .feature-icon-container {
-    background-color: #e3f2fd;
-    width: 56px; /* Icono ligeramente más grande */
+    background-color: var(--icon-container-bg);
+    width: 56px;
     height: 56px;
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
     margin-right: 1rem;
-    flex-shrink: 0; /* Evita que el contenedor del icono se encoja */
+    flex-shrink: 0;
 }
 
 .feature-icon {
-    color: #1976d2 !important;
-    font-size: 28px !important; /* Tamaño del icono */
-    width: 28px !important;
-    height: 28px !important;
+    color: var(--icon-color) !important;
+    font-size: 28px !important;
 }
 
 mat-card-header {
@@ -190,190 +190,87 @@ mat-card-header {
 }
 
 mat-card-title {
-    font-size: 1.25rem !important; /* Título de la tarjeta ligeramente más grande */
-    font-weight: 600 !important; /* Un poco más de peso */
-    color: #2c3e50;
+    font-size: 1.2rem !important;
+    font-weight: 600 !important;
+    color: var(--title-color);
 }
 
 mat-card-content p {
-    color: #546e7a;
+    color: var(--text-muted);
     line-height: 1.6;
     margin: 0;
 }
 
-/* FOOTER base */
+/* Footer */
 .footer {
-    background-color: #ffffff;
+    background-color: var(--footer-bg);
     text-align: center;
-    padding: 20px 40px;
-    border-top: 1px solid #e0e0e0;
-    font-size: 0.95rem;
-    color: #666; /* Color de texto más suave */
+    padding: 20px;
+    border-top: 1px solid var(--header-border);
+    font-size: 0.9rem;
+    color: var(--footer-text);
 }
 
-/* --- Media Queries para un Responsive Perfecto --- */
-
-/* Teléfonos pequeños (vertical) */
-@media (max-width: 480px) {
+/* Medium screens and up (Tablets) */
+@media (min-width: 768px) {
     .header {
-        flex-direction: column;
-        padding: 15px 20px;
-        gap: 10px; /* Espacio entre logo y acciones */
-    }
-
-    .logo {
-        margin-bottom: 0; /* Ajuste para el nuevo flex-direction */
-        text-align: center;
-        width: 100%; /* El logo ocupa todo el ancho */
+        flex-direction: row;
+        justify-content: space-between;
+        padding: 20px 40px;
     }
 
     .actions {
-        width: 100%;
-        display: flex;
-        flex-direction: column;
-        gap: 10px; /* Espacio entre botones */
+        width: auto;
     }
+
     .actions button {
-        width: 100%;
-        margin: 0; /* Eliminar margen para ocupar el 100% */
+        width: auto;
     }
 
     .main-content {
-        padding: 20px 15px;
+        padding: 40px;
     }
 
     .hero {
-        padding: 60px 15px;
-        min-height: 300px; /* Menor altura para el hero en pantallas muy pequeñas */
+        padding: 100px 40px;
+        min-height: 400px;
     }
 
     .hero h1 {
-        font-size: 1.8rem;
+        font-size: 2.8rem;
     }
 
     .hero p {
-        font-size: 1rem;
+        font-size: 1.2rem;
     }
 
     .mission-vision {
-        flex-direction: column;
-        gap: 15px; /* Menor espacio entre tarjetas */
-    }
-
-    .mission-vision .card {
-        padding: 20px;
+        flex-direction: row;
     }
 
     .features h2 {
-        font-size: 1.6rem;
-        margin-bottom: 1.5rem;
+        font-size: 2rem;
     }
 
     .feature-grid {
-        grid-template-columns: 1fr; /* Una sola columna para las características */
-        gap: 1rem;
-    }
-
-    .feature-card {
-        padding: 1rem;
-    }
-
-    mat-card-title {
-        font-size: 1.1rem !important;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
     }
 
     .footer {
-        padding: 15px 15px;
-        font-size: 0.8rem;
+        padding: 20px 40px;
+        font-size: 0.95rem;
     }
 }
 
-/* Teléfonos y tablets pequeñas (vertical y horizontal) */
-@media (min-width: 481px) and (max-width: 767px) {
-    .header {
-        padding: 20px 25px;
-    }
-
-    .main-content {
-        padding: 30px 20px;
-    }
-
-    .hero {
-        padding: 80px 25px;
-        min-height: 350px;
-    }
-
-    .hero h1 {
-        font-size: 2.2rem;
-    }
-
-    .hero p {
-        font-size: 1.1rem;
-    }
-
-    .mission-vision {
-        flex-direction: column;
-    }
-
-    .features h2 {
-        font-size: 1.8rem;
-    }
-
-    .feature-grid {
-        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); /* Permitir 2 columnas */
-    }
-
-    .footer {
-        padding: 20px 25px;
-    }
-}
-
-/* Tablets grandes y laptops pequeñas */
-@media (min-width: 768px) and (max-width: 1023px) {
-    .header {
-        padding: 20px 30px;
-    }
-
-    .main-content {
-        padding: 40px 25px;
-    }
-
-    .hero {
-        padding: 90px 30px;
-    }
-
-    .hero h1 {
-        font-size: 2.5rem;
-    }
-
-    .mission-vision {
-        flex-direction: row; /* Vuelven a ser en fila */
-    }
-
-    .feature-grid {
-        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); /* 2 o 3 columnas */
-        gap: 1.8rem;
-    }
-}
-
-/* Desktops y pantallas grandes */
+/* Large screens and up (Desktops) */
 @media (min-width: 1024px) {
-    .header {
-        padding: 20px 60px;
+    .feature-grid {
+        gap: 2rem;
     }
 
-    .main-content {
-        padding: 40px 40px;
+    .header,
+    .footer {
+        padding-left: 60px;
+        padding-right: 60px;
     }
-
-    /* Estilos base ya son adecuados para pantallas grandes, pocos cambios necesarios aquí */
-}
-
-/* Estilos para accesibilidad y usabilidad general */
-button {
-    cursor: pointer;
-}
-
-a {
-    text-decoration: none;
 }

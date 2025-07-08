@@ -1,7 +1,43 @@
 /* You can add global styles to this file, and also import other style files */
+:root {
+    --primary-font: 'Raleway', sans-serif;
+    --background-color: #f9f9f9;
+    --text-color: #333;
+    --header-bg: #ffffff;
+    --header-border: #e0e0e0;
+    --card-bg: #ffffff;
+    --card-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
+    --title-color: #2c3e50;
+    --text-muted: #546e7a;
+    --footer-bg: #ffffff;
+    --footer-text: #666;
+    --icon-container-bg: #e3f2fd;
+    --icon-color: #1976d2;
+}
 
-html, body { height: 100%; }
+html, body {
+    height: 100%;
+}
 
 body {
-    font-family: 'Roboto', cursive, "Helvetica Neue", sans-serif;
+    font-family: var(--primary-font);
+    margin: 0;
+    padding: 0;
+    background-color: var(--background-color);
+    color: var(--text-color);
+    line-height: 1.6;
+}
+
+.mat-typography,
+.mat-card,
+.mat-button {
+    font-family: var(--primary-font) !important;
+}
+
+button {
+    cursor: pointer;
+}
+
+a {
+    text-decoration: none;
 }
